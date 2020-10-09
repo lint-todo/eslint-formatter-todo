@@ -1,0 +1,53 @@
+{
+  "name": "eslint-formatter-todo",
+  "version": "1.0.0",
+  "repository": "https://github.com/scalvert/eslint-formatter-todo.git",
+  "description": "A ESLint formatter that only report errors when they are not present in a list of \"TODOS\" while allowing authors to update the list of \"TODOS\" from a list of errors automatically.",
+  "author": "Renato Iwashima <renatoiwa@gmail.com>",
+  "contributors": [
+    "Steve Calvert <steve.calvert@gmail.com>"
+  ],
+  "license": "MIT",
+  "main": "lib/index.js",
+  "files:": [
+    "lib/"
+  ],
+  "scripts": {
+    "build": "tsc --build",
+    "build:watch": "tsc --watch",
+    "clean": "tsc --build --clean",
+    "lint": "eslint . --ext .ts",
+    "prepare": "yarn build",
+    "test": "jest --passWithNoTests --no-cache"
+  },
+  "dependencies": {
+    "@ember-template-lint/todo-utils": "^2.1.0",
+    "chalk": "^4.1.0",
+    "eslint": "^7.10.0"
+  },
+  "devDependencies": {
+    "@types/eslint": "^7.2.4",
+    "@types/fs-extra": "^9.0.1",
+    "@types/tmp": "^0.2.0",
+    "@typescript-eslint/eslint-plugin": "^4.4.0",
+    "@typescript-eslint/parser": "^4.4.0",
+    "eslint-config-prettier": "^6.12.0",
+    "eslint-plugin-jest": "^24.1.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^3.1.4",
+    "eslint-plugin-unicorn": "^22.0.0",
+    "fs-extra": "^9.0.1",
+    "jest": "^26.5.2",
+    "prettier": "^2.1.2",
+    "tmp": "^0.2.1",
+    "ts-jest": "^26.4.1",
+    "typescript": "^4.0.3"
+  },
+  "volta": {
+    "node": "12.18.4",
+    "yarn": "1.22.10"
+  },
+  "engines": {
+    "node": "12.18.4"
+  }
+}
