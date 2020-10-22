@@ -18,9 +18,9 @@ When you introduce new linting rules, execute ESLint by setting `UPDATE_TODO=1` 
 $ UPDATE_TODO=1 eslint --format eslint-formatter-todo
 ```
 
-This command will transform all reported ERRORS to WARNINGS and will generate files inside the `.lint-todo` directory to track them.
+This command will transform all reported ERRORS to TODO and will generate files inside the `.lint-todo` directory to track them.
 
-After that, just execute ESLint normally while also passing this formatter:
+Executing ESLint without the `UPDATE_TODO` env var will run `eslint` normally:
 
 ```bash
 $ eslint --format eslint-formatter-todo
