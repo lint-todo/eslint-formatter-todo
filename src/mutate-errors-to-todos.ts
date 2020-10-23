@@ -25,7 +25,7 @@ export async function mutateTodoErrorsToTodos(
       
       const todoHash = todoFilePathFor(todoDatum);
 
-      if (!todoMap.get(todoHash)) {
+      if (!todoMap.has(todoHash)) {
         return;
       }
 
