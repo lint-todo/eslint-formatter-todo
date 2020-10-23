@@ -3,7 +3,7 @@ import {
   readTodos,
   writeTodos,
 } from '@ember-template-lint/todo-utils'; // eslint-disable-line node/no-unpublished-import
-import { ESLint } from 'eslint';
+import type { ESLint } from 'eslint';
 import { existsSync } from 'fs-extra';
 import { formatter } from './formatter';
 import { mutateTodoErrorsToTodos } from './mutate-errors-to-todos';
