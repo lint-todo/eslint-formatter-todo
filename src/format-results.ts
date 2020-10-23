@@ -32,7 +32,7 @@ async function report(
   const todoDir = getTodoStorageDirPath(getBasePath());
 
   if (existsSync(todoDir)) {
-    const todoMap = await readTodos(todoDir);
+    const todos = await readTodos(todoDir);
     await mutateTodoErrorsToTodos(results, todoMap);
   }
 
