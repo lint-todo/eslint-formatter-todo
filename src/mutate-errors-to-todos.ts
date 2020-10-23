@@ -22,9 +22,8 @@ export async function mutateTodoErrorsToTodos(
 
       // we only mutate errors that are present in the todo map, so check if it's there first
       const todoDatum = _buildTodoDatum(result, message);
-      const todoDirHash = todoDirFor(result.filePath);
-      const todoFileHash = todoFileNameFor(todoDatum);
-      const todoHash = `${todoDirHash}/${todoFileHash}`;
+      
+      const todoHash = todoFilePathFor(todoDatum);
 
       if (!todoMap.get(todoHash)) {
         return;
