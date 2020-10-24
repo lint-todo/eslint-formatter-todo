@@ -39,6 +39,9 @@
         "ignores": ["modules"]
       }
     ],
+    "node/no-unpublished-import": ["error", {
+        "allowModules": ["tmp"]
+    }],
     "node/no-extraneous-import": ["error"]
   },
   "overrides": [

@@ -15,6 +15,6 @@
     "skipLibCheck": true,
     "composite": true
   },
-  "include": ["./src", "estlint-type-extension.d.ts"],
+  "include": ["./src", "types/estlint-type-extension.d.ts"],
   "exclude": ["**/node_modules/**"]
 }

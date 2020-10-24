@@ -2,9 +2,9 @@ import {
   getTodoStorageDirPath,
   readTodos,
   writeTodos,
-} from '@ember-template-lint/todo-utils'; // eslint-disable-line node/no-unpublished-import
+} from '@ember-template-lint/todo-utils';
 import type { ESLint } from 'eslint';
-import { existsSync } from 'fs-extra';
+import { existsSync } from 'fs';
 import { formatter } from './formatter';
 import { mutateTodoErrorsToTodos } from './mutate-errors-to-todos';
 import { getBasePath } from './utils';
@@ -18,7 +18,7 @@ async function formatResultsAsync(results: ESLint.LintResult[]): Promise<void> {
   const shouldUpdateTodo = process.env.UPDATE_TODO === '1';
   const shouldIncludeTodo = process.env.INCLUDE_TODO === '1';
 
-  if (shouldUpdateTodo || process.argv.includes('--fix')) {
+  if (shouldUpdateTodo) {
     await writeTodos(getBasePath(), results);
   }
 
@@ -33,7 +33,7 @@ async function report(
 
   if (existsSync(todoDir)) {
     const todos = await readTodos(todoDir);
-    await mutateTodoErrorsToTodos(results, todoMap);
+    await mutateTodoErrorsToTodos(results, todos);
   }
 
   process.stdout.write(formatter(results, shouldIncludeTodo));

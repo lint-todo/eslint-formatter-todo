@@ -1,20 +1,18 @@
 import { buildTodoData } from '@ember-template-lint/todo-utils';
-import '../src/estlint-type-extension.d.ts';
 import { mutateTodoErrorsToTodos } from '../src/mutate-errors-to-todos';
-import { readJson } from './__utils__/read-json';
+import '../types/estlint-type-extension.d.ts';
+import fixtures from './__fixtures__/fixtures';
 
 describe('mutate-errors-to-todos', () => {
   it('changes only the errors that are also present in the todo map to todos', async () => {
-    const results = await readJson(
-      require.resolve('./__fixtures__/eslint-with-errors.json')
-    );
+    const results = fixtures.eslintWithErrors();
 
     // build todo map but without the last result in the results array (so they differ)
     const todoResults = [...results];
     const lastResult = todoResults.pop();
-    const todoMap = buildTodoData(todoResults);
+    const todos = buildTodoData(todoResults);
 
-    mutateTodoErrorsToTodos(results, todoMap);
+    mutateTodoErrorsToTodos(results, todos);
 
     // last result should stay unchanged
     expect(results[results.length - 1]).toEqual(lastResult);

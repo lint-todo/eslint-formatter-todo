@@ -9,6 +9,7 @@
   ],
   "license": "MIT",
   "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "files:": [
     "lib/"
   ],
@@ -23,13 +24,15 @@
   "dependencies": {
     "@ember-template-lint/todo-utils": "^2.2.0",
     "chalk": "^4.1.0",
-    "eslint": "^7.10.0"
+    "eslint": "^7.10.0",
+    "strip-ansi": "^6.0.0",
+    "text-table": "^0.2.0"
   },
   "devDependencies": {
     "@types/eslint": "^7.2.4",
     "@types/fs-extra": "^9.0.1",
-    "@types/tmp": "^0.2.0",
     "@types/text-table": "^0.2.1",
+    "@types/tmp": "^0.2.0",
     "@typescript-eslint/eslint-plugin": "^4.4.0",
     "@typescript-eslint/parser": "^4.4.0",
     "eslint-config-prettier": "^6.12.0",
@@ -49,6 +52,6 @@
     "yarn": "1.22.10"
   },
   "engines": {
-    "node": "12.18.4"
+    "node": "12.* || >= 14"
   }
 }

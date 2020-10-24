@@ -10,15 +10,15 @@ function pluralize(word: string, count: number): string {
 export function formatter(
   results: ESLint.LintResult[],
   shouldIncludeTodo?: boolean
-) {
-  let output = '\n',
-    errorCount = 0,
-    warningCount = 0,
-    todoCount = 0,
-    fixableErrorCount = 0,
-    fixableWarningCount = 0,
-    chalkColorFunction = yellow,
-    hasAnyErrors = false;
+): string {
+  let output = '\n';
+  let errorCount = 0;
+  let warningCount = 0;
+  let todoCount = 0;
+  let fixableErrorCount = 0;
+  let fixableWarningCount = 0;
+  let chalkColorFunction = yellow;
+  let hasAnyErrors = false;
 
   results.forEach((result) => {
     const messages = result.messages;
@@ -41,7 +41,7 @@ export function formatter(
       output += `${underline(result.filePath)}\n`;
     }
 
-    let messageRows: Array<Array<{}>> = [];
+    const messageRows: Array<Array<any>> = [];
     messages.forEach((message) => {
       let messageType;
 

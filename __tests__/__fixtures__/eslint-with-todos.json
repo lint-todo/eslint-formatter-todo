@@ -1,270 +1,272 @@
-[
-  {
-    "filePath": "/Users/fake/app/controllers/settings.js",
-    "messages": [
-      {
-        "ruleId": "no-prototype-builtins",
-        "severity": -1,
-        "message": "Do not access Object.prototype method 'hasOwnProperty' from target object.",
-        "line": 25,
-        "column": 21,
-        "nodeType": "CallExpression",
-        "messageId": "prototypeBuildIn",
-        "endLine": 25,
-        "endColumn": 35
-      },
-      {
-        "ruleId": "no-prototype-builtins",
-        "severity": -1,
-        "message": "Do not access Object.prototype method 'hasOwnProperty' from target object.",
-        "line": 26,
-        "column": 19,
-        "nodeType": "CallExpression",
-        "messageId": "prototypeBuildIn",
-        "endLine": 26,
-        "endColumn": 33
-      },
-      {
-        "ruleId": "no-prototype-builtins",
-        "severity": -1,
-        "message": "Do not access Object.prototype method 'hasOwnProperty' from target object.",
-        "line": 32,
-        "column": 34,
-        "nodeType": "CallExpression",
-        "messageId": "prototypeBuildIn",
-        "endLine": 32,
-        "endColumn": 48
-      }
-    ],
-    "errorCount": 0,
-    "warningCount": 0,
-    "todoCount": 3,
-    "fixableErrorCount": 0,
-    "fixableWarningCount": 0,
-    "source": ""
-  },
-  {
-    "filePath": "/Users/fake/app/initializers/tracer.js",
-    "messages": [
-      {
-        "ruleId": "no-redeclare",
-        "severity": -1,
-        "message": "'window' is already defined as a built-in global variable.",
-        "line": 1,
-        "column": 11,
-        "nodeType": "Block",
-        "messageId": "redeclaredAsBuiltin",
-        "endLine": 1,
-        "endColumn": 17,
-        "fix": {
-          "range": [0, 1],
-          "text": ""
+{
+  "results": [
+    {
+      "filePath": "/Users/fake/app/controllers/settings.js",
+      "messages": [
+        {
+          "ruleId": "no-prototype-builtins",
+          "severity": -1,
+          "message": "Do not access Object.prototype method 'hasOwnProperty' from target object.",
+          "line": 25,
+          "column": 21,
+          "nodeType": "CallExpression",
+          "messageId": "prototypeBuildIn",
+          "endLine": 25,
+          "endColumn": 35
+        },
+        {
+          "ruleId": "no-prototype-builtins",
+          "severity": -1,
+          "message": "Do not access Object.prototype method 'hasOwnProperty' from target object.",
+          "line": 26,
+          "column": 19,
+          "nodeType": "CallExpression",
+          "messageId": "prototypeBuildIn",
+          "endLine": 26,
+          "endColumn": 33
+        },
+        {
+          "ruleId": "no-prototype-builtins",
+          "severity": -1,
+          "message": "Do not access Object.prototype method 'hasOwnProperty' from target object.",
+          "line": 32,
+          "column": 34,
+          "nodeType": "CallExpression",
+          "messageId": "prototypeBuildIn",
+          "endLine": 32,
+          "endColumn": 48
         }
-      },
-      {
-        "ruleId": "no-redeclare",
-        "severity": -1,
-        "message": "'XMLHttpRequest' is already defined as a built-in global variable.",
-        "line": 1,
-        "column": 19,
-        "nodeType": "Block",
-        "messageId": "redeclaredAsBuiltin",
-        "endLine": 1,
-        "endColumn": 33
-      }
-    ],
-    "errorCount": 0,
-    "warningCount": 0,
-    "todoCount": 2,
-    "fixableErrorCount": 1,
-    "fixableWarningCount": 0,
-    "source": ""
-  },
-  {
-    "filePath": "/Users/fake/app/models/build.js",
-    "messages": [
-      {
-        "ruleId": "no-prototype-builtins",
-        "severity": -1,
-        "message": "Do not access Object.prototype method 'hasOwnProperty' from target object.",
-        "line": 108,
-        "column": 50,
-        "nodeType": "CallExpression",
-        "messageId": "prototypeBuildIn",
-        "endLine": 108,
-        "endColumn": 64
-      },
-      {
-        "ruleId": "no-prototype-builtins",
-        "severity": -1,
-        "message": "Do not access Object.prototype method 'hasOwnProperty' from target object.",
-        "line": 120,
-        "column": 25,
-        "nodeType": "CallExpression",
-        "messageId": "prototypeBuildIn",
-        "endLine": 120,
-        "endColumn": 39
-      }
-    ],
-    "errorCount": 0,
-    "warningCount": 0,
-    "todoCount": 2,
-    "fixableErrorCount": 0,
-    "fixableWarningCount": 0,
-    "source": ""
-  },
-  {
-    "filePath": "/Users/fake/app/services/insights.js",
-    "messages": [
-      {
-        "ruleId": "no-prototype-builtins",
-        "severity": -1,
-        "message": "Do not access Object.prototype method 'hasOwnProperty' from target object.",
-        "line": 287,
-        "column": 17,
-        "nodeType": "CallExpression",
-        "messageId": "prototypeBuildIn",
-        "endLine": 287,
-        "endColumn": 31
-      },
-      {
-        "ruleId": "no-prototype-builtins",
-        "severity": -1,
-        "message": "Do not access Object.prototype method 'hasOwnProperty' from target object.",
-        "line": 296,
-        "column": 17,
-        "nodeType": "CallExpression",
-        "messageId": "prototypeBuildIn",
-        "endLine": 296,
-        "endColumn": 31
-      },
-      {
-        "ruleId": "no-prototype-builtins",
-        "severity": -1,
-        "message": "Do not access Object.prototype method 'hasOwnProperty' from target object.",
-        "line": 307,
-        "column": 17,
-        "nodeType": "CallExpression",
-        "messageId": "prototypeBuildIn",
-        "endLine": 307,
-        "endColumn": 31
-      },
-      {
-        "ruleId": "no-prototype-builtins",
-        "severity": -1,
-        "message": "Do not access Object.prototype method 'hasOwnProperty' from target object.",
-        "line": 317,
-        "column": 17,
-        "nodeType": "CallExpression",
-        "messageId": "prototypeBuildIn",
-        "endLine": 317,
-        "endColumn": 31
-      }
-    ],
-    "errorCount": 0,
-    "warningCount": 0,
-    "todoCount": 4,
-    "fixableErrorCount": 0,
-    "fixableWarningCount": 0,
-    "source": ""
-  },
-  {
-    "filePath": "/Users/fake/app/utils/traverse-payload.js",
-    "messages": [
-      {
-        "ruleId": "no-prototype-builtins",
-        "severity": -1,
-        "message": "Do not access Object.prototype method 'hasOwnProperty' from target object.",
-        "line": 18,
-        "column": 18,
-        "nodeType": "CallExpression",
-        "messageId": "prototypeBuildIn",
-        "endLine": 18,
-        "endColumn": 32
-      }
-    ],
-    "errorCount": 0,
-    "warningCount": 0,
-    "todoCount": 1,
-    "fixableErrorCount": 0,
-    "fixableWarningCount": 0,
-    "source": ""
-  },
-  {
-    "filePath": "/Users/fake/tests/unit/services/insights-test.js",
-    "messages": [
-      {
-        "ruleId": "no-prototype-builtins",
-        "severity": -1,
-        "message": "Do not access Object.prototype method 'hasOwnProperty' from target object.",
-        "line": 65,
-        "column": 27,
-        "nodeType": "CallExpression",
-        "messageId": "prototypeBuildIn",
-        "endLine": 65,
-        "endColumn": 41
-      },
-      {
-        "ruleId": "no-prototype-builtins",
-        "severity": -1,
-        "message": "Do not access Object.prototype method 'hasOwnProperty' from target object.",
-        "line": 80,
-        "column": 27,
-        "nodeType": "CallExpression",
-        "messageId": "prototypeBuildIn",
-        "endLine": 80,
-        "endColumn": 41
-      },
-      {
-        "ruleId": "no-prototype-builtins",
-        "severity": -1,
-        "message": "Do not access Object.prototype method 'hasOwnProperty' from target object.",
-        "line": 97,
-        "column": 27,
-        "nodeType": "CallExpression",
-        "messageId": "prototypeBuildIn",
-        "endLine": 97,
-        "endColumn": 41
-      },
-      {
-        "ruleId": "no-prototype-builtins",
-        "severity": -1,
-        "message": "Do not access Object.prototype method 'hasOwnProperty' from target object.",
-        "line": 116,
-        "column": 27,
-        "nodeType": "CallExpression",
-        "messageId": "prototypeBuildIn",
-        "endLine": 116,
-        "endColumn": 41
-      },
-      {
-        "ruleId": "no-prototype-builtins",
-        "severity": -1,
-        "message": "Do not access Object.prototype method 'hasOwnProperty' from target object.",
-        "line": 134,
-        "column": 27,
-        "nodeType": "CallExpression",
-        "messageId": "prototypeBuildIn",
-        "endLine": 134,
-        "endColumn": 41
-      },
-      {
-        "ruleId": "no-prototype-builtins",
-        "severity": -1,
-        "message": "Do not access Object.prototype method 'hasOwnProperty' from target object.",
-        "line": 158,
-        "column": 32,
-        "nodeType": "CallExpression",
-        "messageId": "prototypeBuildIn",
-        "endLine": 158,
-        "endColumn": 46
-      }
-    ],
-    "errorCount": 0,
-    "warningCount": 0,
-    "todoCount": 6,
-    "fixableErrorCount": 0,
-    "fixableWarningCount": 0,
-    "source": ""
-  }
-]
+      ],
+      "errorCount": 0,
+      "warningCount": 0,
+      "todoCount": 3,
+      "fixableErrorCount": 0,
+      "fixableWarningCount": 0,
+      "source": ""
+    },
+    {
+      "filePath": "/Users/fake/app/initializers/tracer.js",
+      "messages": [
+        {
+          "ruleId": "no-redeclare",
+          "severity": -1,
+          "message": "'window' is already defined as a built-in global variable.",
+          "line": 1,
+          "column": 11,
+          "nodeType": "Block",
+          "messageId": "redeclaredAsBuiltin",
+          "endLine": 1,
+          "endColumn": 17,
+          "fix": {
+            "range": [0, 1],
+            "text": ""
+          }
+        },
+        {
+          "ruleId": "no-redeclare",
+          "severity": -1,
+          "message": "'XMLHttpRequest' is already defined as a built-in global variable.",
+          "line": 1,
+          "column": 19,
+          "nodeType": "Block",
+          "messageId": "redeclaredAsBuiltin",
+          "endLine": 1,
+          "endColumn": 33
+        }
+      ],
+      "errorCount": 0,
+      "warningCount": 0,
+      "todoCount": 2,
+      "fixableErrorCount": 1,
+      "fixableWarningCount": 0,
+      "source": ""
+    },
+    {
+      "filePath": "/Users/fake/app/models/build.js",
+      "messages": [
+        {
+          "ruleId": "no-prototype-builtins",
+          "severity": -1,
+          "message": "Do not access Object.prototype method 'hasOwnProperty' from target object.",
+          "line": 108,
+          "column": 50,
+          "nodeType": "CallExpression",
+          "messageId": "prototypeBuildIn",
+          "endLine": 108,
+          "endColumn": 64
+        },
+        {
+          "ruleId": "no-prototype-builtins",
+          "severity": -1,
+          "message": "Do not access Object.prototype method 'hasOwnProperty' from target object.",
+          "line": 120,
+          "column": 25,
+          "nodeType": "CallExpression",
+          "messageId": "prototypeBuildIn",
+          "endLine": 120,
+          "endColumn": 39
+        }
+      ],
+      "errorCount": 0,
+      "warningCount": 0,
+      "todoCount": 2,
+      "fixableErrorCount": 0,
+      "fixableWarningCount": 0,
+      "source": ""
+    },
+    {
+      "filePath": "/Users/fake/app/services/insights.js",
+      "messages": [
+        {
+          "ruleId": "no-prototype-builtins",
+          "severity": -1,
+          "message": "Do not access Object.prototype method 'hasOwnProperty' from target object.",
+          "line": 287,
+          "column": 17,
+          "nodeType": "CallExpression",
+          "messageId": "prototypeBuildIn",
+          "endLine": 287,
+          "endColumn": 31
+        },
+        {
+          "ruleId": "no-prototype-builtins",
+          "severity": -1,
+          "message": "Do not access Object.prototype method 'hasOwnProperty' from target object.",
+          "line": 296,
+          "column": 17,
+          "nodeType": "CallExpression",
+          "messageId": "prototypeBuildIn",
+          "endLine": 296,
+          "endColumn": 31
+        },
+        {
+          "ruleId": "no-prototype-builtins",
+          "severity": -1,
+          "message": "Do not access Object.prototype method 'hasOwnProperty' from target object.",
+          "line": 307,
+          "column": 17,
+          "nodeType": "CallExpression",
+          "messageId": "prototypeBuildIn",
+          "endLine": 307,
+          "endColumn": 31
+        },
+        {
+          "ruleId": "no-prototype-builtins",
+          "severity": -1,
+          "message": "Do not access Object.prototype method 'hasOwnProperty' from target object.",
+          "line": 317,
+          "column": 17,
+          "nodeType": "CallExpression",
+          "messageId": "prototypeBuildIn",
+          "endLine": 317,
+          "endColumn": 31
+        }
+      ],
+      "errorCount": 0,
+      "warningCount": 0,
+      "todoCount": 4,
+      "fixableErrorCount": 0,
+      "fixableWarningCount": 0,
+      "source": ""
+    },
+    {
+      "filePath": "/Users/fake/app/utils/traverse-payload.js",
+      "messages": [
+        {
+          "ruleId": "no-prototype-builtins",
+          "severity": -1,
+          "message": "Do not access Object.prototype method 'hasOwnProperty' from target object.",
+          "line": 18,
+          "column": 18,
+          "nodeType": "CallExpression",
+          "messageId": "prototypeBuildIn",
+          "endLine": 18,
+          "endColumn": 32
+        }
+      ],
+      "errorCount": 0,
+      "warningCount": 0,
+      "todoCount": 1,
+      "fixableErrorCount": 0,
+      "fixableWarningCount": 0,
+      "source": ""
+    },
+    {
+      "filePath": "/Users/fake/tests/unit/services/insights-test.js",
+      "messages": [
+        {
+          "ruleId": "no-prototype-builtins",
+          "severity": -1,
+          "message": "Do not access Object.prototype method 'hasOwnProperty' from target object.",
+          "line": 65,
+          "column": 27,
+          "nodeType": "CallExpression",
+          "messageId": "prototypeBuildIn",
+          "endLine": 65,
+          "endColumn": 41
+        },
+        {
+          "ruleId": "no-prototype-builtins",
+          "severity": -1,
+          "message": "Do not access Object.prototype method 'hasOwnProperty' from target object.",
+          "line": 80,
+          "column": 27,
+          "nodeType": "CallExpression",
+          "messageId": "prototypeBuildIn",
+          "endLine": 80,
+          "endColumn": 41
+        },
+        {
+          "ruleId": "no-prototype-builtins",
+          "severity": -1,
+          "message": "Do not access Object.prototype method 'hasOwnProperty' from target object.",
+          "line": 97,
+          "column": 27,
+          "nodeType": "CallExpression",
+          "messageId": "prototypeBuildIn",
+          "endLine": 97,
+          "endColumn": 41
+        },
+        {
+          "ruleId": "no-prototype-builtins",
+          "severity": -1,
+          "message": "Do not access Object.prototype method 'hasOwnProperty' from target object.",
+          "line": 116,
+          "column": 27,
+          "nodeType": "CallExpression",
+          "messageId": "prototypeBuildIn",
+          "endLine": 116,
+          "endColumn": 41
+        },
+        {
+          "ruleId": "no-prototype-builtins",
+          "severity": -1,
+          "message": "Do not access Object.prototype method 'hasOwnProperty' from target object.",
+          "line": 134,
+          "column": 27,
+          "nodeType": "CallExpression",
+          "messageId": "prototypeBuildIn",
+          "endLine": 134,
+          "endColumn": 41
+        },
+        {
+          "ruleId": "no-prototype-builtins",
+          "severity": -1,
+          "message": "Do not access Object.prototype method 'hasOwnProperty' from target object.",
+          "line": 158,
+          "column": 32,
+          "nodeType": "CallExpression",
+          "messageId": "prototypeBuildIn",
+          "endLine": 158,
+          "endColumn": 46
+        }
+      ],
+      "errorCount": 0,
+      "warningCount": 0,
+      "todoCount": 6,
+      "fixableErrorCount": 0,
+      "fixableWarningCount": 0,
+      "source": ""
+    }
+  ]
+}
