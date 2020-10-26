@@ -7,3 +7,7 @@ declare module 'eslint' {
     }
   }
 }
+
+type TodoResultMessage = Omit<Linter.LintMessage, 'severity'> & {
+  severity: Linter.Severity | -1;
+};

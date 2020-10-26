@@ -3,7 +3,8 @@ import {
   todoFilePathFor,
   _buildTodoDatum,
 } from '@ember-template-lint/todo-utils';
-import type { ESLint } from 'eslint';
+import type { ESLint, Linter } from 'eslint';
+import { TodoResultMessage } from 'types/estlint-type-extension';
 
 /**
  * Mutates all errors present in the todo dir to todos in the results array.
@@ -14,13 +15,13 @@ export async function mutateTodoErrorsToTodos(
   todoMap: Map<string, TodoData>
 ): Promise<void> {
   results.forEach((result) => {
-    result.messages.forEach((message) => {
+    (result.messages as TodoResultMessage[]).forEach((message) => {
       if (message.severity !== 2) {
         return;
       }
 
       // we only mutate errors that are present in the todo map, so check if it's there first
-      const todoDatum = _buildTodoDatum(result, message);
+      const todoDatum = _buildTodoDatum(result, message as Linter.LintMessage);
 
       const todoHash = todoFilePathFor(todoDatum);
 
@@ -28,7 +29,7 @@ export async function mutateTodoErrorsToTodos(
         return;
       }
 
-      (message.severity as number) = -1;
+      message.severity = -1;
 
       result.errorCount -= 1;
       result.todoCount = Number.isInteger(result.todoCount)

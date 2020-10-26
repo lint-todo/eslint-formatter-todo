@@ -2,6 +2,7 @@ import { dim, magenta, red, reset, underline, yellow } from 'chalk';
 import { ESLint } from 'eslint';
 import stripAnsi from 'strip-ansi';
 import table from 'text-table';
+import { TodoResultMessage } from 'types/estlint-type-extension';
 
 function pluralize(word: string, count: number): string {
   return count === 1 ? word : `${word}s`;
@@ -21,7 +22,7 @@ export function formatter(
   let hasAnyErrors = false;
 
   results.forEach((result) => {
-    const messages = result.messages;
+    const messages = result.messages as TodoResultMessage[];
 
     if (messages.length === 0) {
       return;
@@ -34,7 +35,7 @@ export function formatter(
     fixableWarningCount += result.fixableWarningCount;
 
     const areAllMessagesTodo = messages.every(
-      (message) => (message.severity as number) === -1
+      (message) => message.severity === -1
     );
 
     if (shouldIncludeTodo || !areAllMessagesTodo) {
@@ -48,13 +49,13 @@ export function formatter(
       if (message.fatal || message.severity === 2) {
         messageType = red('error');
         hasAnyErrors = true;
-      } else if ((message.severity as number) === -1) {
+      } else if (message.severity === -1) {
         messageType = magenta('todo');
       } else {
         messageType = yellow('warning');
       }
 
-      if ((message.severity as number) === -1 && !shouldIncludeTodo) {
+      if (message.severity === -1 && !shouldIncludeTodo) {
         return;
       }
 

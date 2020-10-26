@@ -1,6 +1,8 @@
-import { getTodoStorageDirPath } from '@ember-template-lint/todo-utils';
-import { existsSync, readdirSync } from 'fs';
-import { join } from 'path';
+import {
+  getTodoStorageDirPath,
+  readTodos,
+} from '@ember-template-lint/todo-utils';
+import { existsSync } from 'fs';
 import { DirResult, dirSync } from 'tmp';
 import { formatResultsAsync } from '../src/format-results';
 import fixtures from './__fixtures__/fixtures';
@@ -20,9 +22,6 @@ describe('format-results', () => {
 
   afterEach(() => {
     tmpDir.removeCallback();
-  });
-
-  afterAll(() => {
     process.env = INITIAL_ENV;
   });
 
@@ -35,7 +34,6 @@ describe('format-results', () => {
 
     const todoDir = getTodoStorageDirPath(tmpDir.name);
     expect(existsSync(todoDir)).toBe(false);
-    expect(process.stdout.write).toHaveBeenCalledTimes(1);
   });
 
   it('SHOULD generate a TODO dir with todo files when UPDATE_TODO is set to 1', async () => {
@@ -48,15 +46,9 @@ describe('format-results', () => {
     const todoDir = getTodoStorageDirPath(tmpDir.name);
     expect(existsSync(todoDir)).toBe(true);
 
-    const todoSubdirs = readdirSync(todoDir);
-    expect(todoSubdirs).toHaveLength(6);
+    const todos = await readTodos(todoDir);
 
-    todoSubdirs.forEach((subdir) => {
-      const files = readdirSync(join(todoDir, subdir));
-      expect(files.length).toBeGreaterThan(0);
-    });
-
-    expect(process.stdout.write).toHaveBeenCalledTimes(1);
+    expect(todos.size).toEqual(18);
   });
 
   it('SHOULD not mutate errors if a todo dir is not present', async () => {
