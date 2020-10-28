@@ -1,17 +1,7 @@
-import { formatter } from '../src/formatter';
-import fixtures from './__fixtures__/fixtures';
+import { formatter } from '../../src/formatter';
+import fixtures from '../__fixtures__/fixtures';
 
 describe('formatter', () => {
-  const INITIAL_ENV = process.env;
-
-  beforeEach(() => {
-    process.env = { ...INITIAL_ENV };
-  });
-
-  afterAll(() => {
-    process.env = INITIAL_ENV;
-  });
-
   it('matches error snapshot (all errors are visible)', async () => {
     const results = fixtures.eslintWithErrors();
     expect(formatter(results)).toMatchInlineSnapshot(`

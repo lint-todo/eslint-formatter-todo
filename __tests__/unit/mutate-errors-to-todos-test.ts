@@ -1,7 +1,7 @@
 import { buildTodoData } from '@ember-template-lint/todo-utils';
-import { mutateTodoErrorsToTodos } from '../src/mutate-errors-to-todos';
-import '../types/estlint-type-extension.d.ts';
-import fixtures from './__fixtures__/fixtures';
+import { mutateTodoErrorsToTodos } from '../../src/mutate-errors-to-todos';
+import '../../types/estlint-type-extension.d.ts';
+import fixtures from '../__fixtures__/fixtures';
 
 describe('mutate-errors-to-todos', () => {
   it('changes only the errors that are also present in the todo map to todos', async () => {

@@ -4,10 +4,10 @@ import {
 } from '@ember-template-lint/todo-utils';
 import { existsSync } from 'fs';
 import { DirResult, dirSync } from 'tmp';
-import { formatResultsAsync } from '../src/format-results';
-import fixtures from './__fixtures__/fixtures';
-import { deepCopy } from './__utils__/deep-copy';
-import { setUpdateTodoEnv } from './__utils__/set-env';
+import { formatResultsAsync } from '../../src/format-results';
+import fixtures from '../__fixtures__/fixtures';
+import { deepCopy } from '../__utils__/deep-copy';
+import { setUpdateTodoEnv } from '../__utils__/set-env';
 
 describe('format-results', () => {
   const INITIAL_ENV = process.env;

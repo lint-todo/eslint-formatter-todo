@@ -1,4 +1,4 @@
-import { getBasePath } from '../src/utils';
+import { getBasePath } from '../../src/utils';
 
 describe('utils', () => {
   const INITIAL_ENV = process.env;
