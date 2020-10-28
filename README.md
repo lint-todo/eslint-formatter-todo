@@ -1,6 +1,6 @@
 # eslint-formatter-todo
 
-A ESLint formatter that only reports errors when they are not present in a list of "TODOS", while allowing authors to update the list of "TODOS" from a list of errors automatically.
+An ESLint formatter that only reports errors when they are not present in a list of "TODOS", while allowing authors to update the list of "TODOS" from a list of errors automatically.
 
 A "TODO" is an existing linting error present in the project, but one that is transitioned into a todo state. This allows for incremental fixing of linting errors on very large projects, where the resolution or introduction of errors can cause undesired delays in engineer velocity.
 
