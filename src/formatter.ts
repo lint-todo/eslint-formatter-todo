@@ -1,4 +1,4 @@
-import { dim, magenta, red, reset, underline, yellow } from 'chalk';
+import { blueBright, dim, red, reset, underline, yellow } from 'chalk';
 import { ESLint } from 'eslint';
 import stripAnsi from 'strip-ansi';
 import table from 'text-table';
@@ -18,6 +18,7 @@ export function formatter(
   let todoCount = 0;
   let fixableErrorCount = 0;
   let fixableWarningCount = 0;
+  let fixableTodoCount = 0;
   let chalkColorFunction = yellow;
   let hasAnyErrors = false;
 
@@ -30,9 +31,10 @@ export function formatter(
 
     errorCount += result.errorCount;
     warningCount += result.warningCount;
-    todoCount += result.todoCount | 0;
+    todoCount += result.todoCount || 0;
     fixableErrorCount += result.fixableErrorCount;
     fixableWarningCount += result.fixableWarningCount;
+    fixableTodoCount += result.fixableTodoCount || 0;
 
     const areAllMessagesTodo = messages.every(
       (message) => message.severity === -1
@@ -50,7 +52,7 @@ export function formatter(
         messageType = red('error');
         hasAnyErrors = true;
       } else if (message.severity === -1) {
-        messageType = magenta('todo');
+        messageType = blueBright('todo');
       } else {
         messageType = yellow('warning');
       }
@@ -86,46 +88,69 @@ export function formatter(
     }
   });
 
-  const total = errorCount + warningCount + todoCount;
+  const total = errorCount + warningCount;
 
-  if (total > 0) {
+  if (total > 0 || (shouldIncludeTodo && todoCount > 0)) {
     chalkColorFunction = hasAnyErrors ? red : chalkColorFunction;
 
-    output += chalkColorFunction.bold(
-      [
-        '\u2716 ',
-        total,
-        pluralize(' problem', total),
-        ' (',
-        errorCount,
-        pluralize(' error', errorCount),
-        ', ',
-        warningCount,
-        pluralize(' warning', warningCount),
-        ', ',
-        todoCount,
-        pluralize(' todo', todoCount),
-        ')\n',
-      ].join('')
-    );
+    let summary = [
+      '\u2716 ',
+      total,
+      pluralize(' problem', total),
+      ' (',
+      errorCount,
+      pluralize(' error', errorCount),
+      ', ',
+      warningCount,
+      pluralize(' warning', warningCount),
+    ];
 
-    if (fixableErrorCount > 0 || fixableWarningCount > 0) {
-      output += chalkColorFunction.bold(
-        [
-          '  ',
+    if (shouldIncludeTodo) {
+      summary = [...summary, ', ', todoCount, pluralize(' todo', todoCount)];
+    }
+
+    summary = [...summary, ')\n'];
+
+    output += chalkColorFunction.bold(summary.join(''));
+
+    if (
+      fixableErrorCount > 0 ||
+      fixableWarningCount > 0 ||
+      fixableTodoCount > 0
+    ) {
+      let fixableMessage: (string | number)[] = ['  '];
+
+      if (shouldIncludeTodo) {
+        fixableMessage = [
+          ...fixableMessage,
           fixableErrorCount,
           pluralize(' error', fixableErrorCount),
-          ' and ',
-          fixableWarningCount,
+          ',',
           pluralize(' warning', fixableWarningCount),
-          ' potentially fixable with the `--fix` option.\n',
-        ].join('')
-      );
+          ', and',
+          pluralize('todo', fixableTodoCount),
+        ];
+      } else {
+        fixableMessage = [
+          ...fixableMessage,
+          fixableErrorCount,
+          pluralize(' error', fixableErrorCount),
+          ' and',
+          pluralize(' warning', fixableWarningCount),
+        ];
+      }
+
+      fixableMessage = [
+        ...fixableMessage,
+        ' potentially fixable with the `--fix` option.\n',
+      ];
+
+      output += chalkColorFunction.bold(fixableMessage.join(''));
     }
 
     output += '\n';
   }
 
   // Resets output color to prevent change on top level
-  return total > 0 ? reset(output) : '';
+  return total > 0 || (shouldIncludeTodo && todoCount > 0) ? reset(output) : '';
 }

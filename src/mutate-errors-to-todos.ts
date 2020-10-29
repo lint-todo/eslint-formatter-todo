@@ -41,6 +41,9 @@ export async function mutateTodoErrorsToTodos(
       }
 
       result.fixableErrorCount -= 1;
+      result.fixableTodoCount = Number.isInteger(result.fixableTodoCount)
+        ? result.fixableTodoCount + 1
+        : 1;
     });
   });
 }

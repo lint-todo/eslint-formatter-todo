@@ -18,10 +18,26 @@ When you introduce new linting rules, execute ESLint by setting `UPDATE_TODO=1` 
 $ UPDATE_TODO=1 eslint --format eslint-formatter-todo
 ```
 
-This command will transform all reported ERRORS to TODO and will generate files inside the `.lint-todo` directory to track them.
+This command will transform all reported `error`s to `todo`s and will generate files inside the `.lint-todo` directory to track them.
 
-Executing ESLint without the `UPDATE_TODO` env var will run `eslint` normally:
+Executing ESLint without `UPDATE_TODO=1` will run `eslint` normally but will transform errors that are present in the `.lint-todo` directory to `todo` items, ignoring them as errors:
 
 ```bash
 $ eslint --format eslint-formatter-todo
+
+# no output, no errors
+```
+
+If you want `todo`s to appear in results, you must set `INCLUDE_TODO=1`:
+
+```bash
+$ INCLUDE_TODO=1 eslint --format eslint-formatter-todo
+
+# todo items will be visible
+/path/to/file/fullOfProblems.js
+   2:7   todo  Use the isNaN function to compare with NaN  use-isnan
+   2:9   todo  Expected '!==' and instead saw '!='         eqeqeq
+   3:12  todo  Unary operator '++' used                    no-plusplus
+
+✖ 0 problems (0 errors, 0 warnings, 1 todo)
 ```
