@@ -1,8 +1,8 @@
 {
   "name": "eslint-formatter-todo",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "repository": "https://github.com/scalvert/eslint-formatter-todo.git",
-  "description": "A ESLint formatter that only report errors when they are not present in a list of \"TODOS\" while allowing authors to update the list of \"TODOS\" from a list of errors automatically.",
+  "description": "An ESLint formatter that can report errors as todos.",
   "author": "Renato Iwashima <renatoiwa@gmail.com>",
   "contributors": [
     "Steve Calvert <steve.calvert@gmail.com>"

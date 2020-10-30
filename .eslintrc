@@ -51,6 +51,12 @@
         "node/no-extraneous-import": "off",
         "node/no-unpublished-import": "off"
       }
+    },
+    {
+    "files": ["src/types/index.ts"],
+      "rules": {
+        "@typescript-eslint/no-namespace": "off"
+      }
     }
   ]
 }

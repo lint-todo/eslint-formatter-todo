@@ -2,25 +2,38 @@ import { blueBright, dim, red, reset, underline, yellow } from 'chalk';
 import { ESLint } from 'eslint';
 import stripAnsi from 'strip-ansi';
 import table from 'text-table';
-import { TodoResultMessage } from 'types/estlint-type-extension';
-
-function pluralize(word: string, count: number): string {
-  return count === 1 ? word : `${word}s`;
-}
+import type {
+  TodoFormatterCounts,
+  TodoFormatterOptions,
+  TodoResultMessage,
+} from './types';
 
 export function formatter(
   results: ESLint.LintResult[],
-  shouldIncludeTodo?: boolean
+  { shouldIncludeTodo }: TodoFormatterOptions = {
+    shouldIncludeTodo: false,
+  }
 ): string {
+  const counts = tallyResults(results);
+
   let output = '\n';
-  let errorCount = 0;
-  let warningCount = 0;
-  let todoCount = 0;
-  let fixableErrorCount = 0;
-  let fixableWarningCount = 0;
-  let fixableTodoCount = 0;
-  let chalkColorFunction = yellow;
-  let hasAnyErrors = false;
+
+  output += formatResults(results, counts, { shouldIncludeTodo });
+
+  output += formatSummary(counts, { shouldIncludeTodo });
+
+  // Resets output color to prevent change on top level
+  return counts.total > 0 || (shouldIncludeTodo && counts.todoCount > 0)
+    ? reset(output)
+    : '';
+}
+
+function formatResults(
+  results: ESLint.LintResult[],
+  counts: TodoFormatterCounts,
+  options: TodoFormatterOptions
+): string {
+  let output = '';
 
   results.forEach((result) => {
     const messages = result.messages as TodoResultMessage[];
@@ -29,69 +42,85 @@ export function formatter(
       return;
     }
 
-    errorCount += result.errorCount;
-    warningCount += result.warningCount;
-    todoCount += result.todoCount || 0;
-    fixableErrorCount += result.fixableErrorCount;
-    fixableWarningCount += result.fixableWarningCount;
-    fixableTodoCount += result.fixableTodoCount || 0;
+    const areAllMessagesTodo =
+      counts.errorCount === 0 &&
+      counts.warningCount === 0 &&
+      counts.todoCount > 0;
 
-    const areAllMessagesTodo = messages.every(
-      (message) => message.severity === -1
-    );
-
-    if (shouldIncludeTodo || !areAllMessagesTodo) {
+    if (options.shouldIncludeTodo || !areAllMessagesTodo) {
       output += `${underline(result.filePath)}\n`;
     }
 
-    const messageRows: Array<Array<any>> = [];
-    messages.forEach((message) => {
+    output += `${formatMessages(messages, options)}\n\n`;
+  });
+
+  return output;
+}
+
+function formatMessages(
+  messages: TodoResultMessage[],
+  options: TodoFormatterOptions
+): string {
+  const messageRows = messages
+    .filter((message) => message.severity !== -1 || options.shouldIncludeTodo)
+    .map((message) => {
       let messageType;
 
       if (message.fatal || message.severity === 2) {
         messageType = red('error');
-        hasAnyErrors = true;
       } else if (message.severity === -1) {
         messageType = blueBright('todo');
       } else {
         messageType = yellow('warning');
       }
 
-      if (message.severity === -1 && !shouldIncludeTodo) {
-        return;
-      }
-
-      messageRows.push([
+      return [
         '',
         message.line || 0,
         message.column || 0,
         messageType,
         message.message.replace(/([^ ])\.$/u, '$1'),
         dim(message.ruleId || ''),
-      ]);
+      ];
     });
 
-    if (messageRows.length > 0) {
-      const messageTable = table(messageRows, {
-        align: ['.', 'r', 'l'],
-        stringLength(str) {
-          return stripAnsi(str).length;
-        },
-      })
+  const messageTableOptions: table.Options = {
+    align: ['.', 'r', 'l'],
+    stringLength(str) {
+      return stripAnsi(str).length;
+    },
+  };
+
+  return messageRows.length > 0
+    ? table(messageRows, messageTableOptions)
         .split('\n')
         .map((el) =>
           el.replace(/(\d+)\s+(\d+)/u, (m, p1, p2) => dim(`${p1}:${p2}`))
         )
-        .join('\n');
+        .join('\n')
+    : '';
+}
 
-      output += `${messageTable}\n\n`;
-    }
-  });
+function formatSummary(
+  counts: TodoFormatterCounts,
+  options: TodoFormatterOptions
+) {
+  let output = '';
 
-  const total = errorCount + warningCount;
+  const { shouldIncludeTodo } = options;
+
+  const {
+    total,
+    errorCount,
+    warningCount,
+    todoCount,
+    fixableErrorCount,
+    fixableWarningCount,
+    fixableTodoCount,
+  } = counts;
 
   if (total > 0 || (shouldIncludeTodo && todoCount > 0)) {
-    chalkColorFunction = hasAnyErrors ? red : chalkColorFunction;
+    const chalkColorFunction = errorCount > 0 ? red : yellow;
 
     let summary = [
       '\u2716 ',
@@ -116,29 +145,25 @@ export function formatter(
     if (
       fixableErrorCount > 0 ||
       fixableWarningCount > 0 ||
-      fixableTodoCount > 0
+      (shouldIncludeTodo && fixableTodoCount > 0)
     ) {
-      let fixableMessage: (string | number)[] = ['  '];
-
-      if (shouldIncludeTodo) {
-        fixableMessage = [
-          ...fixableMessage,
-          fixableErrorCount,
-          pluralize(' error', fixableErrorCount),
-          ',',
-          pluralize(' warning', fixableWarningCount),
-          ', and',
-          pluralize('todo', fixableTodoCount),
-        ];
-      } else {
-        fixableMessage = [
-          ...fixableMessage,
-          fixableErrorCount,
-          pluralize(' error', fixableErrorCount),
-          ' and',
-          pluralize(' warning', fixableWarningCount),
-        ];
-      }
+      let fixableMessage = shouldIncludeTodo
+        ? [
+            '  ',
+            fixableErrorCount,
+            pluralize(' error', fixableErrorCount),
+            ',',
+            pluralize(' warning', fixableWarningCount),
+            ', and',
+            pluralize('todo', fixableTodoCount),
+          ]
+        : [
+            '  ',
+            fixableErrorCount,
+            pluralize(' error', fixableErrorCount),
+            ' and',
+            pluralize(' warning', fixableWarningCount),
+          ];
 
       fixableMessage = [
         ...fixableMessage,
@@ -151,6 +176,34 @@ export function formatter(
     output += '\n';
   }
 
-  // Resets output color to prevent change on top level
-  return total > 0 || (shouldIncludeTodo && todoCount > 0) ? reset(output) : '';
+  return output;
+}
+
+function tallyResults(results: ESLint.LintResult[]): TodoFormatterCounts {
+  const counts = {
+    total: 0,
+    errorCount: 0,
+    warningCount: 0,
+    todoCount: 0,
+    fixableErrorCount: 0,
+    fixableWarningCount: 0,
+    fixableTodoCount: 0,
+  };
+
+  results.forEach((result) => {
+    counts.errorCount += result.errorCount;
+    counts.warningCount += result.warningCount;
+    counts.todoCount += result.todoCount || 0;
+    counts.fixableErrorCount += result.fixableErrorCount;
+    counts.fixableWarningCount += result.fixableWarningCount;
+    counts.fixableTodoCount += result.fixableTodoCount || 0;
+  });
+
+  counts.total = counts.errorCount + counts.warningCount;
+
+  return counts;
+}
+
+function pluralize(word: string, count: number): string {
+  return count === 1 ? word : `${word}s`;
 }

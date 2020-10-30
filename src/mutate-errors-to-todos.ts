@@ -4,7 +4,7 @@ import {
   _buildTodoDatum,
 } from '@ember-template-lint/todo-utils';
 import type { ESLint, Linter } from 'eslint';
-import { TodoResultMessage } from 'types/estlint-type-extension';
+import type { TodoResultMessage } from './types';
 
 /**
  * Mutates all errors present in the todo dir to todos in the results array.

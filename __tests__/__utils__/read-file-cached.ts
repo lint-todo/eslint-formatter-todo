@@ -1,9 +1,9 @@
 import { readFileSync } from 'fs';
 import { join } from 'path';
 
-export function readFile(fileName: string): string {
-  const cache: Map<string, string> = new Map();
+const cache: Map<string, string> = new Map();
 
+export function readFile(fileName: string): string {
   if (cache.has(fileName)) {
     return cache.get(fileName) || '';
   }

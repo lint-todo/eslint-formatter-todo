@@ -7,6 +7,7 @@ import type { ESLint } from 'eslint';
 import { existsSync } from 'fs';
 import { formatter } from './formatter';
 import { mutateTodoErrorsToTodos } from './mutate-errors-to-todos';
+import { TodoFormatterOptions } from './types';
 import { getBasePath } from './utils';
 
 function formatResults(results: ESLint.LintResult[]): void {
@@ -22,12 +23,12 @@ async function formatResultsAsync(results: ESLint.LintResult[]): Promise<void> {
     await writeTodos(getBasePath(), results);
   }
 
-  await report(results, shouldIncludeTodo);
+  await report(results, { shouldIncludeTodo });
 }
 
 async function report(
   results: ESLint.LintResult[],
-  shouldIncludeTodo?: boolean
+  options: TodoFormatterOptions
 ) {
   const todoDir = getTodoStorageDirPath(getBasePath());
 
@@ -36,7 +37,7 @@ async function report(
     await mutateTodoErrorsToTodos(results, todos);
   }
 
-  process.stdout.write(formatter(results, shouldIncludeTodo));
+  process.stdout.write(formatter(results, options));
 }
 
 export { formatResults, formatResultsAsync };

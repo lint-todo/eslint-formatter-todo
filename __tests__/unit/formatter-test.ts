@@ -54,7 +54,8 @@ describe('formatter', () => {
   it('should return all todo items when shouldIncludeTodo is true', async () => {
     const results = fixtures.eslintWithTodos();
 
-    expect(stripAnsi(formatter(results, true))).toMatchInlineSnapshot(`
+    expect(stripAnsi(formatter(results, { shouldIncludeTodo: true })))
+      .toMatchInlineSnapshot(`
       "
       /Users/fake/app/controllers/settings.js
          25:21  todo  Do not access Object.prototype method 'hasOwnProperty' from target object  no-prototype-builtins
