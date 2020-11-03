@@ -1,18 +1,15 @@
 {
   "name": "eslint-formatter-todo",
   "version": "0.1.0",
-  "repository": "https://github.com/scalvert/eslint-formatter-todo.git",
   "description": "An ESLint formatter that can report errors as todos.",
+  "repository": "https://github.com/scalvert/eslint-formatter-todo.git",
+  "license": "MIT",
   "author": "Renato Iwashima <renatoiwa@gmail.com>",
   "contributors": [
     "Steve Calvert <steve.calvert@gmail.com>"
   ],
-  "license": "MIT",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
-  "files:": [
-    "lib/"
-  ],
   "scripts": {
     "build": "tsc --build",
     "build:watch": "tsc --watch",
@@ -45,15 +42,38 @@
     "fs-extra": "^9.0.1",
     "jest": "^26.5.2",
     "prettier": "^2.1.2",
+    "release-it": "^14.2.0",
+    "release-it-lerna-changelog": "^3.1.0",
     "tmp": "^0.2.1",
     "ts-jest": "^26.4.1",
     "typescript": "^4.0.3"
   },
+  "engines": {
+    "node": "12.* || >= 14"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org"
+  },
+  "files:": [
+    "lib/"
+  ],
+  "release-it": {
+    "plugins": {
+      "release-it-lerna-changelog": {
+        "infile": "CHANGELOG.md",
+        "launchEditor": true
+      }
+    },
+    "git": {
+      "tagName": "v${version}"
+    },
+    "github": {
+      "release": true,
+      "tokenRef": "GITHUB_AUTH"
+    }
+  },
   "volta": {
     "node": "12.18.4",
     "yarn": "1.22.10"
-  },
-  "engines": {
-    "node": "12.* || >= 14"
   }
 }
