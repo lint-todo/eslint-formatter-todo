@@ -10,20 +10,20 @@ import type {
 
 export function formatter(
   results: ESLint.LintResult[],
-  { shouldIncludeTodo }: TodoFormatterOptions = {
-    shouldIncludeTodo: false,
+  { includeTodo }: TodoFormatterOptions = {
+    includeTodo: false,
   }
 ): string {
   const counts = tallyResults(results);
 
   let output = '\n';
 
-  output += formatResults(results, counts, { shouldIncludeTodo });
+  output += formatResults(results, counts, { includeTodo });
 
-  output += formatSummary(counts, { shouldIncludeTodo });
+  output += formatSummary(counts, { includeTodo });
 
   // Resets output color to prevent change on top level
-  return counts.total > 0 || (shouldIncludeTodo && counts.todoCount > 0)
+  return counts.total > 0 || (includeTodo && counts.todoCount > 0)
     ? reset(output)
     : '';
 }
@@ -47,7 +47,7 @@ function formatResults(
       counts.warningCount === 0 &&
       counts.todoCount > 0;
 
-    if (options.shouldIncludeTodo || !areAllMessagesTodo) {
+    if (options.includeTodo || !areAllMessagesTodo) {
       output += `${underline(result.filePath)}\n`;
     }
 
@@ -62,7 +62,7 @@ function formatMessages(
   options: TodoFormatterOptions
 ): string {
   const messageRows = messages
-    .filter((message) => message.severity !== -1 || options.shouldIncludeTodo)
+    .filter((message) => message.severity !== -1 || options.includeTodo)
     .map((message) => {
       let messageType;
 
@@ -107,7 +107,7 @@ function formatSummary(
 ) {
   let output = '';
 
-  const { shouldIncludeTodo } = options;
+  const { includeTodo } = options;
 
   const {
     total,
@@ -119,7 +119,7 @@ function formatSummary(
     fixableTodoCount,
   } = counts;
 
-  if (total > 0 || (shouldIncludeTodo && todoCount > 0)) {
+  if (total > 0 || (includeTodo && todoCount > 0)) {
     const chalkColorFunction = errorCount > 0 ? red : yellow;
 
     let summary = [
@@ -134,7 +134,7 @@ function formatSummary(
       pluralize(' warning', warningCount),
     ];
 
-    if (shouldIncludeTodo) {
+    if (includeTodo) {
       summary = [...summary, ', ', todoCount, pluralize(' todo', todoCount)];
     }
 
@@ -145,9 +145,9 @@ function formatSummary(
     if (
       fixableErrorCount > 0 ||
       fixableWarningCount > 0 ||
-      (shouldIncludeTodo && fixableTodoCount > 0)
+      (includeTodo && fixableTodoCount > 0)
     ) {
-      let fixableMessage = shouldIncludeTodo
+      let fixableMessage = includeTodo
         ? [
             '  ',
             fixableErrorCount,

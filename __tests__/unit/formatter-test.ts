@@ -45,16 +45,16 @@ describe('formatter', () => {
     `);
   });
 
-  it('should not return anything when shouldIncludeTodo is false and there are only todo items', async () => {
+  it('should not return anything when includeTodo is false and there are only todo items', async () => {
     const results = fixtures.eslintWithTodos();
 
     expect(stripAnsi(formatter(results)).trim()).toEqual('');
   });
 
-  it('should return all todo items when shouldIncludeTodo is true', async () => {
+  it('should return all todo items when includeTodo is true', async () => {
     const results = fixtures.eslintWithTodos();
 
-    expect(stripAnsi(formatter(results, { shouldIncludeTodo: true })))
+    expect(stripAnsi(formatter(results, { includeTodo: true })))
       .toMatchInlineSnapshot(`
       "
       /Users/fake/app/controllers/settings.js

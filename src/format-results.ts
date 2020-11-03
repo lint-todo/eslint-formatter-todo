@@ -17,13 +17,13 @@ function formatResults(results: ESLint.LintResult[]): void {
 
 async function formatResultsAsync(results: ESLint.LintResult[]): Promise<void> {
   const shouldUpdateTodo = process.env.UPDATE_TODO === '1';
-  const shouldIncludeTodo = process.env.INCLUDE_TODO === '1';
+  const includeTodo = process.env.INCLUDE_TODO === '1';
 
   if (shouldUpdateTodo) {
     await writeTodos(getBasePath(), results);
   }
 
-  await report(results, { shouldIncludeTodo });
+  await report(results, { includeTodo });
 }
 
 async function report(

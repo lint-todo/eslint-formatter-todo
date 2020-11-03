@@ -14,7 +14,7 @@ export type TodoResultMessage = Omit<Linter.LintMessage, 'severity'> & {
 };
 
 export interface TodoFormatterOptions {
-  shouldIncludeTodo: boolean;
+  includeTodo: boolean;
 }
 
 export interface TodoFormatterCounts {
