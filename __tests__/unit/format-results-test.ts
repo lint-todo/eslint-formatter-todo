@@ -1,10 +1,10 @@
 import {
-  getTodoStorageDirPath,
   readTodos,
+  todoStorageDirExists,
 } from '@ember-template-lint/todo-utils';
-import { existsSync } from 'fs';
 import { DirResult, dirSync } from 'tmp';
 import { formatResultsAsync } from '../../src/format-results';
+import { getBasePath } from '../../src/utils';
 import fixtures from '../__fixtures__/fixtures';
 import { deepCopy } from '../__utils__/deep-copy';
 import { setUpdateTodoEnv } from '../__utils__/set-env';
@@ -32,8 +32,7 @@ describe('format-results', () => {
 
     await formatResultsAsync(results);
 
-    const todoDir = getTodoStorageDirPath(tmpDir.name);
-    expect(existsSync(todoDir)).toBe(false);
+    expect(todoStorageDirExists(tmpDir.name)).toBe(false);
   });
 
   it('SHOULD generate a TODO dir with todo files when UPDATE_TODO is set to 1', async () => {
@@ -43,10 +42,9 @@ describe('format-results', () => {
 
     await formatResultsAsync(results);
 
-    const todoDir = getTodoStorageDirPath(tmpDir.name);
-    expect(existsSync(todoDir)).toBe(true);
+    expect(todoStorageDirExists(tmpDir.name)).toBe(true);
 
-    const todos = await readTodos(todoDir);
+    const todos = await readTodos(getBasePath());
 
     expect(todos.size).toEqual(18);
   });

@@ -5,6 +5,7 @@ import {
 } from '@ember-template-lint/todo-utils';
 import type { ESLint, Linter } from 'eslint';
 import type { TodoResultMessage } from './types';
+import { getBasePath } from './utils';
 
 /**
  * Mutates all errors present in the todo dir to todos in the results array.
@@ -21,7 +22,11 @@ export async function mutateTodoErrorsToTodos(
       }
 
       // we only mutate errors that are present in the todo map, so check if it's there first
-      const todoDatum = _buildTodoDatum(result, message as Linter.LintMessage);
+      const todoDatum = _buildTodoDatum(
+        getBasePath(),
+        result,
+        message as Linter.LintMessage
+      );
 
       const todoHash = todoFilePathFor(todoDatum);
 

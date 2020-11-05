@@ -19,7 +19,7 @@
     "test": "jest --passWithNoTests --no-cache"
   },
   "dependencies": {
-    "@ember-template-lint/todo-utils": "^2.2.0",
+    "@ember-template-lint/todo-utils": "^3.0.0",
     "chalk": "^4.1.0",
     "eslint": "^7.10.0",
     "strip-ansi": "^6.0.0",

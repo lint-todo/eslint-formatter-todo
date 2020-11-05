@@ -1,5 +1,6 @@
 import { buildTodoData } from '@ember-template-lint/todo-utils';
 import { mutateTodoErrorsToTodos } from '../../src/mutate-errors-to-todos';
+import { getBasePath } from '../../src/utils';
 import fixtures from '../__fixtures__/fixtures';
 
 describe('mutate-errors-to-todos', () => {
@@ -9,7 +10,7 @@ describe('mutate-errors-to-todos', () => {
     // build todo map but without the last result in the results array (so they differ)
     const todoResults = [...results];
     const lastResult = todoResults.pop();
-    const todos = buildTodoData(todoResults);
+    const todos = buildTodoData(getBasePath(), todoResults);
 
     mutateTodoErrorsToTodos(results, todos);
 

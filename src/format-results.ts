@@ -1,10 +1,9 @@
 import {
-  getTodoStorageDirPath,
   readTodos,
+  todoStorageDirExists,
   writeTodos,
 } from '@ember-template-lint/todo-utils';
 import type { ESLint } from 'eslint';
-import { existsSync } from 'fs';
 import { formatter } from './formatter';
 import { mutateTodoErrorsToTodos } from './mutate-errors-to-todos';
 import { TodoFormatterOptions } from './types';
@@ -30,10 +29,10 @@ async function report(
   results: ESLint.LintResult[],
   options: TodoFormatterOptions
 ) {
-  const todoDir = getTodoStorageDirPath(getBasePath());
+  const basePath = getBasePath();
 
-  if (existsSync(todoDir)) {
-    const todos = await readTodos(todoDir);
+  if (todoStorageDirExists(basePath)) {
+    const todos = await readTodos(basePath);
     await mutateTodoErrorsToTodos(results, todos);
   }
 
