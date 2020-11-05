@@ -7,14 +7,25 @@ describe('eslint with todo formatter', function () {
   let project: FakeProject;
 
   function runEslintWithFormatter(options: execa.Options = {}) {
-    const defaultOptions = Object.assign(options);
-    defaultOptions.reject = false;
-    defaultOptions.cwd = options.cwd || project.baseDir;
+    const mergedOptions = Object.assign(
+      {
+        reject: false,
+        cwd: project.baseDir,
+      },
+      options
+    );
 
     return execa(
       './node_modules/.bin/eslint',
-      ['src', '--format', require.resolve('../..')],
-      defaultOptions
+      [
+        'src',
+        '-c',
+        './eslint-config.json',
+        '--no-eslintrc',
+        '--format',
+        require.resolve('../..'),
+      ],
+      mergedOptions
     );
   }
 
@@ -22,8 +33,8 @@ describe('eslint with todo formatter', function () {
     project = FakeProject.getInstance();
   });
 
-  afterEach(async () => {
-    await project.dispose();
+  afterEach(() => {
+    project.dispose();
   });
 
   it('should not emit anything when there are no errors or warnings', async () => {
@@ -115,7 +126,7 @@ describe('eslint with todo formatter', function () {
     expect(stdout).toMatch(
       /1:10  todo  'fibonacci' is defined but never used\s+no-unused-vars/
     );
-    expect(stdout).toMatch(/✖ 0 problems \(0 errors, 0 warnings, 17 todos\)/);
+    expect(stdout).toMatch(/✖ 0 problems \(0 errors, 0 warnings, 10 todos\)/);
   });
 
   it('should emit todo items and count when INCLUDE_TODO=1 is set alone with prior todo items', async () => {
@@ -148,7 +159,7 @@ describe('eslint with todo formatter', function () {
     expect(stdout).toMatch(
       /1:10  todo  'fibonacci' is defined but never used\s+no-unused-vars/
     );
-    expect(stdout).toMatch(/✖ 0 problems \(0 errors, 0 warnings, 17 todos\)/);
+    expect(stdout).toMatch(/✖ 0 problems \(0 errors, 0 warnings, 10 todos\)/);
   });
 
   it('should emit errors, warnings, and todos when all of these are present and INCLUDE_TODO=1 is set', async () => {
@@ -178,7 +189,6 @@ describe('eslint with todo formatter', function () {
     };
 
     project.writeSync();
-    project.install();
 
     const result = await runEslintWithFormatter({
       env: { INCLUDE_TODO: '1' },

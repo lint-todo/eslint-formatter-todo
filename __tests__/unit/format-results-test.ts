@@ -1,6 +1,7 @@
 import {
   getTodoStorageDirPath,
   readTodos,
+  todoStorageDirExists,
 } from '@ember-template-lint/todo-utils';
 import { existsSync } from 'fs';
 import { DirResult, dirSync } from 'tmp';
@@ -43,10 +44,9 @@ describe('format-results', () => {
 
     await formatResultsAsync(results);
 
-    const todoDir = getTodoStorageDirPath(tmpDir.name);
-    expect(existsSync(todoDir)).toBe(true);
+    expect(todoStorageDirExists(tmpDir.name)).toBe(true);
 
-    const todos = await readTodos(todoDir);
+    const todos = await readTodos(tmpDir.name);
 
     expect(todos.size).toEqual(18);
   });

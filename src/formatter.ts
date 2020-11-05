@@ -1,7 +1,7 @@
 import { blueBright, dim, red, reset, underline, yellow } from 'chalk';
-import { ESLint } from 'eslint';
 import stripAnsi from 'strip-ansi';
 import table from 'text-table';
+import type { ESLint } from 'eslint';
 import type {
   TodoFormatterCounts,
   TodoFormatterOptions,

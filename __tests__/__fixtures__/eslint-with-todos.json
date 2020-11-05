@@ -1,7 +1,7 @@
 {
   "results": [
     {
-      "filePath": "/Users/fake/app/controllers/settings.js",
+      "filePath": "{{path}}/app/controllers/settings.js",
       "messages": [
         {
           "ruleId": "no-prototype-builtins",
@@ -45,7 +45,7 @@
       "source": ""
     },
     {
-      "filePath": "/Users/fake/app/initializers/tracer.js",
+      "filePath": "{{path}}/app/initializers/tracer.js",
       "messages": [
         {
           "ruleId": "no-redeclare",
@@ -82,7 +82,7 @@
       "source": ""
     },
     {
-      "filePath": "/Users/fake/app/models/build.js",
+      "filePath": "{{path}}/app/models/build.js",
       "messages": [
         {
           "ruleId": "no-prototype-builtins",
@@ -115,7 +115,7 @@
       "source": ""
     },
     {
-      "filePath": "/Users/fake/app/services/insights.js",
+      "filePath": "{{path}}/app/services/insights.js",
       "messages": [
         {
           "ruleId": "no-prototype-builtins",
@@ -170,7 +170,7 @@
       "source": ""
     },
     {
-      "filePath": "/Users/fake/app/utils/traverse-payload.js",
+      "filePath": "{{path}}/app/utils/traverse-payload.js",
       "messages": [
         {
           "ruleId": "no-prototype-builtins",
@@ -192,7 +192,7 @@
       "source": ""
     },
     {
-      "filePath": "/Users/fake/tests/unit/services/insights-test.js",
+      "filePath": "{{path}}/tests/unit/services/insights-test.js",
       "messages": [
         {
           "ruleId": "no-prototype-builtins",

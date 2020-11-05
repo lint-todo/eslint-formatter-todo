@@ -11,6 +11,7 @@ import type { TodoResultMessage } from './types';
  * @param results ESLint results array
  */
 export async function mutateTodoErrorsToTodos(
+  baseDir: string,
   results: ESLint.LintResult[],
   todoMap: Map<string, TodoData>
 ): Promise<void> {
@@ -21,7 +22,7 @@ export async function mutateTodoErrorsToTodos(
       }
 
       // we only mutate errors that are present in the todo map, so check if it's there first
-      const todoDatum = _buildTodoDatum(result, message as Linter.LintMessage);
+      const todoDatum = _buildTodoDatum(baseDir, result, message as Linter.LintMessage);
 
       const todoHash = todoFilePathFor(todoDatum);
 
