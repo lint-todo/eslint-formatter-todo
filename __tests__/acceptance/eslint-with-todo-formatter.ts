@@ -22,8 +22,8 @@ describe('eslint with todo formatter', function () {
     project = FakeProject.getInstance();
   });
 
-  afterEach(async () => {
-    await project.dispose();
+  afterEach(() => {
+    project.dispose();
   });
 
   it('should not emit anything when there are no errors or warnings', async () => {
@@ -152,6 +152,8 @@ describe('eslint with todo formatter', function () {
   });
 
   it('should emit errors, warnings, and todos when all of these are present and INCLUDE_TODO=1 is set', async () => {
+    jest.setTimeout(5000000);
+    debugger;
     // first we generate project files with errors and convert them to todos
     project.files = {
       ...project.files,
@@ -178,7 +180,6 @@ describe('eslint with todo formatter', function () {
     };
 
     project.writeSync();
-    project.install();
 
     const result = await runEslintWithFormatter({
       env: { INCLUDE_TODO: '1' },

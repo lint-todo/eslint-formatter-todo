@@ -1,7 +1,5 @@
 import { execSync } from 'child_process';
 import Project from 'fixturify-project';
-import { existsSync } from 'fs-extra';
-import { join } from 'path';
 
 const DEFAULT_ESLINT_CONFIG = `
 module.exports = {
@@ -39,13 +37,7 @@ export class FakeProject extends Project {
   }
 
   install(): void {
-    let cmd: string;
-
-    if (existsSync(join(this.baseDir, 'yarn.lock'))) {
-      cmd = 'yarn install';
-    } else {
-      cmd = 'npm install';
-    }
+    const cmd = 'yarn install';
 
     try {
       execSync(cmd, { cwd: this.baseDir });

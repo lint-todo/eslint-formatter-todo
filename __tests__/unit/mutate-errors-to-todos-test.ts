@@ -1,17 +1,20 @@
 import { buildTodoData } from '@ember-template-lint/todo-utils';
+import { dirSync } from 'tmp';
 import { mutateTodoErrorsToTodos } from '../../src/mutate-errors-to-todos';
 import fixtures from '../__fixtures__/fixtures';
 
 describe('mutate-errors-to-todos', () => {
   it('changes only the errors that are also present in the todo map to todos', async () => {
-    const results = fixtures.eslintWithErrors();
+    const tmp = dirSync({ unsafeCleanup: true });
+    const results = fixtures.eslintWithErrors(tmp.name);
+    debugger;
 
     // build todo map but without the last result in the results array (so they differ)
     const todoResults = [...results];
     const lastResult = todoResults.pop();
-    const todos = buildTodoData(todoResults);
+    const todos = buildTodoData(tmp.name, todoResults);
 
-    mutateTodoErrorsToTodos(results, todos);
+    mutateTodoErrorsToTodos(tmp.name, results, todos);
 
     // last result should stay unchanged
     expect(results[results.length - 1]).toEqual(lastResult);
