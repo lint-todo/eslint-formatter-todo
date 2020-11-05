@@ -7,7 +7,6 @@ describe('mutate-errors-to-todos', () => {
   it('changes only the errors that are also present in the todo map to todos', async () => {
     const tmp = dirSync({ unsafeCleanup: true });
     const results = fixtures.eslintWithErrors(tmp.name);
-    debugger;
 
     // build todo map but without the last result in the results array (so they differ)
     const todoResults = [...results];

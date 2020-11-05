@@ -7,14 +7,15 @@ describe('eslint with todo formatter', function () {
   let project: FakeProject;
 
   function runEslintWithFormatter(options: execa.Options = {}) {
-    const defaultOptions = Object.assign(options);
-    defaultOptions.reject = false;
-    defaultOptions.cwd = options.cwd || project.baseDir;
+    const mergedOptions = Object.assign({
+      reject: false,
+      cwd: project.baseDir
+    }, options);
 
     return execa(
       './node_modules/.bin/eslint',
       ['src', '--format', require.resolve('../..')],
-      defaultOptions
+      mergedOptions
     );
   }
 
@@ -153,7 +154,6 @@ describe('eslint with todo formatter', function () {
 
   it('should emit errors, warnings, and todos when all of these are present and INCLUDE_TODO=1 is set', async () => {
     jest.setTimeout(5000000);
-    debugger;
     // first we generate project files with errors and convert them to todos
     project.files = {
       ...project.files,
