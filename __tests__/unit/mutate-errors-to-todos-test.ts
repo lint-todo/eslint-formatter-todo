@@ -1,5 +1,6 @@
 import { buildTodoData } from '@ember-template-lint/todo-utils';
 import { dirSync } from 'tmp';
+import { TODO_SEVERITY } from '../../src/constants';
 import { mutateTodoErrorsToTodos } from '../../src/mutate-errors-to-todos';
 import fixtures from '../__fixtures__/fixtures';
 
@@ -34,7 +35,7 @@ describe('mutate-errors-to-todos', () => {
       );
 
       result.messages.forEach((message) => {
-        expect(message.severity).toEqual(-1);
+        expect(message.severity).toEqual(TODO_SEVERITY);
       });
     });
   });
