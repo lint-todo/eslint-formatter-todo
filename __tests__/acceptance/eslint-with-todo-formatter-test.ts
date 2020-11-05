@@ -153,7 +153,6 @@ describe('eslint with todo formatter', function () {
   });
 
   it('should emit errors, warnings, and todos when all of these are present and INCLUDE_TODO=1 is set', async () => {
-    jest.setTimeout(5000000);
     // first we generate project files with errors and convert them to todos
     project.files = {
       ...project.files,
