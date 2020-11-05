@@ -1,0 +1,153 @@
+{
+  "results": [
+    {
+      "filePath": "{{path}}/app/errors-only.js",
+      "messages": [
+        {
+          "ruleId": "no-prototype-builtins",
+          "severity": 2,
+          "message": "Do not access Object.prototype method 'hasOwnProperty' from target object.",
+          "line": 25,
+          "column": 21,
+          "nodeType": "CallExpression",
+          "messageId": "prototypeBuildIn",
+          "endLine": 25,
+          "endColumn": 35
+        },
+        {
+          "ruleId": "no-prototype-builtins",
+          "severity": 2,
+          "message": "Do not access Object.prototype method 'hasOwnProperty' from target object.",
+          "line": 26,
+          "column": 19,
+          "nodeType": "CallExpression",
+          "messageId": "prototypeBuildIn",
+          "endLine": 26,
+          "endColumn": 33
+        },
+        {
+          "ruleId": "no-prototype-builtins",
+          "severity": 2,
+          "message": "Do not access Object.prototype method 'hasOwnProperty' from target object.",
+          "line": 32,
+          "column": 34,
+          "nodeType": "CallExpression",
+          "messageId": "prototypeBuildIn",
+          "endLine": 32,
+          "endColumn": 48
+        }
+      ],
+      "errorCount": 3,
+      "warningCount": 0,
+      "fixableErrorCount": 0,
+      "fixableWarningCount": 0,
+      "source": ""
+    },
+    {
+      "filePath": "{{path}}/app/warnings-only.js",
+      "messages": [
+        {
+          "ruleId": "no-alert",
+          "severity": 1,
+          "message": "Unexpected alert.",
+          "line": 3,
+          "column": 3,
+          "nodeType": "CallExpression",
+          "messageId": "unexpected",
+          "endLine": 2,
+          "endColumn": 14
+        }
+      ],
+      "errorCount": 0,
+      "warningCount": 1,
+      "fixableErrorCount": 0,
+      "fixableWarningCount": 0,
+      "source": ""
+    },
+    {
+      "filePath": "{{path}}/app/todos-only.js",
+      "messages": [
+        {
+          "ruleId": "no-redeclare",
+          "severity": -1,
+          "message": "'window' is already defined as a built-in global variable.",
+          "line": 1,
+          "column": 11,
+          "nodeType": "Block",
+          "messageId": "redeclaredAsBuiltin",
+          "endLine": 1,
+          "endColumn": 17,
+          "fix": {
+            "range": [0, 1],
+            "text": ""
+          }
+        },
+        {
+          "ruleId": "no-redeclare",
+          "severity": -1,
+          "message": "'XMLHttpRequest' is already defined as a built-in global variable.",
+          "line": 1,
+          "column": 19,
+          "nodeType": "Block",
+          "messageId": "redeclaredAsBuiltin",
+          "endLine": 1,
+          "endColumn": 33
+        }
+      ],
+      "errorCount": 0,
+      "warningCount": 0,
+      "todoCount": 2,
+      "fixableErrorCount": 0,
+      "fixableWarningCount": 0,
+      "source": ""
+    },
+    {
+      "filePath": "{{path}}/app/errors-warnings-todo.js",
+      "messages": [
+        {
+          "ruleId": "no-redeclare",
+          "severity": 2,
+          "message": "'window' is already defined as a built-in global variable.",
+          "line": 1,
+          "column": 11,
+          "nodeType": "Block",
+          "messageId": "redeclaredAsBuiltin",
+          "endLine": 1,
+          "endColumn": 17,
+          "fix": {
+            "range": [0, 1],
+            "text": ""
+          }
+        },
+        {
+          "ruleId": "no-redeclare",
+          "severity": -1,
+          "message": "'XMLHttpRequest' is already defined as a built-in global variable.",
+          "line": 2,
+          "column": 19,
+          "nodeType": "Block",
+          "messageId": "redeclaredAsBuiltin",
+          "endLine": 1,
+          "endColumn": 33
+        },
+        {
+          "ruleId": "no-alert",
+          "severity": 1,
+          "message": "Unexpected alert.",
+          "line": 3,
+          "column": 3,
+          "nodeType": "CallExpression",
+          "messageId": "unexpected",
+          "endLine": 2,
+          "endColumn": 14
+        }
+      ],
+      "errorCount": 1,
+      "warningCount": 1,
+      "todoCount": 1,
+      "fixableErrorCount": 1,
+      "fixableWarningCount": 0,
+      "source": ""
+    }
+  ]
+}

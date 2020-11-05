@@ -92,4 +92,28 @@ describe('formatter', () => {
       "
     `);
   });
+
+  it('should only return errors and warnings if includeTodo is false and there are errors, warnings, and todo items', async () => {
+    const results = fixtures.eslintWithErrorsWarningsTodos('/stable/path');
+
+    expect(stripAnsi(formatter(results))).toMatchInlineSnapshot(`
+      "
+      /stable/path/app/errors-only.js
+         25:21  error  Do not access Object.prototype method 'hasOwnProperty' from target object  no-prototype-builtins
+         26:19  error  Do not access Object.prototype method 'hasOwnProperty' from target object  no-prototype-builtins
+         32:34  error  Do not access Object.prototype method 'hasOwnProperty' from target object  no-prototype-builtins
+
+      /stable/path/app/warnings-only.js
+         3:3  warning  Unexpected alert  no-alert
+
+      /stable/path/app/errors-warnings-todo.js
+         1:11  error    'window' is already defined as a built-in global variable  no-redeclare
+         3:3   warning  Unexpected alert                                           no-alert
+
+      ✖ 6 problems (4 errors, 2 warnings)
+        1 error and warnings potentially fixable with the \`--fix\` option.
+
+      "
+    `);
+  });
 });

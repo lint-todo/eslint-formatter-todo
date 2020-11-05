@@ -1,7 +1,8 @@
 import { blueBright, dim, red, reset, underline, yellow } from 'chalk';
+import type { ESLint } from 'eslint';
 import stripAnsi from 'strip-ansi';
 import table from 'text-table';
-import type { ESLint } from 'eslint';
+import { ERROR_SEVERITY, TODO_SEVERITY } from './constants';
 import type {
   TodoFormatterCounts,
   TodoFormatterOptions,
@@ -18,7 +19,7 @@ export function formatter(
 
   let output = '\n';
 
-  output += formatResults(results, counts, { includeTodo });
+  output += formatResults(results, { includeTodo });
 
   output += formatSummary(counts, { includeTodo });
 
@@ -30,7 +31,6 @@ export function formatter(
 
 function formatResults(
   results: ESLint.LintResult[],
-  counts: TodoFormatterCounts,
   options: TodoFormatterOptions
 ): string {
   let output = '';
@@ -42,16 +42,16 @@ function formatResults(
       return;
     }
 
-    const areAllMessagesTodo =
-      counts.errorCount === 0 &&
-      counts.warningCount === 0 &&
-      counts.todoCount > 0;
+    const areAllMessagesTodo = messages.every(
+      (message) => message.severity === TODO_SEVERITY
+    );
 
     if (options.includeTodo || !areAllMessagesTodo) {
       output += `${underline(result.filePath)}\n`;
     }
 
-    output += `${formatMessages(messages, options)}\n\n`;
+    output += `${formatMessages(messages, options)}`;
+    output += !options.includeTodo && areAllMessagesTodo ? '' : '\n\n';
   });
 
   return output;
@@ -62,13 +62,15 @@ function formatMessages(
   options: TodoFormatterOptions
 ): string {
   const messageRows = messages
-    .filter((message) => message.severity !== -1 || options.includeTodo)
+    .filter(
+      (message) => message.severity !== TODO_SEVERITY || options.includeTodo
+    )
     .map((message) => {
       let messageType;
 
-      if (message.fatal || message.severity === 2) {
+      if (message.fatal || message.severity === ERROR_SEVERITY) {
         messageType = red('error');
-      } else if (message.severity === -1) {
+      } else if (message.severity === TODO_SEVERITY) {
         messageType = blueBright('todo');
       } else {
         messageType = yellow('warning');
