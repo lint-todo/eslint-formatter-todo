@@ -1,22 +1,64 @@
 import { execSync } from 'child_process';
 import Project from 'fixturify-project';
 
-const DEFAULT_ESLINT_CONFIG = `
-module.exports = {
-  env: {
-    browser: true,
-    es2021: true,
+const DEFAULT_ESLINT_CONFIG = `{
+  "env": {
+    "browser": true,
+    "es2021": true
   },
-  extends: [
-    'airbnb-base',
-  ],
-  parserOptions: {
-    ecmaVersion: 12,
-    sourceType: 'module',
+  "parserOptions": {
+    "ecmaVersion": 12,
+    "sourceType": "module"
   },
-  rules: {
-  },
-};
+  "rules": {
+    "no-alert": ["warn"],
+    "no-unused-vars": [
+      "error",
+      {
+        "vars": "all",
+        "args": "after-used",
+        "ignoreRestSiblings": true
+      }
+    ],
+    "use-isnan": ["error"],
+    "eqeqeq": [
+      "error",
+      "always",
+      {
+        "null": "ignore"
+      }
+    ],
+    "no-plusplus": ["error"],
+    "no-param-reassign": [
+      "error",
+      {
+        "props": true,
+        "ignorePropertyModificationsFor": [
+          "acc",
+          "accumulator",
+          "e",
+          "ctx",
+          "context",
+          "req",
+          "request",
+          "res",
+          "response",
+          "$scope",
+          "staticContext"
+        ]
+      }
+    ],
+    "consistent-return": ["error"],
+    "no-useless-return": ["error"],
+    "quotes": [
+      "error",
+      "single",
+      {
+        "avoidEscape": true
+      }
+    ]
+  }
+}
 `;
 
 export class FakeProject extends Project {
@@ -24,10 +66,8 @@ export class FakeProject extends Project {
     const project = new this();
 
     project.addDevDependency('eslint', '^7.10.0');
-    project.addDevDependency('eslint-plugin-import', '^2.22.1');
-    project.addDevDependency('eslint-config-airbnb-base', '^14.2.0');
 
-    project.files['.eslintrc.js'] = DEFAULT_ESLINT_CONFIG;
+    project.files['eslint-config.json'] = DEFAULT_ESLINT_CONFIG;
 
     return project;
   }

@@ -7,14 +7,24 @@ describe('eslint with todo formatter', function () {
   let project: FakeProject;
 
   function runEslintWithFormatter(options: execa.Options = {}) {
-    const mergedOptions = Object.assign({
-      reject: false,
-      cwd: project.baseDir
-    }, options);
+    const mergedOptions = Object.assign(
+      {
+        reject: false,
+        cwd: project.baseDir,
+      },
+      options
+    );
 
     return execa(
       './node_modules/.bin/eslint',
-      ['src', '--format', require.resolve('../..')],
+      [
+        'src',
+        '-c',
+        './eslint-config.json',
+        '--no-eslintrc',
+        '--format',
+        require.resolve('../..'),
+      ],
       mergedOptions
     );
   }
@@ -116,7 +126,7 @@ describe('eslint with todo formatter', function () {
     expect(stdout).toMatch(
       /1:10  todo  'fibonacci' is defined but never used\s+no-unused-vars/
     );
-    expect(stdout).toMatch(/✖ 0 problems \(0 errors, 0 warnings, 17 todos\)/);
+    expect(stdout).toMatch(/✖ 0 problems \(0 errors, 0 warnings, 10 todos\)/);
   });
 
   it('should emit todo items and count when INCLUDE_TODO=1 is set alone with prior todo items', async () => {
@@ -149,7 +159,7 @@ describe('eslint with todo formatter', function () {
     expect(stdout).toMatch(
       /1:10  todo  'fibonacci' is defined but never used\s+no-unused-vars/
     );
-    expect(stdout).toMatch(/✖ 0 problems \(0 errors, 0 warnings, 17 todos\)/);
+    expect(stdout).toMatch(/✖ 0 problems \(0 errors, 0 warnings, 10 todos\)/);
   });
 
   it('should emit errors, warnings, and todos when all of these are present and INCLUDE_TODO=1 is set', async () => {
