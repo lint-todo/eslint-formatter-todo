@@ -1,4 +1,4 @@
-# eslint-formatter-todo
+# @scalvert/eslint-formatter-todo
 
 An ESLint formatter that can report errors as todos.
 
@@ -13,7 +13,7 @@ This formatter allows you to introduce new rules immediately without blocking co
 When you introduce new linting rules, execute ESLint by setting `UPDATE_TODO=1` and passing this formatter:
 
 ```bash
-$ UPDATE_TODO=1 eslint --format eslint-formatter-todo
+$ UPDATE_TODO=1 eslint --format @scalvert/eslint-formatter-todo
 ```
 
 This command will transform all reported `error`s to `todo`s and will generate files inside the `.lint-todo` directory to track them.
@@ -21,7 +21,7 @@ This command will transform all reported `error`s to `todo`s and will generate f
 Executing ESLint without `UPDATE_TODO=1` will run `eslint` normally but will transform errors that are present in the `.lint-todo` directory to `todo` items, ignoring them as errors:
 
 ```bash
-$ eslint --format eslint-formatter-todo
+$ eslint --format @scalvert/eslint-formatter-todo
 
 # no output, no errors
 ```
@@ -29,7 +29,7 @@ $ eslint --format eslint-formatter-todo
 If you want `todo`s to appear in results, you must set `INCLUDE_TODO=1`:
 
 ```bash
-$ INCLUDE_TODO=1 eslint --format eslint-formatter-todo
+$ INCLUDE_TODO=1 eslint --format @scalvert/eslint-formatter-todo
 
 # todo items will be visible
 /path/to/file/fullOfProblems.js
