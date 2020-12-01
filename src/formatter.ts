@@ -155,15 +155,18 @@ function formatSummary(
             fixableErrorCount,
             pluralize(' error', fixableErrorCount),
             ',',
+            fixableWarningCount,
             pluralize(' warning', fixableWarningCount),
-            ', and',
+            ', and ',
+            fixableTodoCount,
             pluralize('todo', fixableTodoCount),
           ]
         : [
             '  ',
             fixableErrorCount,
             pluralize(' error', fixableErrorCount),
-            ' and',
+            ' and ',
+            fixableWarningCount,
             pluralize(' warning', fixableWarningCount),
           ];
 

@@ -39,7 +39,7 @@ describe('formatter', () => {
          158:32  error  Do not access Object.prototype method 'hasOwnProperty' from target object  no-prototype-builtins
 
       ✖ 18 problems (18 errors, 0 warnings)
-        1 error and warnings potentially fixable with the \`--fix\` option.
+        1 error and 0 warnings potentially fixable with the \`--fix\` option.
 
       "
     `);
@@ -111,7 +111,7 @@ describe('formatter', () => {
          3:3   warning  Unexpected alert                                           no-alert
 
       ✖ 6 problems (4 errors, 2 warnings)
-        1 error and warnings potentially fixable with the \`--fix\` option.
+        1 error and 0 warnings potentially fixable with the \`--fix\` option.
 
       "
     `);
