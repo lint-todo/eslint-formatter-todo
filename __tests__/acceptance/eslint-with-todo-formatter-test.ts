@@ -79,7 +79,7 @@ describe('eslint with todo formatter', function () {
     );
     expect(stdout).toMatch(/✖ 3 problems \(2 errors, 1 warning\)/);
     expect(stdout).toMatch(
-      /1 error and warnings potentially fixable with the `--fix` option\./
+      /1 error and 0 warnings potentially fixable with the `--fix` option\./
     );
   });
 
