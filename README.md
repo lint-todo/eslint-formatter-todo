@@ -2,7 +2,7 @@
 
 An ESLint formatter that can report errors as todos.
 
-<img src="docs/post-todo.png" />
+<img src="docs/post-todo.png" style="background-color: #fff" />
 
 A todo is an existing linting error present in the project, but one that is transitioned into a todo state. This allows for incremental fixing of linting errors on very large projects, where the resolution or introduction of errors can cause undesired delays in engineer velocity.
 
