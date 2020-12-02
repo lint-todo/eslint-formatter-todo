@@ -154,12 +154,12 @@ function formatSummary(
             '  ',
             fixableErrorCount,
             pluralize(' error', fixableErrorCount),
-            ',',
+            ', ',
             fixableWarningCount,
             pluralize(' warning', fixableWarningCount),
             ', and ',
             fixableTodoCount,
-            pluralize('todo', fixableTodoCount),
+            pluralize(' todo', fixableTodoCount),
           ]
         : [
             '  ',

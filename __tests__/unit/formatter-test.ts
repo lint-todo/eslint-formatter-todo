@@ -88,6 +88,7 @@ describe('formatter', () => {
          158:32  todo  Do not access Object.prototype method 'hasOwnProperty' from target object  no-prototype-builtins
 
       ✖ 0 problems (0 errors, 0 warnings, 18 todos)
+        0 errors, 0 warnings, and 1 todo potentially fixable with the \`--fix\` option.
 
       "
     `);
