@@ -1,12 +1,32 @@
 import execa from 'execa';
 import stripAnsi from 'strip-ansi';
+import { posix } from 'path';
+import { getTodoStorageDirPath } from '@ember-template-lint/todo-utils';
 import { FakeProject } from '../__utils__/fake-project';
 import { readFile as readFixture } from '../__utils__/read-file-cached';
+import { readdirSync } from 'fs-extra';
 
 describe('eslint with todo formatter', function () {
   let project: FakeProject;
 
-  function runEslintWithFormatter(options: execa.Options = {}) {
+  function runEslintWithFormatter(
+    argsOrOptions?: string[] | execa.Options,
+    options?: execa.Options
+  ) {
+    if (arguments.length > 0) {
+      if (arguments.length === 1) {
+        if (typeof argsOrOptions === 'object') {
+          options = argsOrOptions as execa.Options;
+          argsOrOptions = [];
+        } else {
+          options = {};
+        }
+      }
+    } else {
+      argsOrOptions = [];
+      options = {};
+    }
+
     const mergedOptions = Object.assign(
       {
         reject: false,
@@ -24,6 +44,7 @@ describe('eslint with todo formatter', function () {
         '--no-eslintrc',
         '--format',
         require.resolve('../..'),
+        ...(argsOrOptions as string[]),
       ],
       mergedOptions
     );
@@ -38,14 +59,11 @@ describe('eslint with todo formatter', function () {
   });
 
   it('should not emit anything when there are no errors or warnings', async () => {
-    project.files = {
-      ...project.files,
+    project.write({
       src: {
         'no-problems.js': readFixture('with-no-problems.js'),
       },
-    };
-
-    project.writeSync();
+    });
     project.install();
 
     const result = await runEslintWithFormatter();
@@ -54,16 +72,13 @@ describe('eslint with todo formatter', function () {
   });
 
   it('should emit errors and warnings as normal', async () => {
-    project.files = {
-      ...project.files,
+    project.write({
       src: {
         'with-errors-and-warnings.js': readFixture(
           'with-errors-and-warnings.js'
         ),
       },
-    };
-
-    project.writeSync();
+    });
     project.install();
 
     const result = await runEslintWithFormatter();
@@ -84,15 +99,12 @@ describe('eslint with todo formatter', function () {
   });
 
   it('should not emit anything when only UPDATE_TODO=1 is set', async () => {
-    project.files = {
-      ...project.files,
+    project.write({
       src: {
         'with-errors-0.js': readFixture('with-errors-0.js'),
         'with-errors-1.js': readFixture('with-errors-1.js'),
       },
-    };
-
-    project.writeSync();
+    });
     project.install();
 
     const result = await runEslintWithFormatter({
@@ -103,15 +115,12 @@ describe('eslint with todo formatter', function () {
   });
 
   it('should emit todo items and count when UPDATE_TODO=1 and INCLUDE_TODO=1 are set', async () => {
-    project.files = {
-      ...project.files,
+    project.write({
       src: {
         'with-errors-0.js': readFixture('with-errors-0.js'),
         'with-errors-1.js': readFixture('with-errors-1.js'),
       },
-    };
-
-    project.writeSync();
+    });
     project.install();
 
     const result = await runEslintWithFormatter({
@@ -130,15 +139,12 @@ describe('eslint with todo formatter', function () {
   });
 
   it('should emit todo items and count when INCLUDE_TODO=1 is set alone with prior todo items', async () => {
-    project.files = {
-      ...project.files,
+    project.write({
       src: {
         'with-errors-0.js': readFixture('with-errors-0.js'),
         'with-errors-1.js': readFixture('with-errors-1.js'),
       },
-    };
-
-    project.writeSync();
+    });
     project.install();
 
     // run eslint to generate TODO dir but don't capture the result because this is not what we're testing
@@ -164,14 +170,11 @@ describe('eslint with todo formatter', function () {
 
   it('should emit errors, warnings, and todos when all of these are present and INCLUDE_TODO=1 is set', async () => {
     // first we generate project files with errors and convert them to todos
-    project.files = {
-      ...project.files,
+    project.write({
       src: {
         'with-errors-0.js': readFixture('with-errors-0.js'),
       },
-    };
-
-    project.writeSync();
+    });
     project.install();
 
     await runEslintWithFormatter({
@@ -179,16 +182,13 @@ describe('eslint with todo formatter', function () {
     });
 
     // now we add new errors and warnings to test output with all problems
-    project.files = {
-      ...project.files,
+    project.write({
       src: {
         'with-errors-and-warnings.js': readFixture(
           'with-errors-and-warnings.js'
         ),
       },
-    };
-
-    project.writeSync();
+    });
 
     const result = await runEslintWithFormatter({
       env: { INCLUDE_TODO: '1' },
@@ -204,5 +204,57 @@ describe('eslint with todo formatter', function () {
     );
     expect(stdout).toMatch(/2:3   warning  Unexpected alert\s+no-alert/);
     expect(stdout).toMatch(/✖ 3 problems \(2 errors, 1 warning, 7 todos\)/);
+  });
+
+  it('errors if a todo item is no longer valid when running without params', async function () {
+    project.write({
+      src: {
+        'with-fixable-error.js': readFixture('with-fixable-error.js'),
+      },
+    });
+    project.install();
+
+    debugger;
+    // generate todo based on existing error
+    await runEslintWithFormatter({
+      env: { UPDATE_TODO: '1' },
+    });
+
+    // mimic fixing the error manually via user interaction
+    project.write({
+      src: {
+        'with-fixable-error.js': readFixture('no-errors.js'),
+      },
+    });
+
+    // run normally and expect an error for not running --fix
+    let result = await runEslintWithFormatter();
+    let stdout = stripAnsi(result.stdout);
+
+    expect(stdout).toMatchInlineSnapshot(`
+      "
+      src/with-fixable-error.js
+         0:0  error  Todo violation passes \`no-unused-vars\` rule. Please run \`--fix\` to remove this todo from the todo list  invalid-todo-violation-rule
+
+      ✖ 1 problem (1 error, 0 warnings)
+
+      "
+    `);
+
+    // run fix, and expect that this will delete the outstanding todo item
+    await runEslintWithFormatter(['--fix']);
+
+    // run normally again and expect no error
+    result = await runEslintWithFormatter();
+    stdout = stripAnsi(result.stdout);
+
+    const todoStorageDir = getTodoStorageDirPath(project.baseDir);
+    const todos = readdirSync(
+      posix.join(todoStorageDir, readdirSync(todoStorageDir)[0])
+    );
+
+    expect(result.exitCode).toEqual(0);
+    expect(stdout).toEqual('');
+    expect(todos).toHaveLength(0);
   });
 });
