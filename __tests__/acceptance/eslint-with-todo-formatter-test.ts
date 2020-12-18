@@ -229,16 +229,12 @@ describe('eslint with todo formatter', function () {
 
     // run normally and expect an error for not running --fix
     let result = await runEslintWithFormatter();
-    let stdout = stripAnsi(result.stdout);
 
-    expect(stdout).toMatchInlineSnapshot(`
-      "
-      src/with-fixable-error.js
+    expect(stripAnsi(result.stdout).trim()).toMatchInlineSnapshot(`
+      "src/with-fixable-error.js
          0:0  error  Todo violation passes \`no-unused-vars\` rule. Please run \`--fix\` to remove this todo from the todo list  invalid-todo-violation-rule
 
-      ✖ 1 problem (1 error, 0 warnings)
-
-      "
+      ✖ 1 problem (1 error, 0 warnings)"
     `);
 
     // run fix, and expect that this will delete the outstanding todo item
@@ -246,7 +242,6 @@ describe('eslint with todo formatter', function () {
 
     // run normally again and expect no error
     result = await runEslintWithFormatter();
-    stdout = stripAnsi(result.stdout);
 
     const todoStorageDir = getTodoStorageDirPath(project.baseDir);
     const todos = readdirSync(
@@ -254,7 +249,7 @@ describe('eslint with todo formatter', function () {
     );
 
     expect(result.exitCode).toEqual(0);
-    expect(stdout).toEqual('');
+    expect(stripAnsi(result.stdout).trim()).toEqual('');
     expect(todos).toHaveLength(0);
   });
 });
