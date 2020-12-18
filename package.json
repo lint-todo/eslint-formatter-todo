@@ -19,7 +19,7 @@
     "clean": "tsc --build --clean",
     "lint": "eslint . --ext .ts",
     "prepare": "yarn build",
-    "test": "jest --passWithNoTests --no-cache"
+    "test": "jest --no-cache"
   },
   "dependencies": {
     "@ember-template-lint/todo-utils": "^3.1.0",
