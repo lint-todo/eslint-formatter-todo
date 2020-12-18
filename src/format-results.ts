@@ -39,14 +39,10 @@ async function report(
 
   if (todoStorageDirExists(baseDir)) {
     const existingTodoFiles = await readTodos(baseDir);
-    console.log(JSON.stringify(results, undefined, 2));
     const [, itemsToRemoveFromTodos,] = await getTodoBatches(
       buildTodoData(baseDir, results),
       existingTodoFiles
     );
-
-    console.log('Items to remove:', itemsToRemoveFromTodos.size);
-    console.log('Fix:', hasFlag('fix'));
 
     if (itemsToRemoveFromTodos.size > 0) {
       if (hasFlag('fix')) {
