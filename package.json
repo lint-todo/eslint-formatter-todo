@@ -17,7 +17,7 @@
     "build": "tsc --build",
     "build:watch": "tsc --watch",
     "clean": "tsc --build --clean",
-    "lint": "eslint . --ext js, ts",
+    "lint": "eslint . --ext .ts",
     "prepare": "yarn build",
     "test": "jest --passWithNoTests --no-cache"
   },
