@@ -279,9 +279,9 @@
     minimist "^1.2.0"
 
 "@ember-template-lint/todo-utils@^3.0.0":
-  version "3.0.2"
-  resolved "https://registry.yarnpkg.com/@ember-template-lint/todo-utils/-/todo-utils-3.0.2.tgz#fc74f51b9d9a2a3e922fbe9f700f8b23b7970ee5"
-  integrity sha512-hdzylXigm5MctZnp1m4f0+DvteNyvBMA+GAQCng6vGe4zExC8yisS6uc4z5DOgKNLnAiRRpwviXZF6Ik34YW6A==
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/@ember-template-lint/todo-utils/-/todo-utils-3.1.0.tgz#4273dcf4f9ba5d1929084bdd0b2b1f0ab66f2f30"
+  integrity sha512-sUmKf8kTpqhgKbSyX9pLQ4kAhGA6vWgnpflYCWWMJ9CdtsldGtwUJb5eONMJNhhZOsfRpBpIrYa2SiXJ2b/Wgg==
   dependencies:
     fs-extra "^9.0.1"
     slash "^3.0.0"
@@ -493,7 +493,7 @@
     "@types/yargs" "^15.0.0"
     chalk "^3.0.0"
 
-"@jest/types@^26.5.2", "@jest/types@^26.6.2":
+"@jest/types@^26.6.2":
   version "26.6.2"
   resolved "https://registry.yarnpkg.com/@jest/types/-/types-26.6.2.tgz#bef5a532030e1d88a2f5a6d933f84e97226ed48e"
   integrity sha512-fC6QCp7Sc5sX6g8Tvbmj4XUTbyrik0akgRy03yjXbQaBWWNWGE7SGtJk98m0N8nzegD/7SggrUlivxo5ax4KWQ==
@@ -3045,7 +3045,7 @@ is-ci@2.0.0, is-ci@^2.0.0:
   dependencies:
     ci-info "^2.0.0"
 
-is-core-module@^2.0.0, is-core-module@^2.1.0:
+is-core-module@^2.1.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/is-core-module/-/is-core-module-2.2.0.tgz#97037ef3d52224d85163f5597b2b63d9afed981a"
   integrity sha512-XRAfAdyyY5F5cOXn7hYQDqh2Xmii+DEfIcQGxK/uNwMHhIkPWO0g8msXcbzLe+MpGoR951MlqM/2iIlU4vKDdQ==
