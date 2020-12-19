@@ -15,11 +15,11 @@ describe('eslint with todo formatter', function () {
   ) {
     if (arguments.length > 0) {
       if (arguments.length === 1) {
-        if (typeof argsOrOptions === 'object') {
+        if (Array.isArray(argsOrOptions)) {
+          options = {};
+        } else {
           options = argsOrOptions as execa.Options;
           argsOrOptions = [];
-        } else {
-          options = {};
         }
       }
     } else {
@@ -238,6 +238,7 @@ describe('eslint with todo formatter', function () {
     `);
 
     // run fix, and expect that this will delete the outstanding todo item
+    debugger;
     await runEslintWithFormatter(['--fix']);
 
     // run normally again and expect no error
