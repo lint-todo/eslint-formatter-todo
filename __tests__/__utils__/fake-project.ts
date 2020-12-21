@@ -1,4 +1,5 @@
 import { execSync } from 'child_process';
+import fixturify from 'fixturify';
 import Project from 'fixturify-project';
 
 const DEFAULT_ESLINT_CONFIG = `{
@@ -74,10 +75,21 @@ export class FakeProject extends Project {
 
   constructor(name = 'fake-project', ...args: any[]) {
     super(name, ...args);
+
+    this.pkg = Object.assign({}, this.pkg, {
+      license: 'MIT',
+      description: 'Fake project',
+      repository: 'http://fakerepo.com',
+    });
+  }
+
+  write(dirJSON: fixturify.DirJSON): void {
+    Object.assign(this.files, dirJSON);
+    this.writeSync();
   }
 
   install(): void {
-    const cmd = 'yarn install';
+    const cmd = 'yarn install --silent';
 
     try {
       execSync(cmd, { cwd: this.baseDir });
