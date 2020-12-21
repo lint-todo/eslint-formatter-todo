@@ -1,4 +1,4 @@
-import { formatResults } from './format-results';
+import { formatter } from './formatter';
 
 // special TS syntax: https://github.com/microsoft/TypeScript/issues/2719
-export = formatResults;
+export = formatter;

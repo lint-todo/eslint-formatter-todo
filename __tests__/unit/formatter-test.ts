@@ -1,120 +1,111 @@
-import stripAnsi from 'strip-ansi';
-import { formatter } from '../../src/formatter';
+import {
+  buildTodoData,
+  getTodoStorageDirPath,
+  readTodos,
+  todoStorageDirExists,
+} from '@ember-template-lint/todo-utils';
+import { existsSync } from 'fs';
+import { DirResult, dirSync } from 'tmp';
+import { TODO_SEVERITY } from '../../src/constants';
+import { formatterAsync, transformResults } from '../../src/formatter';
 import fixtures from '../__fixtures__/fixtures';
+import { deepCopy } from '../__utils__/deep-copy';
+import { setUpdateTodoEnv } from '../__utils__/set-env';
 
-describe('formatter', () => {
-  it('should return all errors', async () => {
-    const results = fixtures.eslintWithErrors('/stable/path');
+describe('format-results', () => {
+  const INITIAL_ENV = process.env;
 
-    expect(stripAnsi(formatter(results))).toMatchInlineSnapshot(`
-      "
-      /stable/path/app/controllers/settings.js
-         25:21  error  Do not access Object.prototype method 'hasOwnProperty' from target object  no-prototype-builtins
-         26:19  error  Do not access Object.prototype method 'hasOwnProperty' from target object  no-prototype-builtins
-         32:34  error  Do not access Object.prototype method 'hasOwnProperty' from target object  no-prototype-builtins
+  let tmpDir: DirResult;
 
-      /stable/path/app/initializers/tracer.js
-         1:11  error  'window' is already defined as a built-in global variable          no-redeclare
-         1:19  error  'XMLHttpRequest' is already defined as a built-in global variable  no-redeclare
-
-      /stable/path/app/models/build.js
-         108:50  error  Do not access Object.prototype method 'hasOwnProperty' from target object  no-prototype-builtins
-         120:25  error  Do not access Object.prototype method 'hasOwnProperty' from target object  no-prototype-builtins
-
-      /stable/path/app/services/insights.js
-         287:17  error  Do not access Object.prototype method 'hasOwnProperty' from target object  no-prototype-builtins
-         296:17  error  Do not access Object.prototype method 'hasOwnProperty' from target object  no-prototype-builtins
-         307:17  error  Do not access Object.prototype method 'hasOwnProperty' from target object  no-prototype-builtins
-         317:17  error  Do not access Object.prototype method 'hasOwnProperty' from target object  no-prototype-builtins
-
-      /stable/path/app/utils/traverse-payload.js
-         18:18  error  Do not access Object.prototype method 'hasOwnProperty' from target object  no-prototype-builtins
-
-      /stable/path/tests/unit/services/insights-test.js
-          65:27  error  Do not access Object.prototype method 'hasOwnProperty' from target object  no-prototype-builtins
-          80:27  error  Do not access Object.prototype method 'hasOwnProperty' from target object  no-prototype-builtins
-          97:27  error  Do not access Object.prototype method 'hasOwnProperty' from target object  no-prototype-builtins
-         116:27  error  Do not access Object.prototype method 'hasOwnProperty' from target object  no-prototype-builtins
-         134:27  error  Do not access Object.prototype method 'hasOwnProperty' from target object  no-prototype-builtins
-         158:32  error  Do not access Object.prototype method 'hasOwnProperty' from target object  no-prototype-builtins
-
-      ✖ 18 problems (18 errors, 0 warnings)
-        1 error and 0 warnings potentially fixable with the \`--fix\` option.
-
-      "
-    `);
+  beforeEach(() => {
+    tmpDir = dirSync({ unsafeCleanup: true });
+    process.stdout.write = jest.fn();
+    process.env = { ...INITIAL_ENV, ESLINT_TODO_DIR: tmpDir.name };
   });
 
-  it('should not return anything when includeTodo is false and there are only todo items', async () => {
-    const results = fixtures.eslintWithTodos('/stable/path');
-
-    expect(stripAnsi(formatter(results)).trim()).toEqual('');
+  afterEach(() => {
+    tmpDir.removeCallback();
+    process.env = INITIAL_ENV;
   });
 
-  it('should return all todo items when includeTodo is true', async () => {
-    const results = fixtures.eslintWithTodos('/stable/path');
+  it('SHOULD NOT generate a TODO dir with todo files when UPDATE_TODO is set to 0', async () => {
+    setUpdateTodoEnv(false);
 
-    expect(stripAnsi(formatter(results, { includeTodo: true })))
-      .toMatchInlineSnapshot(`
-      "
-      /stable/path/app/controllers/settings.js
-         25:21  todo  Do not access Object.prototype method 'hasOwnProperty' from target object  no-prototype-builtins
-         26:19  todo  Do not access Object.prototype method 'hasOwnProperty' from target object  no-prototype-builtins
-         32:34  todo  Do not access Object.prototype method 'hasOwnProperty' from target object  no-prototype-builtins
+    const results = fixtures.eslintWithErrors(tmpDir.name);
 
-      /stable/path/app/initializers/tracer.js
-         1:11  todo  'window' is already defined as a built-in global variable          no-redeclare
-         1:19  todo  'XMLHttpRequest' is already defined as a built-in global variable  no-redeclare
+    await formatterAsync(results);
 
-      /stable/path/app/models/build.js
-         108:50  todo  Do not access Object.prototype method 'hasOwnProperty' from target object  no-prototype-builtins
-         120:25  todo  Do not access Object.prototype method 'hasOwnProperty' from target object  no-prototype-builtins
-
-      /stable/path/app/services/insights.js
-         287:17  todo  Do not access Object.prototype method 'hasOwnProperty' from target object  no-prototype-builtins
-         296:17  todo  Do not access Object.prototype method 'hasOwnProperty' from target object  no-prototype-builtins
-         307:17  todo  Do not access Object.prototype method 'hasOwnProperty' from target object  no-prototype-builtins
-         317:17  todo  Do not access Object.prototype method 'hasOwnProperty' from target object  no-prototype-builtins
-
-      /stable/path/app/utils/traverse-payload.js
-         18:18  todo  Do not access Object.prototype method 'hasOwnProperty' from target object  no-prototype-builtins
-
-      /stable/path/tests/unit/services/insights-test.js
-          65:27  todo  Do not access Object.prototype method 'hasOwnProperty' from target object  no-prototype-builtins
-          80:27  todo  Do not access Object.prototype method 'hasOwnProperty' from target object  no-prototype-builtins
-          97:27  todo  Do not access Object.prototype method 'hasOwnProperty' from target object  no-prototype-builtins
-         116:27  todo  Do not access Object.prototype method 'hasOwnProperty' from target object  no-prototype-builtins
-         134:27  todo  Do not access Object.prototype method 'hasOwnProperty' from target object  no-prototype-builtins
-         158:32  todo  Do not access Object.prototype method 'hasOwnProperty' from target object  no-prototype-builtins
-
-      ✖ 0 problems (0 errors, 0 warnings, 18 todos)
-        0 errors, 0 warnings, and 1 todo potentially fixable with the \`--fix\` option.
-
-      "
-    `);
+    const todoDir = getTodoStorageDirPath(tmpDir.name);
+    expect(existsSync(todoDir)).toBe(false);
   });
 
-  it('should only return errors and warnings if includeTodo is false and there are errors, warnings, and todo items', async () => {
-    const results = fixtures.eslintWithErrorsWarningsTodos('/stable/path');
+  it('SHOULD generate a TODO dir with todo files when UPDATE_TODO is set to 1', async () => {
+    setUpdateTodoEnv(true);
 
-    expect(stripAnsi(formatter(results))).toMatchInlineSnapshot(`
-      "
-      /stable/path/app/errors-only.js
-         25:21  error  Do not access Object.prototype method 'hasOwnProperty' from target object  no-prototype-builtins
-         26:19  error  Do not access Object.prototype method 'hasOwnProperty' from target object  no-prototype-builtins
-         32:34  error  Do not access Object.prototype method 'hasOwnProperty' from target object  no-prototype-builtins
+    const results = fixtures.eslintWithErrors(tmpDir.name);
 
-      /stable/path/app/warnings-only.js
-         3:3  warning  Unexpected alert  no-alert
+    await formatterAsync(results);
 
-      /stable/path/app/errors-warnings-todo.js
-         1:11  error    'window' is already defined as a built-in global variable  no-redeclare
-         3:3   warning  Unexpected alert                                           no-alert
+    expect(todoStorageDirExists(tmpDir.name)).toBe(true);
 
-      ✖ 6 problems (4 errors, 2 warnings)
-        1 error and 0 warnings potentially fixable with the \`--fix\` option.
+    const todos = await readTodos(tmpDir.name);
 
-      "
-    `);
+    expect(todos.size).toEqual(18);
+  });
+
+  it('SHOULD not mutate errors if a todo dir is not present', async () => {
+    setUpdateTodoEnv(false);
+
+    const results = fixtures.eslintWithErrors(tmpDir.name);
+    const expected = deepCopy(results);
+
+    await formatterAsync(results);
+
+    expect(results).toEqual(expected);
+  });
+
+  it('SHOULD mutate errors when a todo dir is present', async () => {
+    setUpdateTodoEnv(true);
+
+    const results = fixtures.eslintWithErrors(tmpDir.name);
+    const notExpected = deepCopy(results);
+
+    await formatterAsync(results);
+
+    expect(results).not.toEqual(notExpected);
+  });
+
+  it('changes only the errors that are also present in the todo map to todos', async () => {
+    const results = fixtures.eslintWithErrors(tmpDir.name);
+
+    // build todo map but without the last result in the results array (so they differ)
+    const todoResults = [...results];
+    const lastResult = todoResults.pop();
+    const todos = buildTodoData(tmpDir.name, todoResults);
+
+    transformResults(tmpDir.name, results, todos);
+
+    // last result should stay unchanged
+    expect(results[results.length - 1]).toEqual(lastResult);
+
+    // everything else should be mutated
+    results.forEach((result, resultIndex) => {
+      if (resultIndex === results.length - 1) {
+        return;
+      }
+
+      expect(result.errorCount).toEqual(0);
+      expect(result.warningCount).toEqual(
+        result.warningCount + result.errorCount
+      );
+      expect(result.fixableErrorCount).toEqual(0);
+      expect(result.fixableWarningCount).toEqual(
+        result.fixableWarningCount + result.fixableErrorCount
+      );
+
+      result.messages.forEach((message) => {
+        expect(message.severity).toEqual(TODO_SEVERITY);
+      });
+    });
   });
 });
