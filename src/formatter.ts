@@ -1,13 +1,13 @@
 import {
   applyTodoChanges,
   buildTodoData,
-  getTodoBatches,
+  getTodoBatchesSync,
   getTodoStorageDirPath,
-  readTodos,
+  readTodosSync,
   TodoData,
   todoFilePathFor,
   todoStorageDirExists,
-  writeTodos,
+  writeTodosSync,
   _buildTodoDatum,
 } from '@ember-template-lint/todo-utils';
 import type { ESLint, Linter } from 'eslint';
@@ -17,20 +17,15 @@ import { getBaseDir } from './get-base-dir';
 import hasFlag from 'has-flag';
 import { ERROR_SEVERITY, TODO_SEVERITY } from './constants';
 
-export function formatter(results: ESLint.LintResult[]): void {
-  // note: using async/await directly causes eslint to print `Promise { <pending> }`
-  formatterAsync(results);
-}
-
-export async function formatterAsync(results: ESLint.LintResult[]): Promise<void> {
+export function formatter(results: ESLint.LintResult[]): string {
   const updateTodo = process.env.UPDATE_TODO === '1';
   const includeTodo = process.env.INCLUDE_TODO === '1';
 
   if (updateTodo) {
-    await writeTodos(getBaseDir(), results);
+    writeTodosSync(getBaseDir(), results);
   }
 
-  await report(results, { includeTodo });
+  return report(results, { includeTodo });
 }
 
 /**
@@ -38,11 +33,11 @@ export async function formatterAsync(results: ESLint.LintResult[]): Promise<void
  *
  * @param results ESLint results array
  */
-export async function transformResults(
+export function transformResults(
   baseDir: string,
   results: ESLint.LintResult[],
   todoMap: Map<string, TodoData>
-): Promise<void> {
+): void {
   results.forEach((result) => {
     (result.messages as TodoResultMessage[]).forEach((message) => {
       if (message.severity !== ERROR_SEVERITY) {
@@ -81,22 +76,23 @@ export async function transformResults(
   });
 }
 
-async function report(
-  results: ESLint.LintResult[],
-  options: TodoFormatterOptions
-) {
+function report(results: ESLint.LintResult[], options: TodoFormatterOptions) {
   const baseDir = getBaseDir();
 
   if (todoStorageDirExists(baseDir)) {
-    const existingTodoFiles = await readTodos(baseDir);
-    const [, itemsToRemoveFromTodos,] = await getTodoBatches(
+    const existingTodoFiles = readTodosSync(baseDir);
+    const [, itemsToRemoveFromTodos] = getTodoBatchesSync(
       buildTodoData(baseDir, results),
       existingTodoFiles
     );
 
     if (itemsToRemoveFromTodos.size > 0) {
       if (hasFlag('fix')) {
-        applyTodoChanges(getTodoStorageDirPath(baseDir), new Map(), itemsToRemoveFromTodos);
+        applyTodoChanges(
+          getTodoStorageDirPath(baseDir),
+          new Map(),
+          itemsToRemoveFromTodos
+        );
       } else {
         itemsToRemoveFromTodos.forEach((todo) => {
           pushResult(results, todo);
@@ -104,21 +100,23 @@ async function report(
       }
     }
 
-    await transformResults(baseDir, results, existingTodoFiles);
+    transformResults(baseDir, results, existingTodoFiles);
   }
 
-  process.stdout.write(format(results, options));
+  return format(results, options);
 }
 
 function pushResult(results: ESLint.LintResult[], todo: TodoData) {
-  const resultForFile = results.find((r: ESLint.LintResult) => r.filePath === todo.filePath);
+  const resultForFile = results.find(
+    (r: ESLint.LintResult) => r.filePath === todo.filePath
+  );
   const result: Linter.LintMessage = {
     ruleId: 'invalid-todo-violation-rule',
     message: `Todo violation passes \`${todo.ruleId}\` rule. Please run \`--fix\` to remove this todo from the todo list.`,
     severity: 2,
     column: 0,
     line: 0,
-  }
+  };
 
   if (resultForFile) {
     resultForFile.messages.push(result);
