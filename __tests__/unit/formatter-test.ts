@@ -2,12 +2,13 @@ import {
   buildTodoData,
   getTodoStorageDirPath,
   readTodos,
+  readTodosSync,
   todoStorageDirExists,
 } from '@ember-template-lint/todo-utils';
 import { existsSync } from 'fs';
 import { DirResult, dirSync } from 'tmp';
 import { TODO_SEVERITY } from '../../src/constants';
-import { formatterAsync, transformResults } from '../../src/formatter';
+import { formatter, transformResults } from '../../src/formatter';
 import fixtures from '../__fixtures__/fixtures';
 import { deepCopy } from '../__utils__/deep-copy';
 import { setUpdateTodoEnv } from '../__utils__/set-env';
@@ -28,54 +29,54 @@ describe('format-results', () => {
     process.env = INITIAL_ENV;
   });
 
-  it('SHOULD NOT generate a TODO dir with todo files when UPDATE_TODO is set to 0', async () => {
+  it('SHOULD NOT generate a TODO dir with todo files when UPDATE_TODO is set to 0', () => {
     setUpdateTodoEnv(false);
 
     const results = fixtures.eslintWithErrors(tmpDir.name);
 
-    await formatterAsync(results);
+    formatter(results);
 
     const todoDir = getTodoStorageDirPath(tmpDir.name);
     expect(existsSync(todoDir)).toBe(false);
   });
 
-  it('SHOULD generate a TODO dir with todo files when UPDATE_TODO is set to 1', async () => {
+  it('SHOULD generate a TODO dir with todo files when UPDATE_TODO is set to 1', () => {
     setUpdateTodoEnv(true);
 
     const results = fixtures.eslintWithErrors(tmpDir.name);
 
-    await formatterAsync(results);
+    formatter(results);
 
     expect(todoStorageDirExists(tmpDir.name)).toBe(true);
 
-    const todos = await readTodos(tmpDir.name);
+    const todos = readTodosSync(tmpDir.name);
 
     expect(todos.size).toEqual(18);
   });
 
-  it('SHOULD not mutate errors if a todo dir is not present', async () => {
+  it('SHOULD not mutate errors if a todo dir is not present', () => {
     setUpdateTodoEnv(false);
 
     const results = fixtures.eslintWithErrors(tmpDir.name);
     const expected = deepCopy(results);
 
-    await formatterAsync(results);
+    formatter(results);
 
     expect(results).toEqual(expected);
   });
 
-  it('SHOULD mutate errors when a todo dir is present', async () => {
+  it('SHOULD mutate errors when a todo dir is present', () => {
     setUpdateTodoEnv(true);
 
     const results = fixtures.eslintWithErrors(tmpDir.name);
     const notExpected = deepCopy(results);
 
-    await formatterAsync(results);
+    formatter(results);
 
     expect(results).not.toEqual(notExpected);
   });
 
-  it('changes only the errors that are also present in the todo map to todos', async () => {
+  it('changes only the errors that are also present in the todo map to todos', () => {
     const results = fixtures.eslintWithErrors(tmpDir.name);
 
     // build todo map but without the last result in the results array (so they differ)
