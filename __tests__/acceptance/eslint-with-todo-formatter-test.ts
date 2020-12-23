@@ -69,6 +69,7 @@ describe('eslint with todo formatter', function () {
     const result = await runEslintWithFormatter();
 
     expect(result.stdout).toEqual('');
+    expect(result.exitCode).toEqual(0);
   });
 
   it('should emit errors and warnings as normal', async () => {
@@ -82,9 +83,9 @@ describe('eslint with todo formatter', function () {
     project.install();
 
     const result = await runEslintWithFormatter();
-
     const stdout = stripAnsi(result.stdout);
 
+    expect(result.exitCode).toEqual(1);
     expect(stdout).toMatch(
       /1:10  error {4}'sayHi' is defined but never used  no-unused-vars/
     );
@@ -111,6 +112,7 @@ describe('eslint with todo formatter', function () {
       env: { UPDATE_TODO: '1' },
     });
 
+    expect(result.exitCode).toEqual(0);
     expect(stripAnsi(result.stdout).trim()).toEqual('');
   });
 
@@ -126,9 +128,9 @@ describe('eslint with todo formatter', function () {
     const result = await runEslintWithFormatter({
       env: { UPDATE_TODO: '1', INCLUDE_TODO: '1' },
     });
-
     const stdout = stripAnsi(result.stdout);
 
+    expect(result.exitCode).toEqual(0);
     expect(stdout).toMatch(
       /1:10  todo  'addOne' is defined but never used\s+no-unused-vars/
     );
@@ -159,6 +161,7 @@ describe('eslint with todo formatter', function () {
 
     const stdout = stripAnsi(result.stdout);
 
+    expect(result.exitCode).toEqual(0);
     expect(stdout).toMatch(
       /1:10  todo  'addOne' is defined but never used\s+no-unused-vars/
     );
@@ -196,6 +199,7 @@ describe('eslint with todo formatter', function () {
 
     const stdout = stripAnsi(result.stdout);
 
+    expect(result.exitCode).toEqual(1);
     expect(stdout).toMatch(
       /1:10  todo  'addOne' is defined but never used\s+no-unused-vars/
     );
@@ -214,7 +218,6 @@ describe('eslint with todo formatter', function () {
     });
     project.install();
 
-    debugger;
     // generate todo based on existing error
     await runEslintWithFormatter({
       env: { UPDATE_TODO: '1' },
@@ -230,6 +233,7 @@ describe('eslint with todo formatter', function () {
     // run normally and expect an error for not running --fix
     let result = await runEslintWithFormatter();
 
+    expect(result.exitCode).toEqual(1);
     expect(stripAnsi(result.stdout).trim()).toMatchInlineSnapshot(`
       "src/with-fixable-error.js
          0:0  error  Todo violation passes \`no-unused-vars\` rule. Please run \`--fix\` to remove this todo from the todo list  invalid-todo-violation-rule
@@ -238,7 +242,6 @@ describe('eslint with todo formatter', function () {
     `);
 
     // run fix, and expect that this will delete the outstanding todo item
-    debugger;
     await runEslintWithFormatter(['--fix']);
 
     // run normally again and expect no error

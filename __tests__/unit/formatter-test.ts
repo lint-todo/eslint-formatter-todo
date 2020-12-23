@@ -1,7 +1,6 @@
 import {
   buildTodoData,
   getTodoStorageDirPath,
-  readTodos,
   readTodosSync,
   todoStorageDirExists,
 } from '@ember-template-lint/todo-utils';
