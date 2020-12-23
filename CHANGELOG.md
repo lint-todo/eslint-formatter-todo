@@ -1,3 +1,19 @@
+## v1.1.0 (2020-12-23)
+
+#### :rocket: Enhancement
+* [#40](https://github.com/scalvert/eslint-formatter-todo/pull/40) Enable removal of outstanding todos with --fix ([@scalvert](https://github.com/scalvert))
+
+#### :bug: Bug Fix
+* [#49](https://github.com/scalvert/eslint-formatter-todo/pull/49) Converts to sync APIs ([@scalvert](https://github.com/scalvert))
+
+#### :house: Internal
+* [#44](https://github.com/scalvert/eslint-formatter-todo/pull/44) Renaming/consolidating files for clarity ([@scalvert](https://github.com/scalvert))
+
+#### Committers: 2
+- Steve Calvert ([@scalvert](https://github.com/scalvert))
+- [@dependabot-preview[bot]](https://github.com/apps/dependabot-preview)
+
+
 ## v1.0.0 (2020-12-01)
 
 #### :boom: Breaking Change
