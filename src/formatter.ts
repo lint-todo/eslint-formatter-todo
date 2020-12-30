@@ -10,19 +10,21 @@ import {
   writeTodosSync,
   _buildTodoDatum,
 } from '@ember-template-lint/todo-utils';
-import type { ESLint, Linter } from 'eslint';
+
 import { format } from './format';
-import { TodoFormatterOptions, TodoResultMessage } from './types';
 import { getBaseDir } from './get-base-dir';
+import { getDaysToDecay } from './get-todo-config';
 import hasFlag from 'has-flag';
-import { ERROR_SEVERITY, TODO_SEVERITY } from './constants';
+
+import type { ESLint, Linter } from 'eslint';
+import { Severity, TodoFormatterOptions, TodoResultMessage } from './types';
 
 export function formatter(results: ESLint.LintResult[]): string {
   const updateTodo = process.env.UPDATE_TODO === '1';
   const includeTodo = process.env.INCLUDE_TODO === '1';
 
   if (updateTodo) {
-    writeTodosSync(getBaseDir(), results);
+    writeTodosSync(getBaseDir(), results, getDaysToDecay());
   }
 
   return report(results, { includeTodo });
@@ -38,9 +40,11 @@ export function transformResults(
   results: ESLint.LintResult[],
   todoMap: Map<string, TodoData>
 ): void {
+  const today = new Date();
+
   results.forEach((result) => {
     (result.messages as TodoResultMessage[]).forEach((message) => {
-      if (message.severity !== ERROR_SEVERITY) {
+      if (message.severity !== Severity.error) {
         return;
       }
 
@@ -50,28 +54,39 @@ export function transformResults(
         result,
         message as Linter.LintMessage
       );
+      const todo = todoMap.get(todoFilePathFor(todoDatum));
 
-      const todoHash = todoFilePathFor(todoDatum);
-
-      if (!todoMap.has(todoHash)) {
+      if (todo === undefined) {
         return;
       }
 
-      message.severity = TODO_SEVERITY;
+      if (todo.errorDate instanceof Date && today > todo.errorDate) {
+        return;
+      }
+
+      if (todo.warnDate instanceof Date && today > todo.warnDate) {
+        message.severity = Severity.warn;
+        result.warningCount = result.warningCount + 1;
+
+        if (message.fix) {
+          result.fixableWarningCount = result.fixableWarningCount + 1;
+          result.fixableErrorCount -= 1;
+        }
+      } else {
+        message.severity = Severity.todo;
+        result.todoCount = Number.isInteger(result.todoCount)
+          ? result.todoCount + 1
+          : 1;
+
+        if (message.fix) {
+          result.fixableTodoCount = Number.isInteger(result.fixableTodoCount)
+            ? result.fixableTodoCount + 1
+            : 1;
+          result.fixableErrorCount -= 1;
+        }
+      }
 
       result.errorCount -= 1;
-      result.todoCount = Number.isInteger(result.todoCount)
-        ? result.todoCount + 1
-        : 1;
-
-      if (!message.fix) {
-        return;
-      }
-
-      result.fixableErrorCount -= 1;
-      result.fixableTodoCount = Number.isInteger(result.fixableTodoCount)
-        ? result.fixableTodoCount + 1
-        : 1;
     });
   });
 }
@@ -81,26 +96,26 @@ function report(results: ESLint.LintResult[], options: TodoFormatterOptions) {
 
   if (todoStorageDirExists(baseDir)) {
     const existingTodoFiles = readTodosSync(baseDir);
-    const [, itemsToRemoveFromTodos] = getTodoBatchesSync(
+    const [, todosToRemove, existingTodos] = getTodoBatchesSync(
       buildTodoData(baseDir, results),
       existingTodoFiles
     );
 
-    if (itemsToRemoveFromTodos.size > 0) {
+    if (todosToRemove.size > 0) {
       if (hasFlag('fix')) {
         applyTodoChanges(
           getTodoStorageDirPath(baseDir),
           new Map(),
-          itemsToRemoveFromTodos
+          todosToRemove
         );
       } else {
-        itemsToRemoveFromTodos.forEach((todo) => {
+        todosToRemove.forEach((todo) => {
           pushResult(results, todo);
         });
       }
     }
 
-    transformResults(baseDir, results, existingTodoFiles);
+    transformResults(baseDir, results, existingTodos);
   }
 
   return format(results, options);

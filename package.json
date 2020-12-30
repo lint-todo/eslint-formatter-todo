@@ -25,9 +25,11 @@
     "@ember-template-lint/todo-utils": "^3.3.0",
     "chalk": "^4.1.0",
     "eslint": "^7.10.0",
+    "fs-extra": "^9.0.1",
     "has-flag": "^4.0.0",
     "strip-ansi": "^6.0.0",
-    "text-table": "^0.2.0"
+    "text-table": "^0.2.0",
+    "type-fest": "^0.20.2"
   },
   "devDependencies": {
     "@types/eslint": "^7.2.4",
@@ -36,6 +38,7 @@
     "@types/tmp": "^0.2.0",
     "@typescript-eslint/eslint-plugin": "^4.4.0",
     "@typescript-eslint/parser": "^4.4.0",
+    "date-fns": "^2.16.1",
     "eslint-config-prettier": "^7.1.0",
     "eslint-plugin-jest": "^24.1.0",
     "eslint-plugin-node": "^11.1.0",
@@ -43,7 +46,6 @@
     "eslint-plugin-unicorn": "^24.0.0",
     "execa": "^5.0.0",
     "fixturify-project": "^2.1.0",
-    "fs-extra": "^9.0.1",
     "jest": "^26.5.2",
     "prettier": "^2.1.2",
     "release-it": "^14.2.0",

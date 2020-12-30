@@ -1,3 +1,4 @@
+import { DaysToDecay } from '@ember-template-lint/todo-utils';
 import { execSync } from 'child_process';
 import fixturify from 'fixturify';
 import Project from 'fixturify-project';
@@ -85,6 +86,16 @@ export class FakeProject extends Project {
 
   write(dirJSON: fixturify.DirJSON): void {
     Object.assign(this.files, dirJSON);
+    this.writeSync();
+  }
+
+  writeLintTodo(daysToDecay: DaysToDecay): void {
+    this.pkg = Object.assign({}, this.pkg, {
+      lintTodo: {
+        daysToDecay,
+      },
+    });
+
     this.writeSync();
   }
 
