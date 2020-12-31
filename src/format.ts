@@ -2,8 +2,8 @@ import { blueBright, dim, red, reset, underline, yellow } from 'chalk';
 import type { ESLint } from 'eslint';
 import stripAnsi from 'strip-ansi';
 import table from 'text-table';
-import { ERROR_SEVERITY, TODO_SEVERITY } from './constants';
-import type {
+import {
+  Severity,
   TodoFormatterCounts,
   TodoFormatterOptions,
   TodoResultMessage,
@@ -15,7 +15,7 @@ export function format(
     includeTodo: false,
   }
 ): string {
-  const counts = tallyResults(results);
+  const counts = sumCounts(results);
 
   let output = '\n';
 
@@ -43,7 +43,7 @@ function formatResults(
     }
 
     const areAllMessagesTodo = messages.every(
-      (message) => message.severity === TODO_SEVERITY
+      (message) => message.severity === Severity.todo
     );
 
     if (options.includeTodo || !areAllMessagesTodo) {
@@ -63,14 +63,14 @@ function formatMessages(
 ): string {
   const messageRows = messages
     .filter(
-      (message) => message.severity !== TODO_SEVERITY || options.includeTodo
+      (message) => message.severity !== Severity.todo || options.includeTodo
     )
     .map((message) => {
       let messageType;
 
-      if (message.fatal || message.severity === ERROR_SEVERITY) {
+      if (message.fatal || message.severity === Severity.error) {
         messageType = red('error');
-      } else if (message.severity === TODO_SEVERITY) {
+      } else if (message.severity === Severity.todo) {
         messageType = blueBright('todo');
       } else {
         messageType = yellow('warning');
@@ -184,7 +184,7 @@ function formatSummary(
   return output;
 }
 
-function tallyResults(results: ESLint.LintResult[]): TodoFormatterCounts {
+function sumCounts(results: ESLint.LintResult[]): TodoFormatterCounts {
   const counts = {
     total: 0,
     errorCount: 0,
