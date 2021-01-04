@@ -7,15 +7,15 @@
 ![TypeScript](https://badgen.net/badge/icon/typescript?icon=typescript&label)
 [![Code Style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](#badge)
 
-An ESLint formatter that can report errors as todos.
+An ESLint formatter that can report errors as TODOs, which can be deferred and fixed at a later time.
 
 <img src="docs/post-todo.png" style="background-color: #fff" />
 
-A todo is an existing linting error present in the project, but one that is transitioned into a todo state. This allows for incremental fixing of linting errors on very large projects, where the resolution or introduction of errors can cause undesired delays in engineer velocity.
+A TODO is an existing linting error present in the project, but one that is transitioned into a new severity level: TODO. This allows for incremental fixing of linting errors in very large projects, where the resolution or introduction of errors can cause undesired degradation in engineer velocity.
 
-When introducing new linting rules to your project it is possible that you may find many linting errors. If your CI is setup to prevent commits when lint errors happen, your team will have to fix all errors before you can add these new rules to your project leading to a delayed introduction of the rules.
+When introducing new linting rules to your project, it is possible that you may find many linting errors. If your CI is set up to prevent commits when lint errors are encountered, your team will have to fix all errors before you can add these new rules to your project, leading to a delayed introduction of the rules.
 
-This formatter allows you to introduce new rules immediately without blocking commits by taking a snapshot of errors and transforming them to todos. Errors not found in this snapshot will continue to reported as errors.
+This formatter allows you to introduce new rules immediately, without blocking commits, by taking a snapshot of errors and transforming them to TODOs. Errors not found in this snapshot will continue to reported as errors.
 
 ## Usage
 
