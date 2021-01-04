@@ -302,7 +302,7 @@ describe('eslint with todo formatter', function () {
     });
 
     const todos = [...(await readTodos(project.baseDir)).values()];
-    debugger;
+
     expect(result.exitCode).toEqual(0);
 
     todos.forEach((todo) => {
@@ -331,7 +331,7 @@ describe('eslint with todo formatter', function () {
     });
 
     const todos = [...(await readTodos(project.baseDir)).values()];
-    debugger;
+
     expect(result.exitCode).toEqual(0);
 
     todos.forEach((todo) => {
@@ -360,7 +360,7 @@ describe('eslint with todo formatter', function () {
     });
 
     const todos = [...(await readTodos(project.baseDir)).values()];
-    debugger;
+
     expect(result.exitCode).toEqual(0);
 
     todos.forEach((todo) => {
@@ -389,7 +389,7 @@ describe('eslint with todo formatter', function () {
     });
 
     const todos = [...(await readTodos(project.baseDir)).values()];
-    debugger;
+
     expect(result.exitCode).toEqual(0);
 
     todos.forEach((todo) => {
@@ -457,7 +457,7 @@ describe('eslint with todo formatter', function () {
     });
 
     const todos = [...(await readTodos(project.baseDir)).values()];
-    debugger;
+
     expect(result.exitCode).toEqual(0);
 
     todos.forEach((todo) => {
