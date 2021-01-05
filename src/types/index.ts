@@ -1,4 +1,4 @@
-import type { DaysToDecay } from '@ember-template-lint/todo-utils';
+import type { TodoConfig } from '@ember-template-lint/todo-utils';
 import type { Linter } from 'eslint';
 import type { PackageJson } from 'type-fest';
 
@@ -37,5 +37,5 @@ export enum Severity {
 }
 
 export type LintTodoPackageJson = PackageJson & {
-  lintTodo?: { daysToDecay: DaysToDecay };
+  lintTodo?: { daysToDecay: TodoConfig };
 };
