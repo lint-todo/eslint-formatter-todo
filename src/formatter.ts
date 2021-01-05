@@ -2,6 +2,7 @@ import {
   applyTodoChanges,
   buildTodoData,
   getTodoBatchesSync,
+  getTodoConfig,
   getTodoStorageDirPath,
   readTodosSync,
   TodoData,
@@ -11,10 +12,10 @@ import {
   _buildTodoDatum,
 } from '@ember-template-lint/todo-utils';
 
+import hasFlag from 'has-flag';
+// import { getLintTodoConfig } from '@ember-template-lint/todo-utils';
 import { format } from './format';
 import { getBaseDir } from './get-base-dir';
-import { getDaysToDecay } from './get-todo-config';
-import hasFlag from 'has-flag';
 
 import type { ESLint, Linter } from 'eslint';
 import { Severity, TodoFormatterOptions, TodoResultMessage } from './types';
@@ -24,7 +25,7 @@ export function formatter(results: ESLint.LintResult[]): string {
   const includeTodo = process.env.INCLUDE_TODO === '1';
 
   if (updateTodo) {
-    writeTodosSync(getBaseDir(), results, getDaysToDecay());
+    writeTodosSync(getBaseDir(), results, getTodoConfig(process.cwd()));
   }
 
   return report(results, { includeTodo });

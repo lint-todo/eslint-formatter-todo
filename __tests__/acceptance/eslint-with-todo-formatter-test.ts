@@ -268,7 +268,7 @@ describe('eslint with todo formatter', function () {
       },
     });
 
-    project.writeLintTodo({
+    project.writeLintTodoConfig({
       warn: 10,
       error: 5,
     });
@@ -291,7 +291,7 @@ describe('eslint with todo formatter', function () {
       },
     });
 
-    project.writeLintTodo({
+    project.writeLintTodoConfig({
       warn: 10,
     });
 
@@ -320,7 +320,7 @@ describe('eslint with todo formatter', function () {
       },
     });
 
-    project.writeLintTodo({
+    project.writeLintTodoConfig({
       warn: 10,
     });
 
@@ -349,7 +349,7 @@ describe('eslint with todo formatter', function () {
       },
     });
 
-    project.writeLintTodo({
+    project.writeLintTodoConfig({
       error: 10,
     });
 
@@ -378,7 +378,7 @@ describe('eslint with todo formatter', function () {
       },
     });
 
-    project.writeLintTodo({
+    project.writeLintTodoConfig({
       error: 10,
     });
 
@@ -407,7 +407,7 @@ describe('eslint with todo formatter', function () {
       },
     });
 
-    project.writeLintTodo({
+    project.writeLintTodoConfig({
       warn: 5,
       error: 10,
     });
@@ -441,7 +441,7 @@ describe('eslint with todo formatter', function () {
       },
     });
 
-    project.writeLintTodo({
+    project.writeLintTodoConfig({
       warn: 5,
       error: 10,
     });
@@ -479,7 +479,7 @@ describe('eslint with todo formatter', function () {
       },
     });
 
-    project.writeLintTodo({
+    project.writeLintTodoConfig({
       warn: 5,
     });
 
@@ -530,7 +530,7 @@ describe('eslint with todo formatter', function () {
       },
     });
 
-    project.writeLintTodo({
+    project.writeLintTodoConfig({
       error: 5,
     });
 
@@ -581,7 +581,7 @@ describe('eslint with todo formatter', function () {
       },
     });
 
-    project.writeLintTodo({
+    project.writeLintTodoConfig({
       warn: 5,
     });
 
@@ -674,7 +674,7 @@ describe('eslint with todo formatter', function () {
       },
     });
 
-    project.writeLintTodo({
+    project.writeLintTodoConfig({
       warn: 5,
       error: 10,
     });
@@ -723,7 +723,7 @@ describe('eslint with todo formatter', function () {
       },
     });
 
-    project.writeLintTodo({
+    project.writeLintTodoConfig({
       error: 5,
     });
 
@@ -816,7 +816,7 @@ describe('eslint with todo formatter', function () {
       },
     });
 
-    project.writeLintTodo({
+    project.writeLintTodoConfig({
       warn: 5,
       error: 10,
     });
