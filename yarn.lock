@@ -278,12 +278,14 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
-"@ember-template-lint/todo-utils@^3.3.0":
-  version "3.3.0"
-  resolved "https://registry.yarnpkg.com/@ember-template-lint/todo-utils/-/todo-utils-3.3.0.tgz#4273c2bcad211a52e5b7a98a1642df9b9bfe50a0"
-  integrity sha512-niGygekKJ/d14U+HpDPPaZA66BfuB0cPmftF821RrOuw3ols5cSOepy8WwIuMp7L7JXKLkN2Hj+idHlza9p3Yw==
+"@ember-template-lint/todo-utils@^4.1.0":
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/@ember-template-lint/todo-utils/-/todo-utils-4.1.0.tgz#dc097711f6cd490468b683c4329805c9bfbd4b5e"
+  integrity sha512-bfdIZ6SX8nLNLodkYOCU6C4VQU5VH1CheNrdIZiiM63xlg4eAnlYzlEn8h1JhPV8m/4sMl/zMTBrN73KcJVJKw==
   dependencies:
+    "@types/eslint" "^7.2.3"
     fs-extra "^9.0.1"
+    json-date-parser "^1.0.1"
     slash "^3.0.0"
 
 "@eslint/eslintrc@^0.2.2":
@@ -703,7 +705,7 @@
     "@types/node" "*"
     "@types/responselike" "*"
 
-"@types/eslint@^7.2.4":
+"@types/eslint@^7.2.3", "@types/eslint@^7.2.4":
   version "7.2.6"
   resolved "https://registry.yarnpkg.com/@types/eslint/-/eslint-7.2.6.tgz#5e9aff555a975596c03a98b59ecd103decc70c3c"
   integrity sha512-I+1sYH+NPQ3/tVqCeUSBwTE/0heyvtXqpIopUUArlBm0Kpocb8FbMa3AZ/ASKIFpN3rnEx932TTXDbt9OXsNDw==
@@ -1797,6 +1799,11 @@ data-urls@^2.0.0:
     abab "^2.0.3"
     whatwg-mimetype "^2.3.0"
     whatwg-url "^8.0.0"
+
+date-fns@^2.16.1:
+  version "2.16.1"
+  resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-2.16.1.tgz#05775792c3f3331da812af253e1a935851d3834b"
+  integrity sha512-sAJVKx/FqrLYHAQeN7VpJrPhagZc9R4ImZIWYRFZaaohR3KzmuK88touwsSwSVT8Qcbd4zoDsnGfX4GFB4imyQ==
 
 debug@4, debug@4.3.1, debug@^4.0.0, debug@^4.0.1, debug@^4.1.0, debug@^4.1.1:
   version "4.3.1"
@@ -3811,6 +3818,11 @@ json-buffer@3.0.1:
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/json-buffer/-/json-buffer-3.0.1.tgz#9338802a30d3b6605fbe0613e094008ca8c05a13"
   integrity sha512-4bV5BfR2mqfQTJm+V5tPPdf+ZpuhiIvTuAB5g8kcrXOZpTT/QwwVRWBywX1ozr6lEuPdbHxwaJlm9G6mI2sfSQ==
+
+json-date-parser@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/json-date-parser/-/json-date-parser-1.0.1.tgz#b70eb47c898f3b16643ad63ffb8d9620fd784f85"
+  integrity sha1-tw60fImPOxZkOtY/+42WIP14T4U=
 
 json-parse-even-better-errors@^2.3.0:
   version "2.3.1"
@@ -5851,6 +5863,11 @@ type-fest@^0.11.0:
   version "0.11.0"
   resolved "https://registry.yarnpkg.com/type-fest/-/type-fest-0.11.0.tgz#97abf0872310fed88a5c466b25681576145e33f1"
   integrity sha512-OdjXJxnCN1AvyLSzeKIgXTXxV+99ZuXl3Hpo9XpJAv9MBcHrrJOQ5kV7ypXOuQie+AmWG25hLbiKdwYTifzcfQ==
+
+type-fest@^0.20.2:
+  version "0.20.2"
+  resolved "https://registry.yarnpkg.com/type-fest/-/type-fest-0.20.2.tgz#1bf207f4b28f91583666cb5fbd327887301cd5f4"
+  integrity sha512-Ne+eE4r0/iWnpAxD852z3A+N0Bt5RN//NjJwRd2VFHEmrywxf5vsZlh4R6lixl6B+wz/8d+maTSAkN1FIkI3LQ==
 
 type-fest@^0.6.0:
   version "0.6.0"

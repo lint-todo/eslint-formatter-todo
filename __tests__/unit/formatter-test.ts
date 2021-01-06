@@ -6,8 +6,8 @@ import {
 } from '@ember-template-lint/todo-utils';
 import { existsSync } from 'fs';
 import { DirResult, dirSync } from 'tmp';
-import { TODO_SEVERITY } from '../../src/constants';
 import { formatter, transformResults } from '../../src/formatter';
+import { Severity } from '../../src/types';
 import fixtures from '../__fixtures__/fixtures';
 import { deepCopy } from '../__utils__/deep-copy';
 import { setUpdateTodoEnv } from '../__utils__/set-env';
@@ -104,7 +104,7 @@ describe('format-results', () => {
       );
 
       result.messages.forEach((message) => {
-        expect(message.severity).toEqual(TODO_SEVERITY);
+        expect(message.severity).toEqual(Severity.todo);
       });
     });
   });

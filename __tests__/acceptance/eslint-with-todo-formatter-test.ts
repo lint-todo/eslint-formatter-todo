@@ -1,10 +1,14 @@
 import execa from 'execa';
 import stripAnsi from 'strip-ansi';
 import { posix } from 'path';
-import { getTodoStorageDirPath } from '@ember-template-lint/todo-utils';
+import { differenceInDays, subDays } from 'date-fns';
+import { readdirSync } from 'fs-extra';
+import {
+  getTodoStorageDirPath,
+  readTodos,
+} from '@ember-template-lint/todo-utils';
 import { FakeProject } from '../__utils__/fake-project';
 import { readFile as readFixture } from '../__utils__/read-file-cached';
-import { readdirSync } from 'fs-extra';
 
 describe('eslint with todo formatter', function () {
   let project: FakeProject;
@@ -255,5 +259,648 @@ describe('eslint with todo formatter', function () {
     expect(result.exitCode).toEqual(0);
     expect(stripAnsi(result.stdout).trim()).toEqual('');
     expect(todos).toHaveLength(0);
+  });
+
+  it('should error if daysToDecay.error is less than daysToDecay.warn in package.json', async function () {
+    project.write({
+      src: {
+        'with-errors-0.js': readFixture('with-errors-0.js'),
+      },
+    });
+
+    project.writeTodoConfig({
+      warn: 10,
+      error: 5,
+    });
+
+    project.install();
+
+    const result = await runEslintWithFormatter({
+      env: { UPDATE_TODO: '1' },
+    });
+
+    expect(result.stderr).toMatch(
+      'The `lintTodo` configuration in the package.json contains invalid values. The `warn` value must be less than the `error` value.'
+    );
+  });
+
+  it('should create todos with correct warn date set', async function () {
+    project.write({
+      src: {
+        'with-errors-0.js': readFixture('with-errors-0.js'),
+      },
+    });
+
+    project.writeTodoConfig({
+      warn: 10,
+    });
+
+    project.install();
+
+    const result = await runEslintWithFormatter({
+      env: { UPDATE_TODO: '1' },
+    });
+
+    const todos = [...(await readTodos(project.baseDir)).values()];
+
+    expect(result.exitCode).toEqual(0);
+
+    todos.forEach((todo) => {
+      expect(
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        differenceInDays(new Date(todo.warnDate!), new Date(todo.createdDate))
+      ).toEqual(10);
+    });
+  });
+
+  it('should create todos with correct warn date set via env var (overrides config value)', async function () {
+    project.write({
+      src: {
+        'with-errors-0.js': readFixture('with-errors-0.js'),
+      },
+    });
+
+    project.writeTodoConfig({
+      warn: 10,
+    });
+
+    project.install();
+
+    const result = await runEslintWithFormatter({
+      env: { UPDATE_TODO: '1', TODO_DAYS_TO_WARN: '30' },
+    });
+
+    const todos = [...(await readTodos(project.baseDir)).values()];
+
+    expect(result.exitCode).toEqual(0);
+
+    todos.forEach((todo) => {
+      expect(
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        differenceInDays(new Date(todo.warnDate!), new Date(todo.createdDate))
+      ).toEqual(30);
+    });
+  });
+
+  it('should create todos with correct error date set', async function () {
+    project.write({
+      src: {
+        'with-errors-0.js': readFixture('with-errors-0.js'),
+      },
+    });
+
+    project.writeTodoConfig({
+      error: 10,
+    });
+
+    project.install();
+
+    const result = await runEslintWithFormatter({
+      env: { UPDATE_TODO: '1' },
+    });
+
+    const todos = [...(await readTodos(project.baseDir)).values()];
+
+    expect(result.exitCode).toEqual(0);
+
+    todos.forEach((todo) => {
+      expect(
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        differenceInDays(new Date(todo.errorDate!), new Date(todo.createdDate))
+      ).toEqual(10);
+    });
+  });
+
+  it('should create todos with correct error date set via env var (overrides config value)', async function () {
+    project.write({
+      src: {
+        'with-errors-0.js': readFixture('with-errors-0.js'),
+      },
+    });
+
+    project.writeTodoConfig({
+      error: 10,
+    });
+
+    project.install();
+
+    const result = await runEslintWithFormatter({
+      env: { UPDATE_TODO: '1', TODO_DAYS_TO_ERROR: '30' },
+    });
+
+    const todos = [...(await readTodos(project.baseDir)).values()];
+
+    expect(result.exitCode).toEqual(0);
+
+    todos.forEach((todo) => {
+      expect(
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        differenceInDays(new Date(todo.errorDate!), new Date(todo.createdDate))
+      ).toEqual(30);
+    });
+  });
+
+  it('should create todos with correct dates set for warn and error', async function () {
+    project.write({
+      src: {
+        'with-errors-0.js': readFixture('with-errors-0.js'),
+      },
+    });
+
+    project.writeTodoConfig({
+      warn: 5,
+      error: 10,
+    });
+
+    project.install();
+
+    const result = await runEslintWithFormatter({
+      env: { UPDATE_TODO: '1' },
+    });
+
+    const todos = [...(await readTodos(project.baseDir)).values()];
+
+    expect(result.exitCode).toEqual(0);
+
+    todos.forEach((todo) => {
+      expect(
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        differenceInDays(new Date(todo.warnDate!), new Date(todo.createdDate))
+      ).toEqual(5);
+      expect(
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        differenceInDays(new Date(todo.errorDate!), new Date(todo.createdDate))
+      ).toEqual(10);
+    });
+  });
+
+  it('should create todos with correct dates set for warn and error via env var (overrides config value)', async function () {
+    project.write({
+      src: {
+        'with-errors-0.js': readFixture('with-errors-0.js'),
+      },
+    });
+
+    project.writeTodoConfig({
+      warn: 5,
+      error: 10,
+    });
+
+    project.install();
+
+    const result = await runEslintWithFormatter({
+      env: {
+        UPDATE_TODO: '1',
+        TODO_DAYS_TO_WARN: '10',
+        TODO_DAYS_TO_ERROR: '20',
+      },
+    });
+
+    const todos = [...(await readTodos(project.baseDir)).values()];
+
+    expect(result.exitCode).toEqual(0);
+
+    todos.forEach((todo) => {
+      expect(
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        differenceInDays(new Date(todo.warnDate!), new Date(todo.createdDate))
+      ).toEqual(10);
+      expect(
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        differenceInDays(new Date(todo.errorDate!), new Date(todo.createdDate))
+      ).toEqual(20);
+    });
+  });
+
+  it('should set to todo if warnDate is not expired', async function () {
+    project.write({
+      src: {
+        'with-errors-0.js': readFixture('with-errors-0.js'),
+      },
+    });
+
+    project.writeTodoConfig({
+      warn: 5,
+    });
+
+    project.install();
+
+    await runEslintWithFormatter({
+      env: {
+        UPDATE_TODO: '1',
+      },
+    });
+
+    const result = await runEslintWithFormatter({
+      env: {
+        INCLUDE_TODO: '1',
+      },
+    });
+    const stdout = stripAnsi(result.stdout);
+
+    expect(result.exitCode).toEqual(0);
+    expect(stdout).toMatch(
+      /1:10  todo  'addOne' is defined but never used\s+no-unused-vars/
+    );
+    expect(stdout).toMatch(
+      /2:7   todo  Use the isNaN function to compare with NaN\s+use-isnan/
+    );
+    expect(stdout).toMatch(
+      /2:9   todo  Expected '!==' and instead saw '!='\s+eqeqeq/
+    );
+    expect(stdout).toMatch(
+      /3:12  todo  Unary operator '\+\+' used\s+no-plusplus/
+    );
+    expect(stdout).toMatch(
+      /3:12  todo  Assignment to function parameter 'i'\s+no-param-reassign/
+    );
+    expect(stdout).toMatch(
+      /5:3   todo  Function 'addOne' expected a return value\s+consistent-return/
+    );
+    expect(stdout).toMatch(
+      /5:3   todo  Unnecessary return statement\s+no-useless-return/
+    );
+    expect(stdout).toMatch(/✖ 0 problems \(0 errors, 0 warnings, 7 todos\)/);
+  });
+
+  it('should set to todo if errorDate is not expired', async function () {
+    project.write({
+      src: {
+        'with-errors-0.js': readFixture('with-errors-0.js'),
+      },
+    });
+
+    project.writeTodoConfig({
+      error: 5,
+    });
+
+    project.install();
+
+    await runEslintWithFormatter({
+      env: {
+        UPDATE_TODO: '1',
+      },
+    });
+
+    const result = await runEslintWithFormatter({
+      env: {
+        INCLUDE_TODO: '1',
+      },
+    });
+    const stdout = stripAnsi(result.stdout);
+
+    expect(result.exitCode).toEqual(0);
+    expect(stdout).toMatch(
+      /1:10  todo  'addOne' is defined but never used\s+no-unused-vars/
+    );
+    expect(stdout).toMatch(
+      /2:7   todo  Use the isNaN function to compare with NaN\s+use-isnan/
+    );
+    expect(stdout).toMatch(
+      /2:9   todo  Expected '!==' and instead saw '!='\s+eqeqeq/
+    );
+    expect(stdout).toMatch(
+      /3:12  todo  Unary operator '\+\+' used\s+no-plusplus/
+    );
+    expect(stdout).toMatch(
+      /3:12  todo  Assignment to function parameter 'i'\s+no-param-reassign/
+    );
+    expect(stdout).toMatch(
+      /5:3   todo  Function 'addOne' expected a return value\s+consistent-return/
+    );
+    expect(stdout).toMatch(
+      /5:3   todo  Unnecessary return statement\s+no-useless-return/
+    );
+    expect(stdout).toMatch(/✖ 0 problems \(0 errors, 0 warnings, 7 todos\)/);
+  });
+
+  it('should set todo to warn if warnDate has expired via config', async function () {
+    project.write({
+      src: {
+        'with-errors-0.js': readFixture('with-errors-0.js'),
+      },
+    });
+
+    project.writeTodoConfig({
+      warn: 5,
+    });
+
+    project.install();
+
+    await runEslintWithFormatter({
+      env: {
+        UPDATE_TODO: '1',
+        TODO_CREATED_DATE: subDays(new Date(), 10).toJSON(),
+      },
+    });
+
+    const result = await runEslintWithFormatter();
+    const stdout = stripAnsi(result.stdout);
+
+    expect(result.exitCode).toEqual(0);
+    expect(stdout).toMatch(
+      /1:10  warning  'addOne' is defined but never used\s+no-unused-vars/
+    );
+    expect(stdout).toMatch(
+      /2:7   warning  Use the isNaN function to compare with NaN\s+use-isnan/
+    );
+    expect(stdout).toMatch(
+      /2:9   warning  Expected '!==' and instead saw '!='\s+eqeqeq/
+    );
+    expect(stdout).toMatch(
+      /3:12  warning  Unary operator '\+\+' used\s+no-plusplus/
+    );
+    expect(stdout).toMatch(
+      /3:12  warning  Assignment to function parameter 'i'\s+no-param-reassign/
+    );
+    expect(stdout).toMatch(
+      /5:3   warning  Function 'addOne' expected a return value\s+consistent-return/
+    );
+    expect(stdout).toMatch(
+      /5:3   warning  Unnecessary return statement\s+no-useless-return/
+    );
+    expect(stdout).toMatch(/✖ 7 problems \(0 errors, 7 warnings\)/);
+  });
+
+  it('should set todo to warn if warnDate has expired via env var', async function () {
+    project.write({
+      src: {
+        'with-errors-0.js': readFixture('with-errors-0.js'),
+      },
+    });
+
+    project.install();
+
+    await runEslintWithFormatter({
+      env: {
+        UPDATE_TODO: '1',
+        TODO_CREATED_DATE: subDays(new Date(), 10).toJSON(),
+        TODO_DAYS_TO_WARN: '5',
+      },
+    });
+
+    const result = await runEslintWithFormatter();
+    const stdout = stripAnsi(result.stdout);
+
+    expect(result.exitCode).toEqual(0);
+    expect(stdout).toMatch(
+      /1:10  warning  'addOne' is defined but never used\s+no-unused-vars/
+    );
+    expect(stdout).toMatch(
+      /2:7   warning  Use the isNaN function to compare with NaN\s+use-isnan/
+    );
+    expect(stdout).toMatch(
+      /2:9   warning  Expected '!==' and instead saw '!='\s+eqeqeq/
+    );
+    expect(stdout).toMatch(
+      /3:12  warning  Unary operator '\+\+' used\s+no-plusplus/
+    );
+    expect(stdout).toMatch(
+      /3:12  warning  Assignment to function parameter 'i'\s+no-param-reassign/
+    );
+    expect(stdout).toMatch(
+      /5:3   warning  Function 'addOne' expected a return value\s+consistent-return/
+    );
+    expect(stdout).toMatch(
+      /5:3   warning  Unnecessary return statement\s+no-useless-return/
+    );
+    expect(stdout).toMatch(/✖ 7 problems \(0 errors, 7 warnings\)/);
+  });
+
+  it('should set todo to warn if warnDate has expired but errorDate has not', async function () {
+    project.write({
+      src: {
+        'with-errors-0.js': readFixture('with-errors-0.js'),
+      },
+    });
+
+    project.writeTodoConfig({
+      warn: 5,
+      error: 10,
+    });
+
+    project.install();
+
+    await runEslintWithFormatter({
+      env: {
+        UPDATE_TODO: '1',
+        TODO_CREATED_DATE: subDays(new Date(), 7).toJSON(),
+      },
+    });
+
+    const result = await runEslintWithFormatter();
+    const stdout = stripAnsi(result.stdout);
+
+    expect(result.exitCode).toEqual(0);
+    expect(stdout).toMatch(
+      /1:10  warning  'addOne' is defined but never used\s+no-unused-vars/
+    );
+    expect(stdout).toMatch(
+      /2:7   warning  Use the isNaN function to compare with NaN\s+use-isnan/
+    );
+    expect(stdout).toMatch(
+      /2:9   warning  Expected '!==' and instead saw '!='\s+eqeqeq/
+    );
+    expect(stdout).toMatch(
+      /3:12  warning  Unary operator '\+\+' used\s+no-plusplus/
+    );
+    expect(stdout).toMatch(
+      /3:12  warning  Assignment to function parameter 'i'\s+no-param-reassign/
+    );
+    expect(stdout).toMatch(
+      /5:3   warning  Function 'addOne' expected a return value\s+consistent-return/
+    );
+    expect(stdout).toMatch(
+      /5:3   warning  Unnecessary return statement\s+no-useless-return/
+    );
+    expect(stdout).toMatch(/✖ 7 problems \(0 errors, 7 warnings\)/);
+  });
+
+  it('should set todo to error if errorDate has expired via config', async function () {
+    project.write({
+      src: {
+        'with-errors-0.js': readFixture('with-errors-0.js'),
+      },
+    });
+
+    project.writeTodoConfig({
+      error: 5,
+    });
+
+    project.install();
+
+    await runEslintWithFormatter({
+      env: {
+        UPDATE_TODO: '1',
+        TODO_CREATED_DATE: subDays(new Date(), 10).toJSON(),
+      },
+    });
+
+    const result = await runEslintWithFormatter();
+    const stdout = stripAnsi(result.stdout);
+
+    expect(result.exitCode).toEqual(1);
+    expect(stdout).toMatch(
+      /1:10  error  'addOne' is defined but never used\s+no-unused-vars/
+    );
+    expect(stdout).toMatch(
+      /2:7   error  Use the isNaN function to compare with NaN\s+use-isnan/
+    );
+    expect(stdout).toMatch(
+      /2:9   error  Expected '!==' and instead saw '!='\s+eqeqeq/
+    );
+    expect(stdout).toMatch(
+      /3:12  error  Unary operator '\+\+' used\s+no-plusplus/
+    );
+    expect(stdout).toMatch(
+      /3:12  error  Assignment to function parameter 'i'\s+no-param-reassign/
+    );
+    expect(stdout).toMatch(
+      /5:3   error  Function 'addOne' expected a return value\s+consistent-return/
+    );
+    expect(stdout).toMatch(
+      /5:3   error  Unnecessary return statement\s+no-useless-return/
+    );
+    expect(stdout).toMatch(/✖ 7 problems \(7 errors, 0 warnings\)/);
+  });
+
+  it('should set todo to error if errorDate has expired via env var', async function () {
+    project.write({
+      src: {
+        'with-errors-0.js': readFixture('with-errors-0.js'),
+      },
+    });
+
+    project.install();
+
+    await runEslintWithFormatter({
+      env: {
+        UPDATE_TODO: '1',
+        TODO_CREATED_DATE: subDays(new Date(), 10).toJSON(),
+        TODO_DAYS_TO_ERROR: '5',
+      },
+    });
+
+    const result = await runEslintWithFormatter();
+    const stdout = stripAnsi(result.stdout);
+
+    expect(result.exitCode).toEqual(1);
+    expect(stdout).toMatch(
+      /1:10  error  'addOne' is defined but never used\s+no-unused-vars/
+    );
+    expect(stdout).toMatch(
+      /2:7   error  Use the isNaN function to compare with NaN\s+use-isnan/
+    );
+    expect(stdout).toMatch(
+      /2:9   error  Expected '!==' and instead saw '!='\s+eqeqeq/
+    );
+    expect(stdout).toMatch(
+      /3:12  error  Unary operator '\+\+' used\s+no-plusplus/
+    );
+    expect(stdout).toMatch(
+      /3:12  error  Assignment to function parameter 'i'\s+no-param-reassign/
+    );
+    expect(stdout).toMatch(
+      /5:3   error  Function 'addOne' expected a return value\s+consistent-return/
+    );
+    expect(stdout).toMatch(
+      /5:3   error  Unnecessary return statement\s+no-useless-return/
+    );
+    expect(stdout).toMatch(/✖ 7 problems \(7 errors, 0 warnings\)/);
+  });
+
+  it('should set todo to error if both warnDate and errorDate have expired via config', async function () {
+    project.write({
+      src: {
+        'with-errors-0.js': readFixture('with-errors-0.js'),
+      },
+    });
+
+    project.writeTodoConfig({
+      warn: 5,
+      error: 10,
+    });
+
+    project.install();
+
+    await runEslintWithFormatter({
+      env: {
+        UPDATE_TODO: '1',
+        TODO_CREATED_DATE: subDays(new Date(), 11).toJSON(),
+      },
+    });
+
+    const result = await runEslintWithFormatter();
+    const stdout = stripAnsi(result.stdout);
+
+    expect(result.exitCode).toEqual(1);
+    expect(stdout).toMatch(
+      /1:10  error  'addOne' is defined but never used\s+no-unused-vars/
+    );
+    expect(stdout).toMatch(
+      /2:7   error  Use the isNaN function to compare with NaN\s+use-isnan/
+    );
+    expect(stdout).toMatch(
+      /2:9   error  Expected '!==' and instead saw '!='\s+eqeqeq/
+    );
+    expect(stdout).toMatch(
+      /3:12  error  Unary operator '\+\+' used\s+no-plusplus/
+    );
+    expect(stdout).toMatch(
+      /3:12  error  Assignment to function parameter 'i'\s+no-param-reassign/
+    );
+    expect(stdout).toMatch(
+      /5:3   error  Function 'addOne' expected a return value\s+consistent-return/
+    );
+    expect(stdout).toMatch(
+      /5:3   error  Unnecessary return statement\s+no-useless-return/
+    );
+    expect(stdout).toMatch(/✖ 7 problems \(7 errors, 0 warnings\)/);
+  });
+
+  it('should set todo to error if both warnDate and errorDate have expired via env vars', async function () {
+    project.write({
+      src: {
+        'with-errors-0.js': readFixture('with-errors-0.js'),
+      },
+    });
+
+    project.install();
+
+    await runEslintWithFormatter({
+      env: {
+        UPDATE_TODO: '1',
+        TODO_CREATED_DATE: subDays(new Date(), 11).toJSON(),
+        TODO_DAYS_TO_WARN: '5',
+        TODO_DAYS_TO_ERROR: '10',
+      },
+    });
+
+    const result = await runEslintWithFormatter();
+    const stdout = stripAnsi(result.stdout);
+
+    expect(result.exitCode).toEqual(1);
+    expect(stdout).toMatch(
+      /1:10  error  'addOne' is defined but never used\s+no-unused-vars/
+    );
+    expect(stdout).toMatch(
+      /2:7   error  Use the isNaN function to compare with NaN\s+use-isnan/
+    );
+    expect(stdout).toMatch(
+      /2:9   error  Expected '!==' and instead saw '!='\s+eqeqeq/
+    );
+    expect(stdout).toMatch(
+      /3:12  error  Unary operator '\+\+' used\s+no-plusplus/
+    );
+    expect(stdout).toMatch(
+      /3:12  error  Assignment to function parameter 'i'\s+no-param-reassign/
+    );
+    expect(stdout).toMatch(
+      /5:3   error  Function 'addOne' expected a return value\s+consistent-return/
+    );
+    expect(stdout).toMatch(
+      /5:3   error  Unnecessary return statement\s+no-useless-return/
+    );
+    expect(stdout).toMatch(/✖ 7 problems \(7 errors, 0 warnings\)/);
   });
 });
