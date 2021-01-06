@@ -278,11 +278,12 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
-"@ember-template-lint/todo-utils@^4.0.0":
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/@ember-template-lint/todo-utils/-/todo-utils-4.0.0.tgz#5d188714aa6d2932112335c2c1195ce55274dbca"
-  integrity sha512-UMvKAwydas5cGSnEClSZnhCUjRh2FaY9eNEpKRU06gotbmxTiB6kUpfvSpUsWSy3Sfce8Mp8ZjCN0ldm+1a/zw==
+"@ember-template-lint/todo-utils@^4.1.0":
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/@ember-template-lint/todo-utils/-/todo-utils-4.1.0.tgz#dc097711f6cd490468b683c4329805c9bfbd4b5e"
+  integrity sha512-bfdIZ6SX8nLNLodkYOCU6C4VQU5VH1CheNrdIZiiM63xlg4eAnlYzlEn8h1JhPV8m/4sMl/zMTBrN73KcJVJKw==
   dependencies:
+    "@types/eslint" "^7.2.3"
     fs-extra "^9.0.1"
     json-date-parser "^1.0.1"
     slash "^3.0.0"
@@ -704,7 +705,7 @@
     "@types/node" "*"
     "@types/responselike" "*"
 
-"@types/eslint@^7.2.4":
+"@types/eslint@^7.2.3", "@types/eslint@^7.2.4":
   version "7.2.6"
   resolved "https://registry.yarnpkg.com/@types/eslint/-/eslint-7.2.6.tgz#5e9aff555a975596c03a98b59ecd103decc70c3c"
   integrity sha512-I+1sYH+NPQ3/tVqCeUSBwTE/0heyvtXqpIopUUArlBm0Kpocb8FbMa3AZ/ASKIFpN3rnEx932TTXDbt9OXsNDw==
