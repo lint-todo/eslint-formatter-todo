@@ -13,7 +13,6 @@ import {
 } from '@ember-template-lint/todo-utils';
 
 import hasFlag from 'has-flag';
-// import { getLintTodoConfig } from '@ember-template-lint/todo-utils';
 import { format } from './format';
 import { getBaseDir } from './get-base-dir';
 
