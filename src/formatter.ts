@@ -1,6 +1,7 @@
 import {
   applyTodoChanges,
   buildTodoData,
+  getSeverity,
   getTodoBatchesSync,
   getTodoConfig,
   getTodoStorageDirPath,
@@ -38,10 +39,8 @@ export function formatter(results: ESLint.LintResult[]): string {
 export function transformResults(
   baseDir: string,
   results: ESLint.LintResult[],
-  todoMap: Map<string, TodoData>
+  existingTodos: Map<string, TodoData>
 ): void {
-  const today = new Date();
-
   results.forEach((result) => {
     (result.messages as TodoResultMessage[]).forEach((message) => {
       if (message.severity !== Severity.error) {
@@ -54,18 +53,20 @@ export function transformResults(
         result,
         message as Linter.LintMessage
       );
-      const todo = todoMap.get(todoFilePathFor(todoDatum));
+      const todo = existingTodos.get(todoFilePathFor(todoDatum));
 
       if (todo === undefined) {
         return;
       }
 
-      if (todo.errorDate instanceof Date && today > todo.errorDate) {
+      const severity = getSeverity(todo);
+
+      if (severity === Severity.error) {
         return;
       }
 
-      if (todo.warnDate instanceof Date && today > todo.warnDate) {
-        message.severity = Severity.warn;
+      if (severity === Severity.warn) {
+        message.severity = severity;
         result.warningCount = result.warningCount + 1;
 
         if (message.fix) {
@@ -73,7 +74,7 @@ export function transformResults(
           result.fixableErrorCount -= 1;
         }
       } else {
-        message.severity = Severity.todo;
+        message.severity = severity;
         result.todoCount = Number.isInteger(result.todoCount)
           ? result.todoCount + 1
           : 1;
