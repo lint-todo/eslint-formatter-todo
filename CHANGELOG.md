@@ -1,3 +1,16 @@
+## v1.2.0 (2021-01-08)
+
+#### :rocket: Enhancement
+* [#55](https://github.com/scalvert/eslint-formatter-todo/pull/55) Adding ability to set days to decay to warn/error ([@scalvert](https://github.com/scalvert))
+
+#### :house: Internal
+* [#62](https://github.com/scalvert/eslint-formatter-todo/pull/62) Converting date validation to use todo-utils internal version. ([@scalvert](https://github.com/scalvert))
+
+#### Committers: 2
+- Steve Calvert ([@scalvert](https://github.com/scalvert))
+- [@dependabot-preview[bot]](https://github.com/apps/dependabot-preview)
+
+
 ## v1.1.0 (2020-12-23)
 
 #### :rocket: Enhancement
