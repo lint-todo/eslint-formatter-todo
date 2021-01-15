@@ -33,7 +33,7 @@ export function formatter(results: ESLint.LintResult[]): string {
       'Using `TODO_DAYS_TO_WARN` or `TODO_DAYS_TO_ERROR` is only valid when the `UPDATE_TODO` environment variable is being used.'
     );
   }
-  debugger;
+
   if (updateTodo) {
     const todoConfig = getTodoConfig(process.cwd());
 

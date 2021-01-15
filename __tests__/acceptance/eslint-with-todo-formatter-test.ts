@@ -83,7 +83,6 @@ describe('eslint with todo formatter', function () {
     });
     project.install();
 
-    debugger;
     let result = await runEslintWithFormatter({
       env: { TODO_DAYS_TO_WARN: '10' },
     });
@@ -104,7 +103,6 @@ describe('eslint with todo formatter', function () {
   });
 
   it('with UPDATE_TODO but no todos, outputs todos created summary', async function () {
-    debugger;
     project.write({
       src: {
         'no-problems.js': readFixture('with-no-problems.js'),
