@@ -1,6 +1,5 @@
 import execa from 'execa';
 import stripAnsi from 'strip-ansi';
-import { posix } from 'path';
 import { differenceInDays, subDays } from 'date-fns';
 import { readdirSync } from 'fs-extra';
 import {
@@ -59,7 +58,7 @@ describe('eslint with todo formatter', function () {
   });
 
   afterEach(() => {
-    project.dispose();
+    // project.dispose();
   });
 
   it('should not emit anything when there are no errors or warnings', async () => {
@@ -74,6 +73,176 @@ describe('eslint with todo formatter', function () {
 
     expect(result.stdout).toEqual('');
     expect(result.exitCode).toEqual(0);
+  });
+
+  it('errors if using either TODO_DAYS_TO_WARN or TODO_DAYS_TO_ERROR without UPDATE_TODO', async () => {
+    project.write({
+      src: {
+        'no-problems.js': readFixture('with-no-problems.js'),
+      },
+    });
+    project.install();
+
+    debugger;
+    let result = await runEslintWithFormatter({
+      env: { TODO_DAYS_TO_WARN: '10' },
+    });
+
+    expect(result.stderr).toContain(
+      'Using `TODO_DAYS_TO_WARN` or `TODO_DAYS_TO_ERROR` is only valid when the `UPDATE_TODO` environment variable is being used.'
+    );
+    expect(result.exitCode).toBeGreaterThan(0);
+
+    result = await runEslintWithFormatter({
+      env: { TODO_DAYS_TO_ERROR: '10' },
+    });
+
+    expect(result.stderr).toContain(
+      'Using `TODO_DAYS_TO_WARN` or `TODO_DAYS_TO_ERROR` is only valid when the `UPDATE_TODO` environment variable is being used.'
+    );
+    expect(result.exitCode).toBeGreaterThan(0);
+  });
+
+  it('with UPDATE_TODO but no todos, outputs todos created summary', async function () {
+    debugger;
+    project.write({
+      src: {
+        'no-problems.js': readFixture('with-no-problems.js'),
+      },
+    });
+    project.install();
+    const result = await runEslintWithFormatter({
+      env: {
+        UPDATE_TODO: '1',
+      },
+    });
+
+    expect(result.exitCode).toEqual(0);
+    expect(result.stdout).toMatchInlineSnapshot(`
+      "
+      ✔ 0 todos created, 0 todos removed"
+    `);
+  });
+
+  it('with UPDATE_TODO, outputs todos created summary', async () => {
+    project.write({
+      src: {
+        'with-errors-0.js': readFixture('with-errors-0.js'),
+        'with-errors-1.js': readFixture('with-errors-1.js'),
+      },
+    });
+    project.install();
+
+    const result = await runEslintWithFormatter({
+      env: { UPDATE_TODO: '1' },
+    });
+
+    expect(result.exitCode).toEqual(0);
+    expect(result.stdout).toMatchInlineSnapshot(`
+      "
+      ✔ 10 todos created, 0 todos removed"
+    `);
+  });
+
+  it('with UPDATE_TODO and INCLUDE_TODO, outputs todos created summary', async () => {
+    project.write({
+      src: {
+        'with-errors-0.js': readFixture('with-errors-0.js'),
+        'with-errors-1.js': readFixture('with-errors-1.js'),
+      },
+    });
+    project.install();
+
+    const result = await runEslintWithFormatter({
+      env: { UPDATE_TODO: '1', INCLUDE_TODO: '1' },
+    });
+
+    expect(result.exitCode).toEqual(0);
+    expect(result.stdout).toMatchInlineSnapshot(`
+      "
+      /private/var/folders/5m/4ybwhyvn3979lm2223q_q22c000gyd/T/tmp-97343RTHwm6PvOKI/fake-project/src/with-errors-0.js
+         1:10  todo  'addOne' is defined but never used          no-unused-vars
+         2:7   todo  Use the isNaN function to compare with NaN  use-isnan
+         2:9   todo  Expected '!==' and instead saw '!='         eqeqeq
+         3:12  todo  Unary operator '++' used                    no-plusplus
+         3:12  todo  Assignment to function parameter 'i'        no-param-reassign
+         5:3   todo  Function 'addOne' expected a return value   consistent-return
+         5:3   todo  Unnecessary return statement                no-useless-return
+
+      /private/var/folders/5m/4ybwhyvn3979lm2223q_q22c000gyd/T/tmp-97343RTHwm6PvOKI/fake-project/src/with-errors-1.js
+         1:10  todo  'fibonacci' is defined but never used   no-unused-vars
+         8:5   todo  Unary operator '--' used                no-plusplus
+         8:5   todo  Assignment to function parameter 'num'  no-param-reassign
+
+      ✖ 0 problems (0 errors, 0 warnings, 10 todos)
+        0 errors, 0 warnings, and 1 todo potentially fixable with the \`--fix\` option.
+
+      ✔ 10 todos created, 0 todos removed"
+    `);
+  });
+
+  it('with UPDATE_TODO, outputs todos created summary with warn info', async () => {
+    project.write({
+      src: {
+        'with-errors-0.js': readFixture('with-errors-0.js'),
+        'with-errors-1.js': readFixture('with-errors-1.js'),
+      },
+    });
+    project.install();
+
+    const result = await runEslintWithFormatter({
+      env: { UPDATE_TODO: '1', TODO_DAYS_TO_WARN: '10' },
+    });
+
+    expect(result.exitCode).toEqual(0);
+    expect(result.stdout).toMatchInlineSnapshot(`
+      "
+      ✔ 10 todos created, 0 todos removed (warn after 10 days)"
+    `);
+  });
+
+  it('with UPDATE_TODO, outputs todos created summary with error info', async () => {
+    project.write({
+      src: {
+        'with-errors-0.js': readFixture('with-errors-0.js'),
+        'with-errors-1.js': readFixture('with-errors-1.js'),
+      },
+    });
+    project.install();
+
+    const result = await runEslintWithFormatter({
+      env: { UPDATE_TODO: '1', TODO_DAYS_TO_ERROR: '10' },
+    });
+
+    expect(result.exitCode).toEqual(0);
+    expect(result.stdout).toMatchInlineSnapshot(`
+      "
+      ✔ 10 todos created, 0 todos removed (error after 10 days)"
+    `);
+  });
+
+  it('with UPDATE_TODO, outputs todos created summary with warn and error info', async () => {
+    project.write({
+      src: {
+        'with-errors-0.js': readFixture('with-errors-0.js'),
+        'with-errors-1.js': readFixture('with-errors-1.js'),
+      },
+    });
+    project.install();
+
+    const result = await runEslintWithFormatter({
+      env: {
+        UPDATE_TODO: '1',
+        TODO_DAYS_TO_WARN: '5',
+        TODO_DAYS_TO_ERROR: '10',
+      },
+    });
+
+    expect(result.exitCode).toEqual(0);
+    expect(result.stdout).toMatchInlineSnapshot(`
+      "
+      ✔ 10 todos created, 0 todos removed (warn after 5, error after 10 days)"
+    `);
   });
 
   it('should emit errors and warnings as normal', async () => {
@@ -101,23 +270,6 @@ describe('eslint with todo formatter', function () {
     expect(stdout).toMatch(
       /1 error and 0 warnings potentially fixable with the `--fix` option\./
     );
-  });
-
-  it('should not emit anything when only UPDATE_TODO=1 is set', async () => {
-    project.write({
-      src: {
-        'with-errors-0.js': readFixture('with-errors-0.js'),
-        'with-errors-1.js': readFixture('with-errors-1.js'),
-      },
-    });
-    project.install();
-
-    const result = await runEslintWithFormatter({
-      env: { UPDATE_TODO: '1' },
-    });
-
-    expect(result.exitCode).toEqual(0);
-    expect(stripAnsi(result.stdout).trim()).toEqual('');
   });
 
   it('should emit todo items and count when UPDATE_TODO=1 and INCLUDE_TODO=1 are set', async () => {
@@ -251,14 +403,11 @@ describe('eslint with todo formatter', function () {
     // run normally again and expect no error
     result = await runEslintWithFormatter();
 
-    const todoStorageDir = getTodoStorageDirPath(project.baseDir);
-    const todos = readdirSync(
-      posix.join(todoStorageDir, readdirSync(todoStorageDir)[0])
-    );
+    const todoDirs = readdirSync(getTodoStorageDirPath(project.baseDir));
 
     expect(result.exitCode).toEqual(0);
     expect(stripAnsi(result.stdout).trim()).toEqual('');
-    expect(todos).toHaveLength(0);
+    expect(todoDirs).toHaveLength(0);
   });
 
   it('should error if daysToDecay.error is less than daysToDecay.warn in package.json', async function () {
@@ -280,7 +429,7 @@ describe('eslint with todo formatter', function () {
     });
 
     expect(result.stderr).toMatch(
-      'The `lintTodo` configuration in the package.json contains invalid values. The `warn` value must be less than the `error` value.'
+      'The provided TODO configuration contains invalid values. The `warn` value (10) must be less than the `error` value (5).'
     );
   });
 

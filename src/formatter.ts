@@ -21,14 +21,32 @@ import type { ESLint, Linter } from 'eslint';
 import { Severity, TodoFormatterOptions, TodoResultMessage } from './types';
 
 export function formatter(results: ESLint.LintResult[]): string {
+  let todoInfo;
   const updateTodo = process.env.UPDATE_TODO === '1';
   const includeTodo = process.env.INCLUDE_TODO === '1';
 
+  if (
+    (process.env.TODO_DAYS_TO_WARN || process.env.TODO_DAYS_TO_ERROR) &&
+    !updateTodo
+  ) {
+    throw new Error(
+      'Using `TODO_DAYS_TO_WARN` or `TODO_DAYS_TO_ERROR` is only valid when the `UPDATE_TODO` environment variable is being used.'
+    );
+  }
+  debugger;
   if (updateTodo) {
-    writeTodosSync(getBaseDir(), results, getTodoConfig(process.cwd()));
+    const todoConfig = getTodoConfig(process.cwd());
+
+    const [added, removed] = writeTodosSync(getBaseDir(), results, todoConfig);
+
+    todoInfo = {
+      added,
+      removed,
+      todoConfig,
+    };
   }
 
-  return report(results, { includeTodo });
+  return report(results, { updateTodo, includeTodo, todoInfo });
 }
 
 /**
@@ -66,7 +84,6 @@ export function transformResults(
       }
 
       if (severity === Severity.warn) {
-        message.severity = severity;
         result.warningCount = result.warningCount + 1;
 
         if (message.fix) {
@@ -74,7 +91,6 @@ export function transformResults(
           result.fixableErrorCount -= 1;
         }
       } else {
-        message.severity = severity;
         result.todoCount = Number.isInteger(result.todoCount)
           ? result.todoCount + 1
           : 1;
@@ -86,6 +102,7 @@ export function transformResults(
           result.fixableErrorCount -= 1;
         }
       }
+      message.severity = severity;
 
       result.errorCount -= 1;
     });
