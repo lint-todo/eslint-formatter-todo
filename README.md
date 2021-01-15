@@ -12,7 +12,7 @@ An ESLint formatter that can report errors as TODOs, which can be deferred and f
 
 <img src="docs/post-todo.png" style="background-color: #fff" />
 
-A TODO is an existing linting error present in the project, but one that is transitioned into a new severity level: TODO. This allows for incremental fixing of linting errors in very large projects, where the resolution or introduction of errors can cause undesired degradation in engineer velocity.
+A `todo` is an existing linting error present in the project, but one that is transitioned into a new severity level: `todo`. This allows for incremental fixing of linting errors in very large projects, where the resolution or introduction of errors can cause undesired degradation in engineer velocity.
 
 When introducing new linting rules to your project, it is possible that you may find many linting errors. If your CI is set up to prevent commits when lint errors are encountered, your team will have to fix all errors before you can add these new rules to your project, leading to a delayed introduction of the rules.
 
@@ -41,7 +41,7 @@ INCLUDE_TODO=1 eslint --format @scalvert/eslint-formatter-todo
 ✖ 0 problems (0 errors, 0 warnings, 3 todos)
 ```
 
-If an error is fixed manually, `eslint` will let you know that there's an outstanding TODO file. You can remove this file by running `--fix`
+If an error is fixed manually, `eslint` will let you know that there's an outstanding `todo` file. You can remove this file by running `--fix`
 
 ```bash
 eslint . --format @scalvert/eslint-formatter-todo --fix
@@ -51,7 +51,7 @@ eslint . --format @scalvert/eslint-formatter-todo --fix
 
 TODOs can be created with optional due dates. These due dates allow for TODOs to, over a period of time, 'decay' the severity to a **warning** and/or **error** after a certain date. This helps ensure that TODOs are created but not forgotten, and can allow for better managing incremental roll-outs of large-scale or slow-to-fix rules.
 
-Due dates can be configured in one of two ways, but both specify integers for `warn` and `error` to signify the number of days from the TODO created date to decay the severity.
+Due dates can be configured in one of two ways, but both specify integers for `warn` and `error` to signify the number of days from the `todo` created date to decay the severity.
 
 :bulb: Both `warn` and `error` are optional. The value for `warn` should be greater than the value of `error`.
 
@@ -99,13 +99,13 @@ UPDATE_TODO='1' TODO_DAYS_TO_WARN= '2' eslint . --format @scalvert/eslint-format
 
 ### Due Date Workflows
 
-Converting errors to TODOs with `warn` and `error` dates that transition the TODO to `warn` after 10 days and `error` after 20 days:
+Converting errors to TODOs with `warn` and `error` dates that transition the `todo` to `warn` after 10 days and `error` after 20 days:
 
 ```bash
 UPDATE_TODO='1' TODO_DAYS_TO_WARN= '10' TODO_DAYS_TO_ERROR='20' eslint . --format @scalvert/eslint-formatter-todo
 ```
 
-Converting errors to TODOs with `warn` and `error` dates that transition the TODO `error` after 20 days, but doesn't include a `warn` date:
+Converting errors to TODOs with `warn` and `error` dates that transition the `todo` `error` after 20 days, but doesn't include a `warn` date:
 
 ```bash
 UPDATE_TODO='1' TODO_DAYS_TO_WARN= '' TODO_DAYS_TO_ERROR='20' eslint . --format @scalvert/eslint-formatter-todo

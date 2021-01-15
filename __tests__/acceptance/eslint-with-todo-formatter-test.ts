@@ -280,7 +280,7 @@ describe('eslint with todo formatter', function () {
     });
     project.install();
 
-    // run eslint to generate TODO dir but don't capture the result because this is not what we're testing
+    // run eslint to generate todo dir but don't capture the result because this is not what we're testing
     await runEslintWithFormatter({
       env: { UPDATE_TODO: '1' },
     });
