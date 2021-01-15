@@ -6,7 +6,15 @@ describe('format', () => {
   it('should return all errors', async () => {
     const results = fixtures.eslintWithErrors('/stable/path');
 
-    expect(stripAnsi(format(results))).toMatchInlineSnapshot(`
+    expect(
+      stripAnsi(
+        format(results, {
+          updateTodo: false,
+          includeTodo: false,
+          todoInfo: undefined,
+        })
+      )
+    ).toMatchInlineSnapshot(`
       "
       /stable/path/app/controllers/settings.js
          25:21  error  Do not access Object.prototype method 'hasOwnProperty' from target object  no-prototype-builtins
@@ -48,14 +56,29 @@ describe('format', () => {
   it('should not return anything when includeTodo is false and there are only todo items', async () => {
     const results = fixtures.eslintWithTodos('/stable/path');
 
-    expect(stripAnsi(format(results)).trim()).toEqual('');
+    expect(
+      stripAnsi(
+        format(results, {
+          updateTodo: false,
+          includeTodo: false,
+          todoInfo: undefined,
+        })
+      ).trim()
+    ).toEqual('');
   });
 
   it('should return all todo items when includeTodo is true', async () => {
     const results = fixtures.eslintWithTodos('/stable/path');
 
-    expect(stripAnsi(format(results, { includeTodo: true })))
-      .toMatchInlineSnapshot(`
+    expect(
+      stripAnsi(
+        format(results, {
+          updateTodo: false,
+          includeTodo: true,
+          todoInfo: undefined,
+        })
+      )
+    ).toMatchInlineSnapshot(`
       "
       /stable/path/app/controllers/settings.js
          25:21  todo  Do not access Object.prototype method 'hasOwnProperty' from target object  no-prototype-builtins
@@ -97,7 +120,15 @@ describe('format', () => {
   it('should only return errors and warnings if includeTodo is false and there are errors, warnings, and todo items', async () => {
     const results = fixtures.eslintWithErrorsWarningsTodos('/stable/path');
 
-    expect(stripAnsi(format(results))).toMatchInlineSnapshot(`
+    expect(
+      stripAnsi(
+        format(results, {
+          updateTodo: false,
+          includeTodo: false,
+          todoInfo: undefined,
+        })
+      )
+    ).toMatchInlineSnapshot(`
       "
       /stable/path/app/errors-only.js
          25:21  error  Do not access Object.prototype method 'hasOwnProperty' from target object  no-prototype-builtins

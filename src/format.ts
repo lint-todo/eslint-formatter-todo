@@ -6,27 +6,36 @@ import {
   Severity,
   TodoFormatterCounts,
   TodoFormatterOptions,
+  TodoInfo,
   TodoResultMessage,
 } from './types';
 
 export function format(
   results: ESLint.LintResult[],
-  { includeTodo }: TodoFormatterOptions = {
-    includeTodo: false,
-  }
+  options: TodoFormatterOptions
 ): string {
   const counts = sumCounts(results);
 
   let output = '\n';
 
-  output += formatResults(results, { includeTodo });
+  output += formatResults(results, options);
 
-  output += formatSummary(counts, { includeTodo });
+  output += formatSummary(counts, options);
+
+  if (options.updateTodo && options.todoInfo) {
+    output += formatTodoSummary(options.todoInfo);
+  }
+
+  const hasCounts = counts.total > 0;
+  const hasTodos = options.includeTodo && counts.todoCount > 0;
+  const hasUpdatedTodos =
+    options.updateTodo &&
+    options.todoInfo &&
+    (Number.isInteger(options.todoInfo.added) ||
+      Number.isInteger(options.todoInfo.removed));
 
   // Resets output color to prevent change on top level
-  return counts.total > 0 || (includeTodo && counts.todoCount > 0)
-    ? reset(output)
-    : '';
+  return hasCounts || hasTodos || hasUpdatedTodos ? reset(output) : '';
 }
 
 function formatResults(
@@ -182,6 +191,37 @@ function formatSummary(
   }
 
   return output;
+}
+
+function formatTodoSummary(todoInfo: TodoInfo) {
+  if (!todoInfo) {
+    return '';
+  }
+
+  let todoSummary = `✔ ${todoInfo.added} todos created`;
+
+  if (Number.isInteger(todoInfo.removed)) {
+    todoSummary += `, ${todoInfo.removed} todos removed`;
+  }
+
+  if (todoInfo.todoConfig) {
+    const todoConfig = todoInfo.todoConfig;
+    const todoConfigSummary = [];
+
+    if (todoConfig.warn) {
+      todoConfigSummary.push(`warn after ${todoConfig.warn}`);
+    }
+
+    if (todoConfig.error) {
+      todoConfigSummary.push(`error after ${todoConfig.error}`);
+    }
+
+    if (todoConfigSummary.length > 0) {
+      todoSummary += ` (${todoConfigSummary.join(', ')} days)`;
+    }
+  }
+
+  return todoSummary;
 }
 
 function sumCounts(results: ESLint.LintResult[]): TodoFormatterCounts {

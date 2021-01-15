@@ -12,7 +12,7 @@ An ESLint formatter that can report errors as TODOs, which can be deferred and f
 
 <img src="docs/post-todo.png" style="background-color: #fff" />
 
-A TODO is an existing linting error present in the project, but one that is transitioned into a new severity level: TODO. This allows for incremental fixing of linting errors in very large projects, where the resolution or introduction of errors can cause undesired degradation in engineer velocity.
+A `todo` is an existing linting error present in the project, but one that is transitioned into a new severity level: `todo`. This allows for incremental fixing of linting errors in very large projects, where the resolution or introduction of errors can cause undesired degradation in engineer velocity.
 
 When introducing new linting rules to your project, it is possible that you may find many linting errors. If your CI is set up to prevent commits when lint errors are encountered, your team will have to fix all errors before you can add these new rules to your project, leading to a delayed introduction of the rules.
 
@@ -20,26 +20,18 @@ This formatter allows you to introduce new rules immediately, without blocking c
 
 ## Usage
 
-When you introduce new linting rules, execute ESLint by setting `UPDATE_TODO=1` and passing the formatter.
+TODOs are stored in a `.lint-todo` directory that should be checked in with other source code. Each error generates a unique file, allowing for multiple errors within a single file to be resolved individually with minimal conflicts.
+
+To convert errors to TODOs, you can use the `UPDATE_TODO` environment variable. This will convert all active errors to TODOs, hiding them from the linting output.
 
 ```bash
-$ UPDATE_TODO=1 eslint --format @scalvert/eslint-formatter-todo
+UPDATE_TODO=1 eslint --format @scalvert/eslint-formatter-todo
 ```
 
-This command will transform all reported `error`s to `todo`s and will generate files inside the `.lint-todo` directory to track them.
-
-Executing ESLint without `UPDATE_TODO=1` will run `eslint` normally but will transform errors that are present in the `.lint-todo` directory to `todo` items, not displaying them as errors.
+If you want to see TODOs as part of `eslint`'s output, you can include them
 
 ```bash
-$ eslint --format @scalvert/eslint-formatter-todo
-
-# no output, no errors
-```
-
-To have `todo`s to appear in results, set `INCLUDE_TODO=1`.
-
-```bash
-$ INCLUDE_TODO=1 eslint --format @scalvert/eslint-formatter-todo
+INCLUDE_TODO=1 eslint --format @scalvert/eslint-formatter-todo
 
 /path/to/file/fullOfProblems.js
    2:7   todo  Use the isNaN function to compare with NaN  use-isnan
@@ -47,4 +39,74 @@ $ INCLUDE_TODO=1 eslint --format @scalvert/eslint-formatter-todo
    3:12  todo  Unary operator '++' used                    no-plusplus
 
 ✖ 0 problems (0 errors, 0 warnings, 3 todos)
+```
+
+If an error is fixed manually, `eslint` will let you know that there's an outstanding `todo` file. You can remove this file by running `--fix`
+
+```bash
+eslint . --format @scalvert/eslint-formatter-todo --fix
+```
+
+### Configuring Due Dates
+
+TODOs can be created with optional due dates. These due dates allow for TODOs to, over a period of time, 'decay' the severity to a **warning** and/or **error** after a certain date. This helps ensure that TODOs are created but not forgotten, and can allow for better managing incremental roll-outs of large-scale or slow-to-fix rules.
+
+Due dates can be configured in one of two ways, but both specify integers for `warn` and `error` to signify the number of days from the `todo` created date to decay the severity.
+
+:bulb: Both `warn` and `error` are optional. The value for `warn` should be greater than the value of `error`.
+
+1. Via package.json configuration
+
+```json
+{
+  "lintTodo": {
+    "decayDays": {
+      "warn": 5,
+      "error": 10
+    }
+  }
+}
+```
+
+1. Via environment variables
+
+```bash
+UPDATE_TODO='1' TODO_DAYS_TO_WARN="5" TODO_DAYS_TO_ERROR="10" eslint . --format @scalvert/eslint-formatter-todo
+```
+
+In order of precedence, environment variables override package.json configuration values.
+
+For example, if you've specified the following values in the package.json configuration...
+
+```json
+{
+  "lintTodo": {
+    "decayDays": {
+      "warn": 5,
+      "error": 10
+    }
+  }
+}
+```
+
+...and you supply the following environment variables:
+
+```bash
+UPDATE_TODO='1' TODO_DAYS_TO_WARN= '2' eslint . --format @scalvert/eslint-formatter-todo
+```
+
+...the TODOs will be created with a `warn` date 2 days from the created date, and an `error` date 10 days from the created date.
+
+### Due Date Workflows
+
+Converting errors to TODOs with `warn` and `error` dates that transition the `todo` to `warn` after 10 days and `error` after 20 days:
+
+```bash
+UPDATE_TODO='1' TODO_DAYS_TO_WARN= '10' TODO_DAYS_TO_ERROR='20' eslint . --format @scalvert/eslint-formatter-todo
+```
+
+Converting errors to TODOs with `warn` and `error` dates that transition the `todo` `error` after 20 days, but doesn't include a `warn` date:
+
+```bash
+UPDATE_TODO='1' TODO_DAYS_TO_WARN= '' TODO_DAYS_TO_ERROR='20' eslint . --format @scalvert/eslint-formatter-todo
 ```

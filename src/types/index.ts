@@ -15,8 +15,18 @@ export type TodoResultMessage = Omit<Linter.LintMessage, 'severity'> & {
   severity: Linter.Severity | -1;
 };
 
+export type TodoInfo =
+  | {
+      added: number;
+      removed: number;
+      todoConfig: TodoConfig | undefined;
+    }
+  | undefined;
+
 export interface TodoFormatterOptions {
+  updateTodo: boolean;
   includeTodo: boolean;
+  todoInfo: TodoInfo;
 }
 
 export interface TodoFormatterCounts {
