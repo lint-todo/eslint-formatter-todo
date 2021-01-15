@@ -116,10 +116,7 @@ describe('eslint with todo formatter', function () {
     });
 
     expect(result.exitCode).toEqual(0);
-    expect(result.stdout).toMatchInlineSnapshot(`
-      "
-      ✔ 0 todos created, 0 todos removed"
-    `);
+    expect(result.stdout).toMatch(/✔ 0 todos created, 0 todos removed/);
   });
 
   it('with UPDATE_TODO, outputs todos created summary', async () => {
@@ -136,10 +133,7 @@ describe('eslint with todo formatter', function () {
     });
 
     expect(result.exitCode).toEqual(0);
-    expect(result.stdout).toMatchInlineSnapshot(`
-      "
-      ✔ 10 todos created, 0 todos removed"
-    `);
+    expect(result.stdout).toMatch(/✔ 10 todos created, 0 todos removed/);
   });
 
   it('with UPDATE_TODO and INCLUDE_TODO, outputs todos created summary', async () => {
@@ -156,27 +150,13 @@ describe('eslint with todo formatter', function () {
     });
 
     expect(result.exitCode).toEqual(0);
-    expect(result.stdout).toMatchInlineSnapshot(`
-      "
-      /private/var/folders/5m/4ybwhyvn3979lm2223q_q22c000gyd/T/tmp-97343RTHwm6PvOKI/fake-project/src/with-errors-0.js
-         1:10  todo  'addOne' is defined but never used          no-unused-vars
-         2:7   todo  Use the isNaN function to compare with NaN  use-isnan
-         2:9   todo  Expected '!==' and instead saw '!='         eqeqeq
-         3:12  todo  Unary operator '++' used                    no-plusplus
-         3:12  todo  Assignment to function parameter 'i'        no-param-reassign
-         5:3   todo  Function 'addOne' expected a return value   consistent-return
-         5:3   todo  Unnecessary return statement                no-useless-return
-
-      /private/var/folders/5m/4ybwhyvn3979lm2223q_q22c000gyd/T/tmp-97343RTHwm6PvOKI/fake-project/src/with-errors-1.js
-         1:10  todo  'fibonacci' is defined but never used   no-unused-vars
-         8:5   todo  Unary operator '--' used                no-plusplus
-         8:5   todo  Assignment to function parameter 'num'  no-param-reassign
-
-      ✖ 0 problems (0 errors, 0 warnings, 10 todos)
-        0 errors, 0 warnings, and 1 todo potentially fixable with the \`--fix\` option.
-
-      ✔ 10 todos created, 0 todos removed"
-    `);
+    expect(result.stdout).toMatch(
+      /✖ 0 problems \(0 errors, 0 warnings, 10 todos/
+    );
+    expect(result.stdout).toMatch(
+      /0 errors, 0 warnings, and 1 todo potentially fixable with the `--fix` option./
+    );
+    expect(result.stdout).toMatch(/✔ 10 todos created, 0 todos removed/);
   });
 
   it('with UPDATE_TODO, outputs todos created summary with warn info', async () => {
@@ -193,10 +173,9 @@ describe('eslint with todo formatter', function () {
     });
 
     expect(result.exitCode).toEqual(0);
-    expect(result.stdout).toMatchInlineSnapshot(`
-      "
-      ✔ 10 todos created, 0 todos removed (warn after 10 days)"
-    `);
+    expect(result.stdout).toMatch(
+      /✔ 10 todos created, 0 todos removed \(warn after 10 days\)/
+    );
   });
 
   it('with UPDATE_TODO, outputs todos created summary with error info', async () => {
@@ -213,10 +192,9 @@ describe('eslint with todo formatter', function () {
     });
 
     expect(result.exitCode).toEqual(0);
-    expect(result.stdout).toMatchInlineSnapshot(`
-      "
-      ✔ 10 todos created, 0 todos removed (error after 10 days)"
-    `);
+    expect(result.stdout).toMatch(
+      /✔ 10 todos created, 0 todos removed \(error after 10 days\)/
+    );
   });
 
   it('with UPDATE_TODO, outputs todos created summary with warn and error info', async () => {
@@ -237,10 +215,9 @@ describe('eslint with todo formatter', function () {
     });
 
     expect(result.exitCode).toEqual(0);
-    expect(result.stdout).toMatchInlineSnapshot(`
-      "
-      ✔ 10 todos created, 0 todos removed (warn after 5, error after 10 days)"
-    `);
+    expect(result.stdout).toMatch(
+      /✔ 10 todos created, 0 todos removed \(warn after 5, error after 10 days\)/
+    );
   });
 
   it('should emit errors and warnings as normal', async () => {
