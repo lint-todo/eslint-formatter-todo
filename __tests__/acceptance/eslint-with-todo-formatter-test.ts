@@ -58,7 +58,7 @@ describe('eslint with todo formatter', function () {
   });
 
   afterEach(() => {
-    // project.dispose();
+    project.dispose();
   });
 
   it('should not emit anything when there are no errors or warnings', async () => {
