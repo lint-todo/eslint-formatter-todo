@@ -1,3 +1,13 @@
+## v1.3.0 (2021-01-15)
+
+#### :rocket: Enhancement
+* [#67](https://github.com/scalvert/eslint-formatter-todo/pull/67) Adds output feedback when creating TODOs ([@scalvert](https://github.com/scalvert))
+
+#### Committers: 2
+- Steve Calvert ([@scalvert](https://github.com/scalvert))
+- [@dependabot-preview[bot]](https://github.com/apps/dependabot-preview)
+
+
 ## v1.2.0 (2021-01-08)
 
 #### :rocket: Enhancement
