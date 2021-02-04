@@ -12,6 +12,7 @@ describe('format', () => {
           updateTodo: false,
           includeTodo: false,
           todoInfo: undefined,
+          writeTodoOptions: {},
         })
       )
     ).toMatchInlineSnapshot(`
@@ -62,6 +63,7 @@ describe('format', () => {
           updateTodo: false,
           includeTodo: false,
           todoInfo: undefined,
+          writeTodoOptions: {},
         })
       ).trim()
     ).toEqual('');
@@ -76,6 +78,7 @@ describe('format', () => {
           updateTodo: false,
           includeTodo: true,
           todoInfo: undefined,
+          writeTodoOptions: {},
         })
       )
     ).toMatchInlineSnapshot(`
@@ -126,6 +129,7 @@ describe('format', () => {
           updateTodo: false,
           includeTodo: false,
           todoInfo: undefined,
+          writeTodoOptions: {},
         })
       )
     ).toMatchInlineSnapshot(`

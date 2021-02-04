@@ -1,4 +1,7 @@
-import type { TodoConfig } from '@ember-template-lint/todo-utils';
+import type {
+  TodoConfig,
+  WriteTodoOptions,
+} from '@ember-template-lint/todo-utils';
 import type { Linter } from 'eslint';
 import type { PackageJson } from 'type-fest';
 
@@ -27,6 +30,7 @@ export interface TodoFormatterOptions {
   updateTodo: boolean;
   includeTodo: boolean;
   todoInfo: TodoInfo;
+  writeTodoOptions: Partial<WriteTodoOptions>;
 }
 
 export interface TodoFormatterCounts {

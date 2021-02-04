@@ -9,6 +9,7 @@ import {
   TodoData,
   todoFilePathFor,
   todoStorageDirExists,
+  WriteTodoOptions,
   writeTodosSync,
   _buildTodoDatum,
 } from '@ember-template-lint/todo-utils';
@@ -24,6 +25,10 @@ export function formatter(results: ESLint.LintResult[]): string {
   let todoInfo;
   const updateTodo = process.env.UPDATE_TODO === '1';
   const includeTodo = process.env.INCLUDE_TODO === '1';
+  const writeTodoOptions: Partial<WriteTodoOptions> = {
+    todoConfig: getTodoConfig(process.cwd()) ?? {},
+    shouldRemove: () => true,
+  };
 
   if (
     (process.env.TODO_DAYS_TO_WARN || process.env.TODO_DAYS_TO_ERROR) &&
@@ -35,18 +40,25 @@ export function formatter(results: ESLint.LintResult[]): string {
   }
 
   if (updateTodo) {
-    const todoConfig = getTodoConfig(process.cwd());
-
-    const [added, removed] = writeTodosSync(getBaseDir(), results, todoConfig);
+    const [added, removed] = writeTodosSync(
+      getBaseDir(),
+      results,
+      writeTodoOptions
+    );
 
     todoInfo = {
       added,
       removed,
-      todoConfig,
+      todoConfig: writeTodoOptions.todoConfig,
     };
   }
 
-  return report(results, { updateTodo, includeTodo, todoInfo });
+  return report(results, {
+    updateTodo,
+    includeTodo,
+    todoInfo,
+    writeTodoOptions,
+  });
 }
 
 /**
@@ -116,7 +128,8 @@ function report(results: ESLint.LintResult[], options: TodoFormatterOptions) {
     const existingTodoFiles = readTodosSync(baseDir);
     const [, todosToRemove, existingTodos] = getTodoBatchesSync(
       buildTodoData(baseDir, results),
-      existingTodoFiles
+      existingTodoFiles,
+      options.writeTodoOptions
     );
 
     if (todosToRemove.size > 0) {
