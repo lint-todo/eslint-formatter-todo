@@ -1,3 +1,17 @@
+## v1.3.1 (2021-02-05)
+
+#### :bug: Bug Fix
+* [#86](https://github.com/scalvert/eslint-formatter-todo/pull/86) Fixes issue where todos were deleted from a different engine ([@scalvert](https://github.com/scalvert))
+
+#### :house: Internal
+* [#84](https://github.com/scalvert/eslint-formatter-todo/pull/84) Updates @ember-template-lint/todo-utils to latest beta ([@scalvert](https://github.com/scalvert))
+* [#76](https://github.com/scalvert/eslint-formatter-todo/pull/76) Adds windows to the testing matrix for CI ([@scalvert](https://github.com/scalvert))
+
+#### Committers: 2
+- Steve Calvert ([@scalvert](https://github.com/scalvert))
+- [@dependabot-preview[bot]](https://github.com/apps/dependabot-preview)
+
+
 ## v1.3.0 (2021-01-15)
 
 #### :rocket: Enhancement
