@@ -279,9 +279,9 @@
     minimist "^1.2.0"
 
 "@ember-template-lint/todo-utils@^8.0.0-beta.2":
-  version "8.0.0-beta.2"
-  resolved "https://registry.yarnpkg.com/@ember-template-lint/todo-utils/-/todo-utils-8.0.0-beta.2.tgz#fd849b4bf2a3fb2ea240ca3594ababc9e8d13f93"
-  integrity sha512-C1Ezt1hVXkPnQ7ndtmpsKc1oMcjBDI1JrEQrxxOAxX+W+0ggB7NNUH3yqdVZvSDsxkzWq6c25hjvITNZI0ROmg==
+  version "8.0.0-beta.3"
+  resolved "https://registry.yarnpkg.com/@ember-template-lint/todo-utils/-/todo-utils-8.0.0-beta.3.tgz#9a048c2787c781f80a6ae682787fbfcb5ea8e03d"
+  integrity sha512-L0XXY8U6Jk4c4OGSydhxa5K3/kyUpaqc6IpYW4wU8g1yu/zOj7XgKgmp48+t3dt1p6Xa+CHKnD1I86m99BEYXg==
   dependencies:
     "@types/eslint" "^7.2.6"
     fs-extra "^9.0.1"
