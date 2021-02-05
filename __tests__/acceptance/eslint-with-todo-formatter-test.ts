@@ -5,9 +5,10 @@ import { readdirSync } from 'fs-extra';
 import {
   getTodoStorageDirPath,
   readTodos,
+  writeTodos,
 } from '@ember-template-lint/todo-utils';
 import { FakeProject } from '../__utils__/fake-project';
-import { readFile as readFixture } from '../__utils__/read-file-cached';
+import { getObjectFixture, getStringFixture } from '../__utils__/get-fixture';
 
 describe('eslint with todo formatter', function () {
   let project: FakeProject;
@@ -64,7 +65,7 @@ describe('eslint with todo formatter', function () {
   it('should not emit anything when there are no errors or warnings', async () => {
     project.write({
       src: {
-        'no-problems.js': readFixture('with-no-problems.js'),
+        'no-problems.js': getStringFixture('with-no-problems.js'),
       },
     });
     project.install();
@@ -78,7 +79,7 @@ describe('eslint with todo formatter', function () {
   it('errors if using either TODO_DAYS_TO_WARN or TODO_DAYS_TO_ERROR without UPDATE_TODO', async () => {
     project.write({
       src: {
-        'no-problems.js': readFixture('with-no-problems.js'),
+        'no-problems.js': getStringFixture('with-no-problems.js'),
       },
     });
     project.install();
@@ -105,7 +106,7 @@ describe('eslint with todo formatter', function () {
   it('with UPDATE_TODO but no todos, outputs todos created summary', async function () {
     project.write({
       src: {
-        'no-problems.js': readFixture('with-no-problems.js'),
+        'no-problems.js': getStringFixture('with-no-problems.js'),
       },
     });
     project.install();
@@ -122,8 +123,8 @@ describe('eslint with todo formatter', function () {
   it('with UPDATE_TODO, outputs todos created summary', async () => {
     project.write({
       src: {
-        'with-errors-0.js': readFixture('with-errors-0.js'),
-        'with-errors-1.js': readFixture('with-errors-1.js'),
+        'with-errors-0.js': getStringFixture('with-errors-0.js'),
+        'with-errors-1.js': getStringFixture('with-errors-1.js'),
       },
     });
     project.install();
@@ -139,8 +140,8 @@ describe('eslint with todo formatter', function () {
   it('with UPDATE_TODO and INCLUDE_TODO, outputs todos created summary', async () => {
     project.write({
       src: {
-        'with-errors-0.js': readFixture('with-errors-0.js'),
-        'with-errors-1.js': readFixture('with-errors-1.js'),
+        'with-errors-0.js': getStringFixture('with-errors-0.js'),
+        'with-errors-1.js': getStringFixture('with-errors-1.js'),
       },
     });
     project.install();
@@ -162,8 +163,8 @@ describe('eslint with todo formatter', function () {
   it('with UPDATE_TODO, outputs todos created summary with warn info', async () => {
     project.write({
       src: {
-        'with-errors-0.js': readFixture('with-errors-0.js'),
-        'with-errors-1.js': readFixture('with-errors-1.js'),
+        'with-errors-0.js': getStringFixture('with-errors-0.js'),
+        'with-errors-1.js': getStringFixture('with-errors-1.js'),
       },
     });
     project.install();
@@ -181,8 +182,8 @@ describe('eslint with todo formatter', function () {
   it('with UPDATE_TODO, outputs todos created summary with error info', async () => {
     project.write({
       src: {
-        'with-errors-0.js': readFixture('with-errors-0.js'),
-        'with-errors-1.js': readFixture('with-errors-1.js'),
+        'with-errors-0.js': getStringFixture('with-errors-0.js'),
+        'with-errors-1.js': getStringFixture('with-errors-1.js'),
       },
     });
     project.install();
@@ -200,8 +201,8 @@ describe('eslint with todo formatter', function () {
   it('with UPDATE_TODO, outputs todos created summary with warn and error info', async () => {
     project.write({
       src: {
-        'with-errors-0.js': readFixture('with-errors-0.js'),
-        'with-errors-1.js': readFixture('with-errors-1.js'),
+        'with-errors-0.js': getStringFixture('with-errors-0.js'),
+        'with-errors-1.js': getStringFixture('with-errors-1.js'),
       },
     });
     project.install();
@@ -223,7 +224,7 @@ describe('eslint with todo formatter', function () {
   it('should emit errors and warnings as normal', async () => {
     project.write({
       src: {
-        'with-errors-and-warnings.js': readFixture(
+        'with-errors-and-warnings.js': getStringFixture(
           'with-errors-and-warnings.js'
         ),
       },
@@ -247,11 +248,37 @@ describe('eslint with todo formatter', function () {
     );
   });
 
+  it('should not remove todos from another engine', async function () {
+    project.write({
+      src: {
+        'with-errors-0.js': getStringFixture('with-errors-0.js'),
+        'with-errors-1.js': getStringFixture('with-errors-1.js'),
+      },
+    });
+    project.install();
+
+    await writeTodos(
+      project.baseDir,
+      getObjectFixture('ember-template-lint-single-error.json', project.baseDir)
+    );
+
+    const result = await runEslintWithFormatter({
+      env: {
+        UPDATE_TODO: '1',
+      },
+    });
+
+    expect(result.exitCode).toEqual(0);
+    expect(result.stdout).toMatch(
+      /.*✔ 10 todos created, 0 todos removed \(warn after 30, error after 60 days\)/
+    );
+  });
+
   it('should emit todo items and count when UPDATE_TODO=1 and INCLUDE_TODO=1 are set', async () => {
     project.write({
       src: {
-        'with-errors-0.js': readFixture('with-errors-0.js'),
-        'with-errors-1.js': readFixture('with-errors-1.js'),
+        'with-errors-0.js': getStringFixture('with-errors-0.js'),
+        'with-errors-1.js': getStringFixture('with-errors-1.js'),
       },
     });
     project.install();
@@ -274,8 +301,8 @@ describe('eslint with todo formatter', function () {
   it('should emit todo items and count when INCLUDE_TODO=1 is set alone with prior todo items', async () => {
     project.write({
       src: {
-        'with-errors-0.js': readFixture('with-errors-0.js'),
-        'with-errors-1.js': readFixture('with-errors-1.js'),
+        'with-errors-0.js': getStringFixture('with-errors-0.js'),
+        'with-errors-1.js': getStringFixture('with-errors-1.js'),
       },
     });
     project.install();
@@ -306,7 +333,7 @@ describe('eslint with todo formatter', function () {
     // first we generate project files with errors and convert them to todos
     project.write({
       src: {
-        'with-errors-0.js': readFixture('with-errors-0.js'),
+        'with-errors-0.js': getStringFixture('with-errors-0.js'),
       },
     });
     project.install();
@@ -318,7 +345,7 @@ describe('eslint with todo formatter', function () {
     // now we add new errors and warnings to test output with all problems
     project.write({
       src: {
-        'with-errors-and-warnings.js': readFixture(
+        'with-errors-and-warnings.js': getStringFixture(
           'with-errors-and-warnings.js'
         ),
       },
@@ -344,7 +371,7 @@ describe('eslint with todo formatter', function () {
   it('errors if a todo item is no longer valid when running without params', async function () {
     project.write({
       src: {
-        'with-fixable-error.js': readFixture('with-fixable-error.js'),
+        'with-fixable-error.js': getStringFixture('with-fixable-error.js'),
       },
     });
     project.install();
@@ -357,7 +384,7 @@ describe('eslint with todo formatter', function () {
     // mimic fixing the error manually via user interaction
     project.write({
       src: {
-        'with-fixable-error.js': readFixture('no-errors.js'),
+        'with-fixable-error.js': getStringFixture('no-errors.js'),
       },
     });
 
@@ -388,7 +415,7 @@ describe('eslint with todo formatter', function () {
   it('should error if daysToDecay.error is less than daysToDecay.warn in package.json', async function () {
     project.write({
       src: {
-        'with-errors-0.js': readFixture('with-errors-0.js'),
+        'with-errors-0.js': getStringFixture('with-errors-0.js'),
       },
     });
 
@@ -411,7 +438,7 @@ describe('eslint with todo formatter', function () {
   it('should create todos with correct warn date set', async function () {
     project.write({
       src: {
-        'with-errors-0.js': readFixture('with-errors-0.js'),
+        'with-errors-0.js': getStringFixture('with-errors-0.js'),
       },
     });
 
@@ -440,7 +467,7 @@ describe('eslint with todo formatter', function () {
   it('should create todos with correct warn date set via env var (overrides config value)', async function () {
     project.write({
       src: {
-        'with-errors-0.js': readFixture('with-errors-0.js'),
+        'with-errors-0.js': getStringFixture('with-errors-0.js'),
       },
     });
 
@@ -469,7 +496,7 @@ describe('eslint with todo formatter', function () {
   it('should create todos with correct error date set', async function () {
     project.write({
       src: {
-        'with-errors-0.js': readFixture('with-errors-0.js'),
+        'with-errors-0.js': getStringFixture('with-errors-0.js'),
       },
     });
 
@@ -498,7 +525,7 @@ describe('eslint with todo formatter', function () {
   it('should create todos with correct error date set via env var (overrides config value)', async function () {
     project.write({
       src: {
-        'with-errors-0.js': readFixture('with-errors-0.js'),
+        'with-errors-0.js': getStringFixture('with-errors-0.js'),
       },
     });
 
@@ -527,7 +554,7 @@ describe('eslint with todo formatter', function () {
   it('should create todos with correct dates set for warn and error', async function () {
     project.write({
       src: {
-        'with-errors-0.js': readFixture('with-errors-0.js'),
+        'with-errors-0.js': getStringFixture('with-errors-0.js'),
       },
     });
 
@@ -561,7 +588,7 @@ describe('eslint with todo formatter', function () {
   it('should create todos with correct dates set for warn and error via env var (overrides config value)', async function () {
     project.write({
       src: {
-        'with-errors-0.js': readFixture('with-errors-0.js'),
+        'with-errors-0.js': getStringFixture('with-errors-0.js'),
       },
     });
 
@@ -599,7 +626,7 @@ describe('eslint with todo formatter', function () {
   it('should set to todo if warnDate is not expired', async function () {
     project.write({
       src: {
-        'with-errors-0.js': readFixture('with-errors-0.js'),
+        'with-errors-0.js': getStringFixture('with-errors-0.js'),
       },
     });
 
@@ -650,7 +677,7 @@ describe('eslint with todo formatter', function () {
   it('should set to todo if errorDate is not expired', async function () {
     project.write({
       src: {
-        'with-errors-0.js': readFixture('with-errors-0.js'),
+        'with-errors-0.js': getStringFixture('with-errors-0.js'),
       },
     });
 
@@ -701,7 +728,7 @@ describe('eslint with todo formatter', function () {
   it('should set todo to warn if warnDate has expired via config', async function () {
     project.write({
       src: {
-        'with-errors-0.js': readFixture('with-errors-0.js'),
+        'with-errors-0.js': getStringFixture('with-errors-0.js'),
       },
     });
 
@@ -749,7 +776,7 @@ describe('eslint with todo formatter', function () {
   it('should set todo to warn if warnDate has expired via env var', async function () {
     project.write({
       src: {
-        'with-errors-0.js': readFixture('with-errors-0.js'),
+        'with-errors-0.js': getStringFixture('with-errors-0.js'),
       },
     });
 
@@ -794,7 +821,7 @@ describe('eslint with todo formatter', function () {
   it('should set todo to warn if warnDate has expired but errorDate has not', async function () {
     project.write({
       src: {
-        'with-errors-0.js': readFixture('with-errors-0.js'),
+        'with-errors-0.js': getStringFixture('with-errors-0.js'),
       },
     });
 
@@ -843,7 +870,7 @@ describe('eslint with todo formatter', function () {
   it('should set todo to error if errorDate has expired via config', async function () {
     project.write({
       src: {
-        'with-errors-0.js': readFixture('with-errors-0.js'),
+        'with-errors-0.js': getStringFixture('with-errors-0.js'),
       },
     });
 
@@ -891,7 +918,7 @@ describe('eslint with todo formatter', function () {
   it('should set todo to error if errorDate has expired via env var', async function () {
     project.write({
       src: {
-        'with-errors-0.js': readFixture('with-errors-0.js'),
+        'with-errors-0.js': getStringFixture('with-errors-0.js'),
       },
     });
 
@@ -936,7 +963,7 @@ describe('eslint with todo formatter', function () {
   it('should set todo to error if both warnDate and errorDate have expired via config', async function () {
     project.write({
       src: {
-        'with-errors-0.js': readFixture('with-errors-0.js'),
+        'with-errors-0.js': getStringFixture('with-errors-0.js'),
       },
     });
 
@@ -985,7 +1012,7 @@ describe('eslint with todo formatter', function () {
   it('should set todo to error if both warnDate and errorDate have expired via env vars', async function () {
     project.write({
       src: {
-        'with-errors-0.js': readFixture('with-errors-0.js'),
+        'with-errors-0.js': getStringFixture('with-errors-0.js'),
       },
     });
 

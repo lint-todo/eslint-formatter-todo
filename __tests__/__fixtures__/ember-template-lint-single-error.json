@@ -1,0 +1,21 @@
+{
+  "errorCount": 1,
+  "results": [
+    {
+      "messages": [
+        {
+          "rule": "require-input-label",
+          "severity": 2,
+          "moduleId": "{{path}}/app/templates/components/add-ssh-key.hbs",
+          "message": "Input elements require a valid associated label.",
+          "line": 3,
+          "column": 4,
+          "source": ""
+        }
+      ],
+      "errorCount": 1,
+      "filePath": "{{path}}/app/templates/components/add-ssh-key.hbs",
+      "source": ""
+    }
+  ]
+}
