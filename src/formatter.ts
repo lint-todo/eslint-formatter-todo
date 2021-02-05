@@ -27,7 +27,7 @@ export function formatter(results: ESLint.LintResult[]): string {
   const includeTodo = process.env.INCLUDE_TODO === '1';
   const writeTodoOptions: Partial<WriteTodoOptions> = {
     todoConfig: getTodoConfig(process.cwd()) ?? {},
-    shouldRemove: () => true,
+    shouldRemove: (todoDatum: TodoData) => todoDatum.engine === 'eslint',
   };
 
   if (
