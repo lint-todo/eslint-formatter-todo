@@ -5982,6 +5982,11 @@ type-fest@^0.8.1:
   resolved "https://registry.yarnpkg.com/type-fest/-/type-fest-0.8.1.tgz#09e249ebde851d3b1e48d27c105444667f17b83d"
   integrity sha512-4dbzIzqvjtgiM5rw1k5rEHtBANKmdudhGyBEajN01fEyhaAIhsoKNy6y7+IN93IfpFtwY9iqi7kD+xwKhQsNJA==
 
+type-fest@^1.1.2:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/type-fest/-/type-fest-1.1.2.tgz#0de29c10ea673e089eb8d4afb788928a72ed7594"
+  integrity sha512-q++CYzCt8xYVqKnPfJi5o3rMx83MxN4h+hqp/4+5+J7MrbmV5qwVk6epQ4tKp7pGIF9TDmbmunHSW8UtacKnBQ==
+
 typedarray-to-buffer@^3.1.5:
   version "3.1.5"
   resolved "https://registry.yarnpkg.com/typedarray-to-buffer/-/typedarray-to-buffer-3.1.5.tgz#a97ee7a9ff42691b9f783ff1bc5112fe3fca9080"
