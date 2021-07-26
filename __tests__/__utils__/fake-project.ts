@@ -5,7 +5,6 @@ import {
   TodoConfigByEngine,
 } from '@ember-template-lint/todo-utils';
 import { dirname, join } from 'path';
-import { execSync } from 'child_process';
 import fixturify from 'fixturify';
 import Project from 'fixturify-project';
 import { mkdirpSync, symlinkSync } from 'fs-extra';
