@@ -89,7 +89,17 @@ export class FakeProject extends Project {
       repository: 'http://fakerepo.com',
     });
 
-    this.symlinkBinary();
+    // link binary
+    this.symlink(
+      join(__dirname, '../..', 'node_modules', '.bin', 'eslint'),
+      join(this.baseDir, 'node_modules', '.bin', 'eslint')
+    );
+
+    // link package
+    this.symlink(
+      join(__dirname, '../..', 'node_modules', 'eslint'),
+      join(this.baseDir, 'node_modules', 'eslint')
+    );
   }
 
   write(dirJSON: fixturify.DirJSON): void {
@@ -155,10 +165,7 @@ export class FakeProject extends Project {
     });
   }
 
-  symlinkBinary(): void {
-    const source = join(__dirname, '../..', 'node_modules', '.bin', 'eslint');
-    const target = join(this.baseDir, 'node_modules', '.bin', 'eslint');
-
+  symlink(source: string, target: string): void {
     mkdirpSync(dirname(target));
     symlinkSync(source, target);
   }
