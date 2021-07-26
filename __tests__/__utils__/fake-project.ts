@@ -1,7 +1,14 @@
-import { TodoConfig } from '@ember-template-lint/todo-utils';
+import {
+  DaysToDecay,
+  DaysToDecayByRule,
+  LintTodoPackageJson,
+  TodoConfigByEngine,
+} from '@ember-template-lint/todo-utils';
+import { dirname, join } from 'path';
 import { execSync } from 'child_process';
 import fixturify from 'fixturify';
 import Project from 'fixturify-project';
+import { mkdirpSync, symlinkSync } from 'fs-extra';
 
 const DEFAULT_ESLINT_CONFIG = `{
   "env": {
@@ -67,7 +74,7 @@ export class FakeProject extends Project {
   static getInstance(): FakeProject {
     const project = new this();
 
-    project.addDevDependency('eslint', '^7.10.0');
+    // project.addDevDependency('eslint', '^7.10.0');
 
     project.files['eslint-config.json'] = DEFAULT_ESLINT_CONFIG;
 
@@ -82,6 +89,8 @@ export class FakeProject extends Project {
       description: 'Fake project',
       repository: 'http://fakerepo.com',
     });
+
+    this.symlinkBinary();
   }
 
   write(dirJSON: fixturify.DirJSON): void {
@@ -89,23 +98,69 @@ export class FakeProject extends Project {
     this.writeSync();
   }
 
-  writeTodoConfig(todoConfig: TodoConfig): void {
+  setShorthandPackageJsonTodoConfig(daysToDecay: DaysToDecay): void {
     this.pkg = Object.assign({}, this.pkg, {
       lintTodo: {
-        daysToDecay: todoConfig,
+        daysToDecay,
       },
     });
 
     this.writeSync();
   }
 
-  install(): void {
-    const cmd = 'yarn install --silent';
+  setPackageJsonTodoConfig(
+    engine: string,
+    daysToDecay: DaysToDecay,
+    daysToDecayByRule?: DaysToDecayByRule
+  ): void {
+    const todoConfig: LintTodoPackageJson = {
+      lintTodo: {
+        [engine]: {
+          daysToDecay,
+        },
+      },
+    };
 
-    try {
-      execSync(cmd, { cwd: this.baseDir });
-    } catch {
-      throw new Error(`Couldn't install dependencies using ${cmd}`);
+    if (daysToDecayByRule) {
+      (<TodoConfigByEngine>todoConfig.lintTodo)![engine].daysToDecayByRule =
+        daysToDecayByRule;
     }
+
+    this.pkg = Object.assign({}, this.pkg, todoConfig);
+
+    this.writeSync();
+  }
+
+  setLintTodorc(
+    engine: string,
+    daysToDecay: DaysToDecay,
+    daysToDecayByRule?: DaysToDecayByRule
+  ): void {
+    const todoConfig: TodoConfigByEngine = {
+      [engine]: {
+        daysToDecay,
+      },
+    };
+
+    if (daysToDecayByRule) {
+      todoConfig[engine].daysToDecayByRule = daysToDecayByRule;
+    }
+
+    this.write({
+      '.lint-todorc.js': `module.exports = ${JSON.stringify(
+        todoConfig,
+        // eslint-disable-next-line unicorn/no-null
+        null,
+        2
+      )}`,
+    });
+  }
+
+  symlinkBinary(): void {
+    const source = join(__dirname, '../..', 'node_modules', '.bin', 'eslint');
+    const target = join(this.baseDir, 'node_modules', '.bin', 'eslint');
+
+    mkdirpSync(dirname(target));
+    symlinkSync(source, target);
   }
 }

@@ -49,11 +49,12 @@
       },
       "rules": {
         "node/no-extraneous-import": "off",
-        "node/no-unpublished-import": "off"
+        "node/no-unpublished-import": "off",
+        "@typescript-eslint/no-non-null-assertion": "off"
       }
     },
     {
-    "files": ["src/types/index.ts"],
+      "files": ["src/types/index.ts"],
       "rules": {
         "@typescript-eslint/no-namespace": "off"
       }

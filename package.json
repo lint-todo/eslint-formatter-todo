@@ -7,9 +7,9 @@
     "url": "git+https://github.com/scalvert/eslint-formatter-todo.git"
   },
   "license": "MIT",
-  "author": "Renato Iwashima <renatoiwa@gmail.com>",
   "contributors": [
-    "Steve Calvert <steve.calvert@gmail.com>"
+    "Steve Calvert <steve.calvert@gmail.com>",
+    "Renato Iwashima <renatoiwa@gmail.com>"
   ],
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -22,7 +22,7 @@
     "test": "jest --no-cache"
   },
   "dependencies": {
-    "@ember-template-lint/todo-utils": "^8.0.0-beta.3",
+    "@ember-template-lint/todo-utils": "^10.0.0-beta.2",
     "chalk": "^4.1.0",
     "eslint": "^7.10.0",
     "fs-extra": "^9.0.1",

@@ -3,7 +3,6 @@ import type {
   WriteTodoOptions,
 } from '@ember-template-lint/todo-utils';
 import type { Linter } from 'eslint';
-import type { PackageJson } from 'type-fest';
 
 declare module 'eslint' {
   export namespace ESLint {
@@ -49,7 +48,3 @@ export enum Severity {
   warn = 1,
   error = 2,
 }
-
-export type LintTodoPackageJson = PackageJson & {
-  lintTodo?: { daysToDecay: TodoConfig };
-};

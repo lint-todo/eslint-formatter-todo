@@ -1,7 +1,8 @@
 import {
   buildTodoData,
   getTodoStorageDirPath,
-  readTodosSync,
+  readTodoData,
+  todoFilePathFor,
   todoStorageDirExists,
 } from '@ember-template-lint/todo-utils';
 import { existsSync } from 'fs';
@@ -48,9 +49,9 @@ describe('format-results', () => {
 
     expect(todoStorageDirExists(tmpDir.name)).toBe(true);
 
-    const todos = readTodosSync(tmpDir.name);
+    const todos = readTodoData(tmpDir.name);
 
-    expect(todos.size).toEqual(18);
+    expect(todos).toHaveLength(18);
   });
 
   it('SHOULD not mutate errors if a todo dir is not present', () => {
@@ -81,7 +82,12 @@ describe('format-results', () => {
     // build todo map but without the last result in the results array (so they differ)
     const todoResults = [...results];
     const lastResult = todoResults.pop();
-    const todos = buildTodoData(tmpDir.name, todoResults);
+    const todos = new Map(
+      [...buildTodoData(tmpDir.name, todoResults)].map((todoDatum) => [
+        todoFilePathFor(todoDatum),
+        todoDatum,
+      ])
+    );
 
     transformResults(tmpDir.name, results, todos);
 

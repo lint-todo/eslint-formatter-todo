@@ -1,17 +1,17 @@
 import {
   applyTodoChanges,
-  buildTodoData,
   getSeverity,
-  getTodoBatchesSync,
+  getTodoBatches,
   getTodoConfig,
   getTodoStorageDirPath,
-  readTodosSync,
+  readTodos,
   TodoData,
+  TodoDataV2,
   todoFilePathFor,
   todoStorageDirExists,
   WriteTodoOptions,
-  writeTodosSync,
-  _buildTodoDatum,
+  writeTodos,
+  buildTodoDatum,
 } from '@ember-template-lint/todo-utils';
 
 import hasFlag from 'has-flag';
@@ -26,7 +26,7 @@ export function formatter(results: ESLint.LintResult[]): string {
   const updateTodo = process.env.UPDATE_TODO === '1';
   const includeTodo = process.env.INCLUDE_TODO === '1';
   const writeTodoOptions: Partial<WriteTodoOptions> = {
-    todoConfig: getTodoConfig(process.cwd()) ?? {},
+    todoConfig: getTodoConfig(process.cwd(), 'eslint') ?? {},
     shouldRemove: (todoDatum: TodoData) => todoDatum.engine === 'eslint',
   };
 
@@ -40,7 +40,7 @@ export function formatter(results: ESLint.LintResult[]): string {
   }
 
   if (updateTodo) {
-    const [added, removed] = writeTodosSync(
+    const [added, removed] = writeTodos(
       getBaseDir(),
       results,
       writeTodoOptions
@@ -69,7 +69,7 @@ export function formatter(results: ESLint.LintResult[]): string {
 export function transformResults(
   baseDir: string,
   results: ESLint.LintResult[],
-  existingTodos: Map<string, TodoData>
+  existingTodos: Map<string, TodoDataV2>
 ): void {
   results.forEach((result) => {
     (result.messages as TodoResultMessage[]).forEach((message) => {
@@ -78,7 +78,7 @@ export function transformResults(
       }
 
       // we only mutate errors that are present in the todo map, so check if it's there first
-      const todoDatum = _buildTodoDatum(
+      const todoDatum = buildTodoDatum(
         baseDir,
         result,
         message as Linter.LintMessage
@@ -125,28 +125,25 @@ function report(results: ESLint.LintResult[], options: TodoFormatterOptions) {
   const baseDir = getBaseDir();
 
   if (todoStorageDirExists(baseDir)) {
-    const existingTodoFiles = readTodosSync(baseDir);
-    const [, todosToRemove, existingTodos] = getTodoBatchesSync(
-      buildTodoData(baseDir, results),
+    const existingTodoFiles = readTodos(baseDir);
+    const { remove, stable } = getTodoBatches(
+      baseDir,
+      results,
       existingTodoFiles,
       options.writeTodoOptions
     );
 
-    if (todosToRemove.size > 0) {
+    if (remove.size > 0) {
       if (hasFlag('fix')) {
-        applyTodoChanges(
-          getTodoStorageDirPath(baseDir),
-          new Map(),
-          todosToRemove
-        );
+        applyTodoChanges(getTodoStorageDirPath(baseDir), new Map(), remove);
       } else {
-        todosToRemove.forEach((todo) => {
+        remove.forEach((todo) => {
           pushResult(results, todo);
         });
       }
     }
 
-    transformResults(baseDir, results, existingTodos);
+    transformResults(baseDir, results, stable);
   }
 
   return format(results, options);
