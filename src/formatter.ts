@@ -12,6 +12,7 @@ import {
   WriteTodoOptions,
   writeTodos,
   buildTodoDatum,
+  validateConfig,
 } from '@ember-template-lint/todo-utils';
 
 import hasFlag from 'has-flag';
@@ -22,6 +23,13 @@ import type { ESLint, Linter } from 'eslint';
 import { Severity, TodoFormatterOptions, TodoResultMessage } from './types';
 
 export function formatter(results: ESLint.LintResult[]): string {
+  const baseDir = getBaseDir();
+  const todoConfigResult = validateConfig(baseDir);
+
+  if (!todoConfigResult.isValid) {
+    throw new Error(todoConfigResult.message);
+  }
+
   let todoInfo;
   const updateTodo = process.env.UPDATE_TODO === '1';
   const includeTodo = process.env.INCLUDE_TODO === '1';
@@ -40,11 +48,7 @@ export function formatter(results: ESLint.LintResult[]): string {
   }
 
   if (updateTodo) {
-    const [added, removed] = writeTodos(
-      getBaseDir(),
-      results,
-      writeTodoOptions
-    );
+    const [added, removed] = writeTodos(baseDir, results, writeTodoOptions);
 
     todoInfo = {
       added,

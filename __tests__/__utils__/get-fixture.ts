@@ -1,7 +1,6 @@
 import { join, resolve } from 'path';
 import { ESLint } from 'eslint';
 import { readFileSync, readJsonSync } from 'fs-extra';
-import { TemplateLintResult } from '@ember-template-lint/todo-utils';
 
 const cache: Map<string, string> = new Map();
 
@@ -22,9 +21,10 @@ export function getStringFixture(fileName: string): string {
   return contents;
 }
 
-export function getObjectFixture<
-  T extends ESLint.LintResult | TemplateLintResult
->(fileName: string, tmp: string): T[] {
+export function getObjectFixture<T extends ESLint.LintResult>(
+  fileName: string,
+  tmp: string
+): T[] {
   const fixture = readJsonSync(
     resolve(join('./__tests__/__fixtures__/', fileName))
   );

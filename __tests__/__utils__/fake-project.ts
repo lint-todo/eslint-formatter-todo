@@ -118,20 +118,19 @@ export class FakeProject extends Project {
   }
 
   setPackageJsonTodoConfig(
-    engine: string,
     daysToDecay: DaysToDecay,
     daysToDecayByRule?: DaysToDecayByRule
   ): void {
     const todoConfig: LintTodoPackageJson = {
       lintTodo: {
-        [engine]: {
+        eslint: {
           daysToDecay,
         },
       },
     };
 
     if (daysToDecayByRule) {
-      (<TodoConfigByEngine>todoConfig.lintTodo)![engine].daysToDecayByRule =
+      (<TodoConfigByEngine>todoConfig.lintTodo)!['eslint'].daysToDecayByRule =
         daysToDecayByRule;
     }
 
@@ -141,18 +140,17 @@ export class FakeProject extends Project {
   }
 
   setLintTodorc(
-    engine: string,
     daysToDecay: DaysToDecay,
     daysToDecayByRule?: DaysToDecayByRule
   ): void {
     const todoConfig: TodoConfigByEngine = {
-      [engine]: {
+      eslint: {
         daysToDecay,
       },
     };
 
     if (daysToDecayByRule) {
-      todoConfig[engine].daysToDecayByRule = daysToDecayByRule;
+      todoConfig['eslint'].daysToDecayByRule = daysToDecayByRule;
     }
 
     this.write({

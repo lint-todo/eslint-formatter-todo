@@ -64,6 +64,31 @@ describe('eslint with todo formatter', function () {
     project.dispose();
   });
 
+  it('errors if todo config exists in both package.json and .lint-todorc.js', async function () {
+    project.write({
+      src: {
+        'no-problems.js': getStringFixture('with-no-problems.js'),
+      },
+    });
+
+    project.setShorthandPackageJsonTodoConfig({
+      warn: 5,
+      error: 10,
+    });
+
+    project.setLintTodorc({
+      warn: 5,
+      error: 10,
+    });
+
+    const result = await runEslintWithFormatter();
+
+    expect(result.exitCode).toBeGreaterThan(0);
+    expect(result.stderr).toMatch(
+      /You cannot have todo configurations in both package.json and .lint-todorc.js. Please move the configuration from the package.json to the .lint-todorc.js/
+    );
+  });
+
   it('should not emit anything when there are no errors or warnings', async () => {
     project.write({
       src: {
@@ -414,12 +439,7 @@ describe('eslint with todo formatter', function () {
       setTodoConfig: (
         daysToDecay: DaysToDecay,
         daysToDecayByRule?: DaysToDecayByRule
-      ) =>
-        project.setPackageJsonTodoConfig(
-          'eslint',
-          daysToDecay,
-          daysToDecayByRule
-        ),
+      ) => project.setPackageJsonTodoConfig(daysToDecay, daysToDecayByRule),
     },
     {
       name: '.lint-todorc.js todo configuration',
@@ -427,7 +447,7 @@ describe('eslint with todo formatter', function () {
       setTodoConfig: (
         daysToDecay: DaysToDecay,
         daysToDecayByRule?: DaysToDecayByRule
-      ) => project.setLintTodorc('eslint', daysToDecay, daysToDecayByRule),
+      ) => project.setLintTodorc(daysToDecay, daysToDecayByRule),
     },
   ]) {
     // eslint-disable-next-line jest/valid-title
