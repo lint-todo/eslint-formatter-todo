@@ -1,14 +1,17 @@
 import {
-  buildTodoData,
   getTodoStorageDirPath,
   readTodoData,
   todoFilePathFor,
   todoStorageDirExists,
+  Severity,
 } from '@ember-template-lint/todo-utils';
 import { existsSync } from 'fs';
 import { DirResult, dirSync } from 'tmp';
-import { formatter, transformResults } from '../../src/formatter';
-import { Severity } from '../../src/types';
+import {
+  buildMaybeTodos,
+  formatter,
+  processResults,
+} from '../../src/formatter';
 import fixtures from '../__fixtures__/fixtures';
 import { deepCopy } from '../__utils__/deep-copy';
 import { setUpdateTodoEnv } from '../__utils__/set-env';
@@ -66,6 +69,7 @@ describe('format-results', () => {
   });
 
   it('SHOULD mutate errors when a todo dir is present', () => {
+    debugger;
     setUpdateTodoEnv(true);
 
     const results = fixtures.eslintWithErrors(tmpDir.name);
@@ -83,13 +87,13 @@ describe('format-results', () => {
     const todoResults = [...results];
     const lastResult = todoResults.pop();
     const todos = new Map(
-      [...buildTodoData(tmpDir.name, todoResults)].map((todoDatum) => [
+      [...buildMaybeTodos(tmpDir.name, todoResults)].map((todoDatum) => [
         todoFilePathFor(todoDatum),
         todoDatum,
       ])
     );
 
-    transformResults(tmpDir.name, results, todos);
+    processResults(results, todos);
 
     // last result should stay unchanged
     expect(results[results.length - 1]).toEqual(lastResult);

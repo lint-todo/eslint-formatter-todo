@@ -2,8 +2,8 @@ import { blueBright, dim, red, reset, underline, yellow } from 'chalk';
 import type { ESLint } from 'eslint';
 import stripAnsi from 'strip-ansi';
 import table from 'text-table';
+import { Severity } from '@ember-template-lint/todo-utils';
 import {
-  Severity,
   TodoFormatterCounts,
   TodoFormatterOptions,
   TodoInfo,

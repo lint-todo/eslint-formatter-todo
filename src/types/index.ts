@@ -41,10 +41,3 @@ export interface TodoFormatterCounts {
   readonly fixableWarningCount: number;
   readonly fixableTodoCount: number;
 }
-
-export enum Severity {
-  todo = -1,
-  off = 0,
-  warn = 1,
-  error = 2,
-}

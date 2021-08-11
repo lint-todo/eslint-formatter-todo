@@ -11,6 +11,7 @@ import {
 } from '@ember-template-lint/todo-utils';
 import { FakeProject } from '../__utils__/fake-project';
 import { getObjectFixture, getStringFixture } from '../__utils__/get-fixture';
+import { buildMaybeTodos } from '../../src/formatter';
 
 describe('eslint with todo formatter', function () {
   let project: FakeProject;
@@ -275,9 +276,17 @@ describe('eslint with todo formatter', function () {
       },
     });
 
-    await writeTodos(
+    writeTodos(
       project.baseDir,
-      getObjectFixture('ember-template-lint-single-error.json', project.baseDir)
+      buildMaybeTodos(
+        project.baseDir,
+        getObjectFixture(
+          'ember-template-lint-single-error.json',
+          project.baseDir
+        ),
+        undefined,
+        'ember-template-lint'
+      )
     );
 
     const result = await runEslintWithFormatter({
