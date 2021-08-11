@@ -7,6 +7,7 @@ import {
   DaysToDecayByRule,
   getTodoStorageDirPath,
   readTodoData,
+  todoStorageDirExists,
   writeTodos,
 } from '@ember-template-lint/todo-utils';
 import { FakeProject } from '../__utils__/fake-project';
@@ -62,7 +63,7 @@ describe('eslint with todo formatter', function () {
   });
 
   afterEach(() => {
-    project.dispose();
+    // project.dispose();
   });
 
   it('errors if todo config exists in both package.json and .lint-todorc.js', async function () {
@@ -266,6 +267,56 @@ describe('eslint with todo formatter', function () {
     expect(stdout).toMatch(
       /1 error and 0 warnings potentially fixable with the `--fix` option\./
     );
+  });
+
+  it('generates todos for existing errors', async function () {
+    project.write({
+      src: {
+        'with-errors-0.js': getStringFixture('with-errors-0.js'),
+      },
+    });
+
+    let result = await runEslintWithFormatter({
+      env: {
+        UPDATE_TODO: '1',
+      },
+    });
+
+    expect(result.exitCode).toEqual(0);
+    expect(todoStorageDirExists(project.baseDir)).toEqual(true);
+    expect(readTodoData(project.baseDir)).toHaveLength(7);
+
+    result = await runEslintWithFormatter();
+
+    expect(result.exitCode).toEqual(0);
+  });
+
+  it('generates todos for existing errors, and correctly reports todo severity when file is edited to trigger fuzzy match', async function () {
+    project.write({
+      src: {
+        'with-errors.js': getStringFixture('with-errors-0.js'),
+      },
+    });
+
+    let result = await runEslintWithFormatter({
+      env: {
+        UPDATE_TODO: '1',
+      },
+    });
+
+    expect(result.exitCode).toEqual(0);
+    expect(todoStorageDirExists(project.baseDir)).toEqual(true);
+    expect(readTodoData(project.baseDir)).toHaveLength(7);
+
+    project.write({
+      src: {
+        'with-errors.js': getStringFixture('with-errors-for-fuzzy.js'),
+      },
+    });
+    debugger;
+    result = await runEslintWithFormatter();
+
+    expect(result.exitCode).toEqual(0);
   });
 
   it('should not remove todos from another engine', async function () {

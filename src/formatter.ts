@@ -100,13 +100,9 @@ export function processResults(
       continue;
     }
 
-    const message = result.messages.find((message) => {
-      return (
-        message.ruleId === todo.ruleId &&
-        message.line === todo.range.start.line &&
-        message.column === todo.range.start.column
-      );
-    });
+    const message = result.messages.find(
+      (message) => message === todo.originalLintResult
+    );
 
     if (!message) {
       continue;
@@ -210,6 +206,7 @@ export function buildMaybeTodos(
                 range
               )
             : '',
+          originalLintResult: message,
         },
         todoConfig
       );
