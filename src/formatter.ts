@@ -18,7 +18,7 @@ import {
 } from '@ember-template-lint/todo-utils';
 import { relative, join } from 'path';
 import hasFlag from 'has-flag';
-import { format } from './format';
+import { printResults } from './print-results';
 import { getBaseDir } from './get-base-dir';
 
 import type { ESLint, Linter } from 'eslint';
@@ -163,7 +163,7 @@ function report(
     processResults(results, stable);
   }
 
-  return format(results, options);
+  return printResults(results, options);
 }
 
 export function buildMaybeTodos(

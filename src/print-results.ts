@@ -10,7 +10,7 @@ import {
   TodoResultMessage,
 } from './types';
 
-export function format(
+export function printResults(
   results: ESLint.LintResult[],
   options: TodoFormatterOptions
 ): string {
