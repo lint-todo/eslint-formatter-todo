@@ -16,7 +16,7 @@ import {
   TodoConfig,
   Range,
 } from '@ember-template-lint/todo-utils';
-import { posix } from 'path';
+import { relative } from 'path';
 import hasFlag from 'has-flag';
 import { format } from './format';
 import { getBaseDir } from './get-base-dir';
@@ -277,8 +277,6 @@ function pushResult(results: ESLint.LintResult[], todo: TodoData) {
 
 function findResult(results: ESLint.LintResult[], todo: TodoData) {
   return results.find(
-    (result) =>
-      result.filePath.replace(`${getBaseDir()}${posix.sep}`, '') ===
-      todo.filePath
+    (result) => relative(getBaseDir(), result.filePath) === todo.filePath
   );
 }
