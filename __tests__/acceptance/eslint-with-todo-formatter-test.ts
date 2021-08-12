@@ -467,7 +467,7 @@ describe('eslint with todo formatter', function () {
 
     expect(result.exitCode).toEqual(1);
     expect(stripAnsi(result.stdout).trim()).toMatchInlineSnapshot(`
-      "src/with-fixable-error.js
+      "/private/var/folders/5m/4ybwhyvn3979lm2223q_q22c000gyd/T/tmp-24188zqHIOFSxyGce/fake-project/src/with-fixable-error.js
          0:0  error  Todo violation passes \`no-unused-vars\` rule. Please run \`--fix\` to remove this todo from the todo list  invalid-todo-violation-rule
 
       ✖ 1 problem (1 error, 0 warnings)"

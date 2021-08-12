@@ -16,7 +16,7 @@ import {
   TodoConfig,
   Range,
 } from '@ember-template-lint/todo-utils';
-import { relative } from 'path';
+import { relative, join } from 'path';
 import hasFlag from 'has-flag';
 import { format } from './format';
 import { getBaseDir } from './get-base-dir';
@@ -262,7 +262,7 @@ function pushResult(results: ESLint.LintResult[], todo: TodoData) {
     resultForFile.errorCount += 1;
   } else {
     results.push({
-      filePath: todo.filePath,
+      filePath: join(getBaseDir(), todo.filePath),
       messages: [result],
       errorCount: 1,
       warningCount: 0,
