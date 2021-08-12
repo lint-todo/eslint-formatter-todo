@@ -16,7 +16,7 @@ import {
   TodoConfig,
   Range,
 } from '@ember-template-lint/todo-utils';
-
+import { posix } from 'path';
 import hasFlag from 'has-flag';
 import { format } from './format';
 import { getBaseDir } from './get-base-dir';
@@ -91,10 +91,7 @@ export function processResults(
       continue;
     }
 
-    const result = results.find(
-      (result) =>
-        result.filePath.replace(`${getBaseDir()}/`, '') === todo.filePath
-    );
+    const result = findResult(results, todo);
 
     if (!result) {
       continue;
@@ -250,9 +247,8 @@ function getSourceForRange(source: string[], range: Range) {
 }
 
 function pushResult(results: ESLint.LintResult[], todo: TodoData) {
-  const resultForFile = results.find(
-    (r: ESLint.LintResult) => r.filePath === todo.filePath
-  );
+  const resultForFile = findResult(results, todo);
+
   const result: Linter.LintMessage = {
     ruleId: 'invalid-todo-violation-rule',
     message: `Todo violation passes \`${todo.ruleId}\` rule. Please run \`--fix\` to remove this todo from the todo list.`,
@@ -277,4 +273,12 @@ function pushResult(results: ESLint.LintResult[], todo: TodoData) {
       usedDeprecatedRules: [],
     });
   }
+}
+
+function findResult(results: ESLint.LintResult[], todo: TodoData) {
+  return results.find(
+    (result) =>
+      result.filePath.replace(`${getBaseDir()}${posix.sep}`, '') ===
+      todo.filePath
+  );
 }
