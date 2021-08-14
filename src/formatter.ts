@@ -22,7 +22,7 @@ import { printResults } from './print-results';
 import { getBaseDir } from './get-base-dir';
 
 import type { ESLint, Linter } from 'eslint';
-import { TodoFormatterOptions } from './types';
+import type { TodoFormatterOptions } from './types';
 
 const LINES_PATTERN = /(.*?(?:\r\n?|\n|$))/gm;
 
@@ -37,7 +37,7 @@ export function formatter(results: ESLint.LintResult[]): string {
   let todoInfo;
   const updateTodo = process.env.UPDATE_TODO === '1';
   const includeTodo = process.env.INCLUDE_TODO === '1';
-  const writeTodoOptions: Partial<WriteTodoOptions> = {
+  let writeTodoOptions: Partial<WriteTodoOptions> = {
     todoConfig: getTodoConfig(process.cwd(), 'eslint') ?? {},
     shouldRemove: (todoDatum: TodoData) => todoDatum.engine === 'eslint',
   };
@@ -51,23 +51,38 @@ export function formatter(results: ESLint.LintResult[]): string {
     );
   }
 
-  const maybeTodos = buildMaybeTodos(
-    baseDir,
-    results,
-    writeTodoOptions.todoConfig
-  );
+  for (const fileResults of results) {
+    const maybeTodos = buildMaybeTodos(
+      baseDir,
+      [fileResults],
+      writeTodoOptions.todoConfig
+    );
 
-  if (updateTodo) {
-    const [added, removed] = writeTodos(baseDir, maybeTodos, writeTodoOptions);
+    writeTodoOptions = { ...writeTodoOptions, filePath: fileResults.filePath };
 
-    todoInfo = {
-      added,
-      removed,
-      todoConfig: writeTodoOptions.todoConfig,
-    };
+    if (updateTodo) {
+      const [added, removed] = writeTodos(
+        baseDir,
+        maybeTodos,
+        writeTodoOptions
+      );
+
+      todoInfo = {
+        added,
+        removed,
+        todoConfig: writeTodoOptions.todoConfig,
+      };
+    }
+
+    processResults(results, maybeTodos, {
+      updateTodo,
+      includeTodo,
+      todoInfo,
+      writeTodoOptions,
+    });
   }
 
-  return report(results, maybeTodos, {
+  return printResults(results, {
     updateTodo,
     includeTodo,
     todoInfo,
@@ -80,7 +95,7 @@ export function formatter(results: ESLint.LintResult[]): string {
  *
  * @param results ESLint results array
  */
-export function processResults(
+export function updateResults(
   results: ESLint.LintResult[],
   existingTodos: Map<string, TodoDataV2>
 ): void {
@@ -131,7 +146,7 @@ export function processResults(
   }
 }
 
-function report(
+function processResults(
   results: ESLint.LintResult[],
   maybeTodos: Set<TodoDataV2>,
   options: TodoFormatterOptions
@@ -160,10 +175,8 @@ function report(
       }
     }
 
-    processResults(results, stable);
+    updateResults(results, stable);
   }
-
-  return printResults(results, options);
 }
 
 export function buildMaybeTodos(

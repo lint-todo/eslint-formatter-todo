@@ -7,11 +7,7 @@ import {
 } from '@ember-template-lint/todo-utils';
 import { existsSync } from 'fs';
 import { DirResult, dirSync } from 'tmp';
-import {
-  buildMaybeTodos,
-  formatter,
-  processResults,
-} from '../../src/formatter';
+import { buildMaybeTodos, formatter, updateResults } from '../../src/formatter';
 import fixtures from '../__fixtures__/fixtures';
 import { deepCopy } from '../__utils__/deep-copy';
 import { setUpdateTodoEnv } from '../__utils__/set-env';
@@ -93,7 +89,7 @@ describe('format-results', () => {
       ])
     );
 
-    processResults(results, todos);
+    updateResults(results, todos);
 
     // last result should stay unchanged
     expect(results[results.length - 1]).toEqual(lastResult);
