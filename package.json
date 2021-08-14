@@ -20,7 +20,7 @@
     "lint": "eslint . --ext .ts",
     "prepare": "yarn build",
     "test": "npm-run-all lint test:*",
-    "test:jest": "jest --no-cache"
+    "test:jest": "yarn build && jest --no-cache"
   },
   "dependencies": {
     "@ember-template-lint/todo-utils": "^10.0.0-beta.4",

@@ -154,7 +154,7 @@ describe('eslint with todo formatter', function () {
         'with-errors-1.js': getStringFixture('with-errors-1.js'),
       },
     });
-
+    debugger;
     const result = await runEslintWithFormatter({
       env: { UPDATE_TODO: '1' },
     });

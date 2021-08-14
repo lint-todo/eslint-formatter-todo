@@ -4,7 +4,6 @@ import {
   getTodoBatches,
   getTodoConfig,
   getTodoStorageDirPath,
-  readTodos,
   TodoData,
   TodoDataV2,
   todoStorageDirExists,
@@ -15,6 +14,7 @@ import {
   Severity,
   TodoConfig,
   Range,
+  readTodosForFilePath,
 } from '@ember-template-lint/todo-utils';
 import { relative, join } from 'path';
 import hasFlag from 'has-flag';
@@ -37,7 +37,7 @@ export function formatter(results: ESLint.LintResult[]): string {
   let todoInfo;
   const updateTodo = process.env.UPDATE_TODO === '1';
   const includeTodo = process.env.INCLUDE_TODO === '1';
-  let writeTodoOptions: Partial<WriteTodoOptions> = {
+  const writeTodoOptions: Partial<WriteTodoOptions> = {
     todoConfig: getTodoConfig(process.cwd(), 'eslint') ?? {},
     shouldRemove: (todoDatum: TodoData) => todoDatum.engine === 'eslint',
   };
@@ -58,19 +58,18 @@ export function formatter(results: ESLint.LintResult[]): string {
       writeTodoOptions.todoConfig
     );
 
-    writeTodoOptions = { ...writeTodoOptions, filePath: fileResults.filePath };
+    const optionsForFile = {
+      ...writeTodoOptions,
+      filePath: relative(baseDir, fileResults.filePath),
+    };
 
     if (updateTodo) {
-      const [added, removed] = writeTodos(
-        baseDir,
-        maybeTodos,
-        writeTodoOptions
-      );
+      const [added, removed] = writeTodos(baseDir, maybeTodos, optionsForFile);
 
       todoInfo = {
         added,
         removed,
-        todoConfig: writeTodoOptions.todoConfig,
+        todoConfig: optionsForFile.todoConfig,
       };
     }
 
@@ -78,7 +77,7 @@ export function formatter(results: ESLint.LintResult[]): string {
       updateTodo,
       includeTodo,
       todoInfo,
-      writeTodoOptions,
+      writeTodoOptions: optionsForFile,
     });
   }
 
@@ -154,7 +153,11 @@ function processResults(
   const baseDir = getBaseDir();
 
   if (todoStorageDirExists(baseDir)) {
-    const existingTodoFiles = readTodos(baseDir);
+    const existingTodoFiles = readTodosForFilePath(
+      baseDir,
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      options.writeTodoOptions.filePath!
+    );
     const { remove, stable, expired } = getTodoBatches(
       maybeTodos,
       existingTodoFiles,
