@@ -34,14 +34,17 @@ export function formatter(results: ESLint.LintResult[]): string {
     throw new Error(todoConfigResult.message);
   }
 
-  let todoInfo;
+  const todoInfo = {
+    added: 0,
+    removed: 0,
+    todoConfig: getTodoConfig(process.cwd(), 'eslint') ?? {},
+  };
   const updateTodo = process.env.UPDATE_TODO === '1';
   const includeTodo = process.env.INCLUDE_TODO === '1';
   const writeTodoOptions: Partial<WriteTodoOptions> = {
-    todoConfig: getTodoConfig(process.cwd(), 'eslint') ?? {},
     shouldRemove: (todoDatum: TodoData) => todoDatum.engine === 'eslint',
   };
-
+  debugger;
   if (
     (process.env.TODO_DAYS_TO_WARN || process.env.TODO_DAYS_TO_ERROR) &&
     !updateTodo
@@ -55,22 +58,24 @@ export function formatter(results: ESLint.LintResult[]): string {
     const maybeTodos = buildMaybeTodos(
       baseDir,
       [fileResults],
-      writeTodoOptions.todoConfig
+      todoInfo.todoConfig
     );
 
     const optionsForFile = {
       ...writeTodoOptions,
+      todoConfig: todoInfo.todoConfig,
       filePath: relative(baseDir, fileResults.filePath),
     };
 
     if (updateTodo) {
-      const [added, removed] = writeTodos(baseDir, maybeTodos, optionsForFile);
+      const { addedCount, removedCount } = writeTodos(
+        baseDir,
+        maybeTodos,
+        optionsForFile
+      );
 
-      todoInfo = {
-        added,
-        removed,
-        todoConfig: optionsForFile.todoConfig,
-      };
+      todoInfo.added += addedCount;
+      todoInfo.removed += removedCount;
     }
 
     processResults(results, maybeTodos, {

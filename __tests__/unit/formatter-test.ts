@@ -65,7 +65,6 @@ describe('format-results', () => {
   });
 
   it('SHOULD mutate errors when a todo dir is present', () => {
-    debugger;
     setUpdateTodoEnv(true);
 
     const results = fixtures.eslintWithErrors(tmpDir.name);

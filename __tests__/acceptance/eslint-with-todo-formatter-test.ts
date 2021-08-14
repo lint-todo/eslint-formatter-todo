@@ -313,7 +313,7 @@ describe('eslint with todo formatter', function () {
         'with-errors.js': getStringFixture('with-errors-for-fuzzy.js'),
       },
     });
-    debugger;
+
     result = await runEslintWithFormatter();
 
     expect(result.exitCode).toEqual(0);
