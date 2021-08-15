@@ -1,14 +1,14 @@
 import stripAnsi from 'strip-ansi';
-import { format } from '../../src/format';
+import { printResults } from '../../src/print-results';
 import fixtures from '../__fixtures__/fixtures';
 
-describe('format', () => {
+describe('print-results', () => {
   it('should return all errors', async () => {
     const results = fixtures.eslintWithErrors('/stable/path');
 
     expect(
       stripAnsi(
-        format(results, {
+        printResults(results, {
           updateTodo: false,
           includeTodo: false,
           todoInfo: undefined,
@@ -59,7 +59,7 @@ describe('format', () => {
 
     expect(
       stripAnsi(
-        format(results, {
+        printResults(results, {
           updateTodo: false,
           includeTodo: false,
           todoInfo: undefined,
@@ -74,7 +74,7 @@ describe('format', () => {
 
     expect(
       stripAnsi(
-        format(results, {
+        printResults(results, {
           updateTodo: false,
           includeTodo: true,
           todoInfo: undefined,
@@ -125,7 +125,7 @@ describe('format', () => {
 
     expect(
       stripAnsi(
-        format(results, {
+        printResults(results, {
           updateTodo: false,
           includeTodo: false,
           todoInfo: undefined,

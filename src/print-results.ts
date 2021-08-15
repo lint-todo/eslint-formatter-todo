@@ -2,15 +2,15 @@ import { blueBright, dim, red, reset, underline, yellow } from 'chalk';
 import type { ESLint } from 'eslint';
 import stripAnsi from 'strip-ansi';
 import table from 'text-table';
+import { Severity } from '@ember-template-lint/todo-utils';
 import {
-  Severity,
   TodoFormatterCounts,
   TodoFormatterOptions,
   TodoInfo,
   TodoResultMessage,
 } from './types';
 
-export function format(
+export function printResults(
   results: ESLint.LintResult[],
   options: TodoFormatterOptions
 ): string {
@@ -204,16 +204,16 @@ function formatTodoSummary(todoInfo: TodoInfo) {
     todoSummary += `, ${todoInfo.removed} todos removed`;
   }
 
-  if (todoInfo.todoConfig) {
-    const todoConfig = todoInfo.todoConfig;
+  if (todoInfo.todoConfig && todoInfo.todoConfig.daysToDecay) {
+    const daysToDecay = todoInfo.todoConfig.daysToDecay;
     const todoConfigSummary = [];
 
-    if (todoConfig.warn) {
-      todoConfigSummary.push(`warn after ${todoConfig.warn}`);
+    if (daysToDecay.warn) {
+      todoConfigSummary.push(`warn after ${daysToDecay.warn}`);
     }
 
-    if (todoConfig.error) {
-      todoConfigSummary.push(`error after ${todoConfig.error}`);
+    if (daysToDecay.error) {
+      todoConfigSummary.push(`error after ${daysToDecay.error}`);
     }
 
     if (todoConfigSummary.length > 0) {
