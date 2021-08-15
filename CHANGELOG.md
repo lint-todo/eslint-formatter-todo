@@ -1,3 +1,18 @@
+## v1.4.0 (2021-08-15)
+
+#### :rocket: Enhancement
+* [#213](https://github.com/scalvert/eslint-formatter-todo/pull/213) Upgrades to latest version of @ember-template-lint/todo-utils with fuzzy matching ([@scalvert](https://github.com/scalvert))
+
+#### :memo: Documentation
+* [#237](https://github.com/scalvert/eslint-formatter-todo/pull/237) Updates the README to clarify usage for configuration ([@scalvert](https://github.com/scalvert))
+* [#206](https://github.com/scalvert/eslint-formatter-todo/pull/206) docs(README): `error > warn` ([@buschtoens](https://github.com/buschtoens))
+
+#### Committers: 3
+- Jan Buschtöns ([@buschtoens](https://github.com/buschtoens))
+- Steve Calvert ([@scalvert](https://github.com/scalvert))
+- [@dependabot-preview[bot]](https://github.com/apps/dependabot-preview)
+
+
 ## v1.3.1 (2021-02-05)
 
 #### :bug: Bug Fix
