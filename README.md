@@ -52,45 +52,106 @@ Due dates can be configured in one of two ways, but both specify integers for `w
 
 1. Via package.json configuration
 
-```json
-{
-  "lintTodo": {
-    "decayDays": {
-      "warn": 5,
-      "error": 10
-    }
-  }
-}
-```
+   ```json
+   {
+     "lintTodo": {
+       "eslint": {
+         "decayDays": {
+           "warn": 5,
+           "error": 10
+         }
+       }
+     }
+   }
+   ```
+
+1. Via `.lint-todorc.js`
+
+   ```js
+   module.exports = {
+     eslint: {
+       daysToDecay: {
+         warn: 5,
+         error: 10,
+       },
+     },
+   };
+   ```
 
 1. Via environment variables
 
-```bash
-UPDATE_TODO='1' TODO_DAYS_TO_WARN="5" TODO_DAYS_TO_ERROR="10" eslint . --format @scalvert/eslint-formatter-todo
-```
+   ```bash
+   UPDATE_TODO='1' TODO_DAYS_TO_WARN="5" TODO_DAYS_TO_ERROR="10" eslint . --format @scalvert/eslint-formatter-todo
+   ```
 
-In order of precedence, environment variables override package.json configuration values.
+   In order of precedence, environment variables override package.json configuration values.
 
-For example, if you've specified the following values in the package.json configuration...
+   For example, if you've specified the following values in the package.json configuration...
 
-```json
-{
-  "lintTodo": {
-    "decayDays": {
-      "warn": 5,
-      "error": 10
-    }
-  }
-}
-```
+   ```json
+   {
+     "lintTodo": {
+       "eslint": {
+         "decayDays": {
+           "warn": 5,
+           "error": 10
+         }
+       }
+     }
+   }
+   ```
 
-...and you supply the following environment variables:
+   ...and you supply the following environment variables:
 
-```bash
-UPDATE_TODO='1' TODO_DAYS_TO_WARN= '2' eslint . --format @scalvert/eslint-formatter-todo
-```
+   ```bash
+   UPDATE_TODO='1' TODO_DAYS_TO_WARN= '2' eslint . --format @scalvert/eslint-formatter-todo
+   ```
 
-...the todos will be created with a `warn` date 2 days from the created date, and an `error` date 10 days from the created date.
+   ...the todos will be created with a `warn` date 2 days from the created date, and an `error` date 10 days from the created date.
+
+### Configuring Due Dates for Individual Rules
+
+Due dates can be configured on a per-rule basis with the `daysToDecayByRule` option. See examples below.
+
+1. Via `package.json`
+
+   ```json
+   {
+     "lintTodo": {
+       "eslint": {
+         "daysToDecay": {
+           "warn": 5,
+           "error": 10
+         },
+         "daysToDecayByRule": {
+           "no-plus-plus": {
+             "warn": 10,
+             "error": 20
+           }
+         }
+       }
+     }
+   }
+   ```
+
+1. Via `.lint-todorc.js`
+
+   ```js
+   module.exports = {
+     eslint: {
+       daysToDecay: {
+         warn: 5,
+         error: 10,
+       },
+       daysToDecayByRule: {
+         'no-plus-plus': {
+           warn: 10,
+           error: 20,
+         },
+       },
+     },
+   };
+   ```
 
 ### Due Date Workflows
 
