@@ -32,6 +32,7 @@
     "unicorn/prevent-abbreviations": "off",
     "unicorn/no-process-exit": "off",
     "unicorn/import-style": "off",
+    "unicorn/no-array-reduce": "off",
     "node/no-missing-import": "off",
     "node/no-unsupported-features/es-syntax": [
       "error",
