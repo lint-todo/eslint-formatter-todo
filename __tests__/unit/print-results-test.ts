@@ -11,6 +11,8 @@ describe('print-results', () => {
         printResults(results, {
           updateTodo: false,
           includeTodo: false,
+          cleanTodo: false,
+          shouldFix: false,
           todoInfo: undefined,
           writeTodoOptions: {},
         })
@@ -62,6 +64,8 @@ describe('print-results', () => {
         printResults(results, {
           updateTodo: false,
           includeTodo: false,
+          cleanTodo: false,
+          shouldFix: false,
           todoInfo: undefined,
           writeTodoOptions: {},
         })
@@ -77,6 +81,8 @@ describe('print-results', () => {
         printResults(results, {
           updateTodo: false,
           includeTodo: true,
+          cleanTodo: false,
+          shouldFix: false,
           todoInfo: undefined,
           writeTodoOptions: {},
         })
@@ -128,6 +134,8 @@ describe('print-results', () => {
         printResults(results, {
           updateTodo: false,
           includeTodo: false,
+          cleanTodo: false,
+          shouldFix: false,
           todoInfo: undefined,
           writeTodoOptions: {},
         })

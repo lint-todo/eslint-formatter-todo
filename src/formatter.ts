@@ -41,10 +41,12 @@ export function formatter(results: ESLint.LintResult[]): string {
   };
   const updateTodo = process.env.UPDATE_TODO === '1';
   const includeTodo = process.env.INCLUDE_TODO === '1';
+  const cleanTodo = process.env.CLEAN_TODO == '1';
+  const shouldFix = hasFlag('fix');
   const writeTodoOptions: Partial<WriteTodoOptions> = {
     shouldRemove: (todoDatum: TodoData) => todoDatum.engine === 'eslint',
   };
-  debugger;
+
   if (
     (process.env.TODO_DAYS_TO_WARN || process.env.TODO_DAYS_TO_ERROR) &&
     !updateTodo
@@ -81,6 +83,8 @@ export function formatter(results: ESLint.LintResult[]): string {
     processResults(results, maybeTodos, {
       updateTodo,
       includeTodo,
+      cleanTodo,
+      shouldFix,
       todoInfo,
       writeTodoOptions: optionsForFile,
     });
@@ -89,6 +93,8 @@ export function formatter(results: ESLint.LintResult[]): string {
   return printResults(results, {
     updateTodo,
     includeTodo,
+    cleanTodo,
+    shouldFix,
     todoInfo,
     writeTodoOptions,
   });
@@ -170,7 +176,7 @@ function processResults(
     );
 
     if (remove.size > 0 || expired.size > 0) {
-      if (hasFlag('fix')) {
+      if (options.shouldFix || options.cleanTodo) {
         applyTodoChanges(
           getTodoStorageDirPath(baseDir),
           new Map(),
@@ -272,7 +278,7 @@ function pushResult(results: ESLint.LintResult[], todo: TodoData) {
 
   const result: Linter.LintMessage = {
     ruleId: 'invalid-todo-violation-rule',
-    message: `Todo violation passes \`${todo.ruleId}\` rule. Please run \`--fix\` to remove this todo from the todo list.`,
+    message: `Todo violation passes \`${todo.ruleId}\` rule. Please run with \`CLEAN_TODO=1\` env var to remove this todo from the todo list.`,
     severity: 2,
     column: 0,
     line: 0,
