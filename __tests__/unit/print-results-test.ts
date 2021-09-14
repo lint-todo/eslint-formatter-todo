@@ -2,22 +2,27 @@ import stripAnsi from 'strip-ansi';
 import { printResults } from '../../src/print-results';
 import fixtures from '../__fixtures__/fixtures';
 
+function getOptions(options = {}) {
+  return Object.assign(
+    {},
+    {
+      updateTodo: false,
+      includeTodo: false,
+      cleanTodo: false,
+      shouldFix: false,
+      todoInfo: undefined,
+      writeTodoOptions: {},
+    },
+    options
+  );
+}
+
 describe('print-results', () => {
   it('should return all errors', async () => {
     const results = fixtures.eslintWithErrors('/stable/path');
 
-    expect(
-      stripAnsi(
-        printResults(results, {
-          updateTodo: false,
-          includeTodo: false,
-          cleanTodo: false,
-          shouldFix: false,
-          todoInfo: undefined,
-          writeTodoOptions: {},
-        })
-      )
-    ).toMatchInlineSnapshot(`
+    expect(stripAnsi(printResults(results, getOptions())))
+      .toMatchInlineSnapshot(`
       "
       /stable/path/app/controllers/settings.js
          25:21  error  Do not access Object.prototype method 'hasOwnProperty' from target object  no-prototype-builtins
@@ -59,18 +64,7 @@ describe('print-results', () => {
   it('should not return anything when includeTodo is false and there are only todo items', async () => {
     const results = fixtures.eslintWithTodos('/stable/path');
 
-    expect(
-      stripAnsi(
-        printResults(results, {
-          updateTodo: false,
-          includeTodo: false,
-          cleanTodo: false,
-          shouldFix: false,
-          todoInfo: undefined,
-          writeTodoOptions: {},
-        })
-      ).trim()
-    ).toEqual('');
+    expect(stripAnsi(printResults(results, getOptions())).trim()).toEqual('');
   });
 
   it('should return all todo items when includeTodo is true', async () => {
@@ -78,14 +72,12 @@ describe('print-results', () => {
 
     expect(
       stripAnsi(
-        printResults(results, {
-          updateTodo: false,
-          includeTodo: true,
-          cleanTodo: false,
-          shouldFix: false,
-          todoInfo: undefined,
-          writeTodoOptions: {},
-        })
+        printResults(
+          results,
+          getOptions({
+            includeTodo: true,
+          })
+        )
       )
     ).toMatchInlineSnapshot(`
       "
@@ -129,18 +121,8 @@ describe('print-results', () => {
   it('should only return errors and warnings if includeTodo is false and there are errors, warnings, and todo items', async () => {
     const results = fixtures.eslintWithErrorsWarningsTodos('/stable/path');
 
-    expect(
-      stripAnsi(
-        printResults(results, {
-          updateTodo: false,
-          includeTodo: false,
-          cleanTodo: false,
-          shouldFix: false,
-          todoInfo: undefined,
-          writeTodoOptions: {},
-        })
-      )
-    ).toMatchInlineSnapshot(`
+    expect(stripAnsi(printResults(results, getOptions())))
+      .toMatchInlineSnapshot(`
       "
       /stable/path/app/errors-only.js
          25:21  error  Do not access Object.prototype method 'hasOwnProperty' from target object  no-prototype-builtins
