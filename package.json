@@ -1,6 +1,6 @@
 {
   "name": "@scalvert/eslint-formatter-todo",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "An ESLint formatter that can report errors as todos.",
   "repository": {
     "type": "git",

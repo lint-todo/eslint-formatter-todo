@@ -1,3 +1,13 @@
+
+## v1.5.0 (2021-09-14)
+
+#### :rocket: Enhancement
+* [#250](https://github.com/scalvert/eslint-formatter-todo/pull/250) Adds CLEAN_TODO env var to match ember-template-lint implementation ([@scalvert](https://github.com/scalvert))
+
+#### Committers: 1
+- Steve Calvert ([@scalvert](https://github.com/scalvert))
+
+
 ## v1.4.0 (2021-08-15)
 
 #### :rocket: Enhancement
