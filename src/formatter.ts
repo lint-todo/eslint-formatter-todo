@@ -18,6 +18,7 @@ import {
 } from '@ember-template-lint/todo-utils';
 import { relative, join } from 'path';
 import hasFlag from 'has-flag';
+import ci from 'ci-info';
 import { printResults } from './print-results';
 import { getBaseDir } from './get-base-dir';
 
@@ -41,8 +42,9 @@ export function formatter(results: ESLint.LintResult[]): string {
   };
   const updateTodo = process.env.UPDATE_TODO === '1';
   const includeTodo = process.env.INCLUDE_TODO === '1';
-  const cleanTodo = process.env.CLEAN_TODO == '1';
+  const cleanTodo = process.env.NO_CLEAN_TODO !== '1' && !ci.isCI;
   const shouldFix = hasFlag('fix');
+  const shouldCleanTodos = shouldFix || cleanTodo;
   const writeTodoOptions: Partial<WriteTodoOptions> = {
     shouldRemove: (todoDatum: TodoData) => todoDatum.engine === 'eslint',
   };
@@ -83,8 +85,7 @@ export function formatter(results: ESLint.LintResult[]): string {
     processResults(results, maybeTodos, {
       updateTodo,
       includeTodo,
-      cleanTodo,
-      shouldFix,
+      shouldCleanTodos,
       todoInfo,
       writeTodoOptions: optionsForFile,
     });
@@ -93,8 +94,7 @@ export function formatter(results: ESLint.LintResult[]): string {
   return printResults(results, {
     updateTodo,
     includeTodo,
-    cleanTodo,
-    shouldFix,
+    shouldCleanTodos,
     todoInfo,
     writeTodoOptions,
   });
@@ -176,7 +176,7 @@ function processResults(
     );
 
     if (remove.size > 0 || expired.size > 0) {
-      if (options.shouldFix || options.cleanTodo) {
+      if (options.shouldCleanTodos) {
         applyTodoChanges(
           getTodoStorageDirPath(baseDir),
           new Map(),

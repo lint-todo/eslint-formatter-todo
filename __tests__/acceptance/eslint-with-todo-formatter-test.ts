@@ -463,7 +463,9 @@ describe('eslint with todo formatter', function () {
     });
 
     // run normally and expect an error for not running --fix
-    let result = await runEslintWithFormatter();
+    let result = await runEslintWithFormatter({
+      env: { CI: '1' },
+    });
 
     expect(result.exitCode).toEqual(1);
     const results = stripAnsi(result.stdout).trim().split(/\r?\n/);
@@ -486,7 +488,7 @@ describe('eslint with todo formatter', function () {
     expect(todoDirs).toHaveLength(0);
   });
 
-  it('errors if a todo item is no longer valid when running without params, and fixes with CLEAN_TODO=1', async function () {
+  it('errors if a todo item is no longer valid when running without params, and fixes when run again', async function () {
     project.write({
       src: {
         'with-fixable-error.js': getStringFixture('with-fixable-error.js'),
@@ -506,7 +508,9 @@ describe('eslint with todo formatter', function () {
     });
 
     // run normally and expect an error for not running --fix
-    let result = await runEslintWithFormatter();
+    let result = await runEslintWithFormatter({
+      env: { CI: '1' },
+    });
 
     expect(result.exitCode).toEqual(1);
     const results = stripAnsi(result.stdout).trim().split(/\r?\n/);
@@ -515,11 +519,6 @@ describe('eslint with todo formatter', function () {
       /0:0  error  Todo violation passes `no-unused-vars` rule. Please run with `CLEAN_TODO=1` env var to remove this todo from the todo list  invalid-todo-violation-rule/
     );
     expect(results[3]).toMatch(/✖ 1 problem \(1 error, 0 warnings\)/);
-
-    // run fix, and expect that this will delete the outstanding todo item
-    await runEslintWithFormatter({
-      env: { CLEAN_TODO: '1' },
-    });
 
     // run normally again and expect no error
     result = await runEslintWithFormatter();

@@ -28,8 +28,7 @@ export type TodoInfo =
 export interface TodoFormatterOptions {
   updateTodo: boolean;
   includeTodo: boolean;
-  cleanTodo: boolean;
-  shouldFix: boolean;
+  shouldCleanTodos: boolean;
   todoInfo: TodoInfo;
   writeTodoOptions: Partial<WriteTodoOptions>;
 }
