@@ -466,7 +466,10 @@ describe('eslint with todo formatter', function () {
     let result = await runEslintWithFormatter({
       env: { CI: '1' },
     });
+    });
 
+      env: { CI: '1' },
+    });
     expect(result.exitCode).toEqual(1);
     const results = stripAnsi(result.stdout).trim().split(/\r?\n/);
 
@@ -475,9 +478,7 @@ describe('eslint with todo formatter', function () {
     );
     expect(results[3]).toMatch(/✖ 1 problem \(1 error, 0 warnings\)/);
 
-    // run fix, and expect that this will delete the outstanding todo item
     await runEslintWithFormatter(['--fix']);
-
     // run normally again and expect no error
     result = await runEslintWithFormatter();
 
