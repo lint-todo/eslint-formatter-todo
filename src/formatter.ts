@@ -3,10 +3,8 @@ import {
   getSeverity,
   getTodoBatches,
   getTodoConfig,
-  getTodoStorageDirPath,
   TodoData,
-  TodoDataV2,
-  todoStorageDirExists,
+  todoStorageFileExists,
   WriteTodoOptions,
   writeTodos,
   buildTodoDatum,
@@ -107,9 +105,9 @@ export function formatter(results: ESLint.LintResult[]): string {
  */
 export function updateResults(
   results: ESLint.LintResult[],
-  existingTodos: Map<string, TodoDataV2>
+  existingTodos: Set<TodoData>
 ): void {
-  for (const todo of [...existingTodos.values()]) {
+  for (const todo of existingTodos) {
     const severity: Severity = getSeverity(todo);
 
     if (severity === Severity.error) {
@@ -158,12 +156,12 @@ export function updateResults(
 
 function processResults(
   results: ESLint.LintResult[],
-  maybeTodos: Set<TodoDataV2>,
+  maybeTodos: Set<TodoData>,
   options: TodoFormatterOptions
 ) {
   const baseDir = getBaseDir();
 
-  if (todoStorageDirExists(baseDir)) {
+  if (todoStorageFileExists(baseDir)) {
     const existingTodoFiles = readTodosForFilePath(
       baseDir,
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -177,13 +175,9 @@ function processResults(
 
     if (remove.size > 0 || expired.size > 0) {
       if (options.shouldCleanTodos) {
-        applyTodoChanges(
-          getTodoStorageDirPath(baseDir),
-          new Map(),
-          new Map([...remove, ...expired])
-        );
+        applyTodoChanges(baseDir, new Set(), new Set([...remove, ...expired]));
       } else {
-        for (const [, todo] of remove) {
+        for (const todo of remove) {
           pushResult(results, todo);
         }
       }
@@ -198,7 +192,7 @@ export function buildMaybeTodos(
   lintResults: ESLint.LintResult[],
   todoConfig?: TodoConfig,
   engine?: string
-): Set<TodoDataV2> {
+): Set<TodoData> {
   const results = lintResults.filter((result) => result.messages.length > 0);
 
   const todoData = results.reduce((converted, lintResult) => {
@@ -239,7 +233,7 @@ export function buildMaybeTodos(
     });
 
     return converted;
-  }, new Set<TodoDataV2>());
+  }, new Set<TodoData>());
 
   return todoData;
 }

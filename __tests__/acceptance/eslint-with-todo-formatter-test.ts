@@ -1,13 +1,13 @@
 import execa from 'execa';
 import stripAnsi from 'strip-ansi';
 import { differenceInDays, subDays } from 'date-fns';
-import { readdirSync } from 'fs-extra';
 import {
   DaysToDecay,
   DaysToDecayByRule,
-  getTodoStorageDirPath,
+  getTodoStorageFilePath,
   readTodoData,
-  todoStorageDirExists,
+  readTodoStorageFile,
+  todoStorageFileExists,
   writeTodos,
 } from '@ember-template-lint/todo-utils';
 import { FakeProject } from '../__utils__/fake-project';
@@ -283,8 +283,8 @@ describe('eslint with todo formatter', function () {
     });
 
     expect(result.exitCode).toEqual(0);
-    expect(todoStorageDirExists(project.baseDir)).toEqual(true);
-    expect(readTodoData(project.baseDir)).toHaveLength(7);
+    expect(todoStorageFileExists(project.baseDir)).toEqual(true);
+    expect(readTodoData(project.baseDir).size).toEqual(7);
 
     result = await runEslintWithFormatter();
 
@@ -305,8 +305,8 @@ describe('eslint with todo formatter', function () {
     });
 
     expect(result.exitCode).toEqual(0);
-    expect(todoStorageDirExists(project.baseDir)).toEqual(true);
-    expect(readTodoData(project.baseDir)).toHaveLength(7);
+    expect(todoStorageFileExists(project.baseDir)).toEqual(true);
+    expect(readTodoData(project.baseDir).size).toEqual(7);
 
     project.write({
       src: {
@@ -466,6 +466,8 @@ describe('eslint with todo formatter', function () {
     let result = await runEslintWithFormatter({
       env: { CI: '1' },
     });
+      getTodoStorageFilePath(project.baseDir)
+    );
     });
 
       env: { CI: '1' },
@@ -482,11 +484,13 @@ describe('eslint with todo formatter', function () {
     // run normally again and expect no error
     result = await runEslintWithFormatter();
 
-    const todoDirs = readdirSync(getTodoStorageDirPath(project.baseDir));
+    const todoContents = readTodoStorageFile(
+      getTodoStorageFilePath(project.baseDir)
+    );
 
     expect(result.exitCode).toEqual(0);
     expect(stripAnsi(result.stdout).trim()).toEqual('');
-    expect(todoDirs).toHaveLength(0);
+    expect(todoContents).toHaveLength(2);
   });
 
   for (const { name, isLegacy, setTodoConfig } of [

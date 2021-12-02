@@ -1,11 +1,8 @@
 import {
-  getTodoStorageDirPath,
   readTodoData,
-  todoFilePathFor,
-  todoStorageDirExists,
+  todoStorageFileExists,
   Severity,
 } from '@ember-template-lint/todo-utils';
-import { existsSync } from 'fs';
 import { DirResult, dirSync } from 'tmp';
 import { buildMaybeTodos, formatter, updateResults } from '../../src/formatter';
 import fixtures from '../__fixtures__/fixtures';
@@ -35,8 +32,7 @@ describe('format-results', () => {
 
     formatter(results);
 
-    const todoDir = getTodoStorageDirPath(tmpDir.name);
-    expect(existsSync(todoDir)).toBe(false);
+    expect(todoStorageFileExists(tmpDir.name)).toBe(false);
   });
 
   it('SHOULD generate a TODO dir with todo files when UPDATE_TODO is set to 1', () => {
@@ -46,11 +42,11 @@ describe('format-results', () => {
 
     formatter(results);
 
-    expect(todoStorageDirExists(tmpDir.name)).toBe(true);
+    expect(todoStorageFileExists(tmpDir.name)).toBe(true);
 
     const todos = readTodoData(tmpDir.name);
 
-    expect(todos).toHaveLength(18);
+    expect(todos.size).toEqual(18);
   });
 
   it('SHOULD not mutate errors if a todo dir is not present', () => {
@@ -81,12 +77,7 @@ describe('format-results', () => {
     // build todo map but without the last result in the results array (so they differ)
     const todoResults = [...results];
     const lastResult = todoResults.pop();
-    const todos = new Map(
-      [...buildMaybeTodos(tmpDir.name, todoResults)].map((todoDatum) => [
-        todoFilePathFor(todoDatum),
-        todoDatum,
-      ])
-    );
+    const todos = buildMaybeTodos(tmpDir.name, todoResults);
 
     updateResults(results, todos);
 
