@@ -2,7 +2,7 @@ import {
   readTodoData,
   todoStorageFileExists,
   Severity,
-} from '@ember-template-lint/todo-utils';
+} from '@lint-todo/utils';
 import { DirResult, dirSync } from 'tmp';
 import { buildMaybeTodos, formatter, updateResults } from '../../src/formatter';
 import fixtures from '../__fixtures__/fixtures';

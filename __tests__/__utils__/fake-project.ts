@@ -3,7 +3,7 @@ import {
   DaysToDecayByRule,
   LintTodoPackageJson,
   TodoConfigByEngine,
-} from '@ember-template-lint/todo-utils';
+} from '@lint-todo/utils';
 import { dirname, join } from 'path';
 import fixturify from 'fixturify';
 import Project from 'fixturify-project';

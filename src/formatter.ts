@@ -13,7 +13,7 @@ import {
   TodoConfig,
   Range,
   readTodosForFilePath,
-} from '@ember-template-lint/todo-utils';
+} from '@lint-todo/utils';
 import { relative, join } from 'path';
 import hasFlag from 'has-flag';
 import ci from 'ci-info';

@@ -9,7 +9,7 @@ import {
   readTodoStorageFile,
   todoStorageFileExists,
   writeTodos,
-} from '@ember-template-lint/todo-utils';
+} from '@lint-todo/utils';
 import { FakeProject } from '../__utils__/fake-project';
 import { getObjectFixture, getStringFixture } from '../__utils__/get-fixture';
 import { buildMaybeTodos } from '../../src/formatter';
