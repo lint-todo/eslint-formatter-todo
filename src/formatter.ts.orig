@@ -3,8 +3,10 @@ import {
   getSeverity,
   getTodoBatches,
   getTodoConfig,
+  getTodoStorageDirPath,
   TodoData,
-  todoStorageFileExists,
+  TodoDataV2,
+  todoStorageDirExists,
   WriteTodoOptions,
   writeTodos,
   buildTodoDatum,
@@ -40,7 +42,11 @@ export function formatter(results: ESLint.LintResult[]): string {
   };
   const updateTodo = process.env.UPDATE_TODO === '1';
   const includeTodo = process.env.INCLUDE_TODO === '1';
+<<<<<<< HEAD
   const cleanTodo = !process.env.NO_CLEAN_TODO && !ci.isCI;
+=======
+  const cleanTodo = process.env.NO_CLEAN_TODO !== '1' && !ci.isCI;
+>>>>>>> 97122fd (feat: Enable auto-fix of todos)
   const shouldFix = hasFlag('fix');
   const shouldCleanTodos = shouldFix || cleanTodo;
   const writeTodoOptions: Partial<WriteTodoOptions> = {
@@ -105,9 +111,9 @@ export function formatter(results: ESLint.LintResult[]): string {
  */
 export function updateResults(
   results: ESLint.LintResult[],
-  existingTodos: Set<TodoData>
+  existingTodos: Map<string, TodoDataV2>
 ): void {
-  for (const todo of existingTodos) {
+  for (const todo of [...existingTodos.values()]) {
     const severity: Severity = getSeverity(todo);
 
     if (severity === Severity.error) {
@@ -156,12 +162,12 @@ export function updateResults(
 
 function processResults(
   results: ESLint.LintResult[],
-  maybeTodos: Set<TodoData>,
+  maybeTodos: Set<TodoDataV2>,
   options: TodoFormatterOptions
 ) {
   const baseDir = getBaseDir();
 
-  if (todoStorageFileExists(baseDir)) {
+  if (todoStorageDirExists(baseDir)) {
     const existingTodoFiles = readTodosForFilePath(
       baseDir,
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -175,9 +181,13 @@ function processResults(
 
     if (remove.size > 0 || expired.size > 0) {
       if (options.shouldCleanTodos) {
-        applyTodoChanges(baseDir, new Set(), new Set([...remove, ...expired]));
+        applyTodoChanges(
+          getTodoStorageDirPath(baseDir),
+          new Map(),
+          new Map([...remove, ...expired])
+        );
       } else {
-        for (const todo of remove) {
+        for (const [, todo] of remove) {
           pushResult(results, todo);
         }
       }
@@ -192,7 +202,7 @@ export function buildMaybeTodos(
   lintResults: ESLint.LintResult[],
   todoConfig?: TodoConfig,
   engine?: string
-): Set<TodoData> {
+): Set<TodoDataV2> {
   const results = lintResults.filter((result) => result.messages.length > 0);
 
   const todoData = results.reduce((converted, lintResult) => {
@@ -233,7 +243,7 @@ export function buildMaybeTodos(
     });
 
     return converted;
-  }, new Set<TodoData>());
+  }, new Set<TodoDataV2>());
 
   return todoData;
 }
