@@ -23,7 +23,7 @@
     "test:jest": "yarn build && jest --no-cache"
   },
   "dependencies": {
-    "@ember-template-lint/todo-utils": "11.0.0-beta.1",
+    "@lint-todo/utils": "^11.0.0",
     "chalk": "^4.1.0",
     "ci-info": "^3.3.0",
     "eslint": "^7.10.0",

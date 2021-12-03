@@ -1,7 +1,4 @@
-import type {
-  TodoConfig,
-  WriteTodoOptions,
-} from '@ember-template-lint/todo-utils';
+import type { TodoConfig, WriteTodoOptions } from '@lint-todo/utils';
 import type { Linter } from 'eslint';
 
 declare module 'eslint' {
