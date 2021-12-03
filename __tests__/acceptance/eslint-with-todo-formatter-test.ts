@@ -488,48 +488,6 @@ describe('eslint with todo formatter', function () {
     expect(todoDirs).toHaveLength(0);
   });
 
-  it('errors if a todo item is no longer valid when running without params, and fixes when run again', async function () {
-    project.write({
-      src: {
-        'with-fixable-error.js': getStringFixture('with-fixable-error.js'),
-      },
-    });
-
-    // generate todo based on existing error
-    await runEslintWithFormatter({
-      env: { UPDATE_TODO: '1' },
-    });
-
-    // mimic fixing the error manually via user interaction
-    project.write({
-      src: {
-        'with-fixable-error.js': getStringFixture('no-errors.js'),
-      },
-    });
-
-    // run normally and expect an error for not running --fix
-    let result = await runEslintWithFormatter({
-      env: { CI: '1' },
-    });
-
-    expect(result.exitCode).toEqual(1);
-    const results = stripAnsi(result.stdout).trim().split(/\r?\n/);
-
-    expect(results[1]).toMatch(
-      /0:0  error  Todo violation passes `no-unused-vars` rule. Please run with `CLEAN_TODO=1` env var to remove this todo from the todo list  invalid-todo-violation-rule/
-    );
-    expect(results[3]).toMatch(/✖ 1 problem \(1 error, 0 warnings\)/);
-
-    // run normally again and expect no error
-    result = await runEslintWithFormatter();
-
-    const todoDirs = readdirSync(getTodoStorageDirPath(project.baseDir));
-
-    expect(result.exitCode).toEqual(0);
-    expect(stripAnsi(result.stdout).trim()).toEqual('');
-    expect(todoDirs).toHaveLength(0);
-  });
-
   for (const { name, isLegacy, setTodoConfig } of [
     {
       name: 'Shorthand todo configuration',

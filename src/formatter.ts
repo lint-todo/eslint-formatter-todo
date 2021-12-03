@@ -34,7 +34,7 @@ export function formatter(results: ESLint.LintResult[]): string {
   if (!todoConfigResult.isValid) {
     throw new Error(todoConfigResult.message);
   }
-
+  debugger;
   const todoInfo = {
     added: 0,
     removed: 0,
@@ -42,7 +42,7 @@ export function formatter(results: ESLint.LintResult[]): string {
   };
   const updateTodo = process.env.UPDATE_TODO === '1';
   const includeTodo = process.env.INCLUDE_TODO === '1';
-  const cleanTodo = process.env.NO_CLEAN_TODO !== '1' && !ci.isCI;
+  const cleanTodo = !process.env.NO_CLEAN_TODO && !ci.isCI;
   const shouldFix = hasFlag('fix');
   const shouldCleanTodos = shouldFix || cleanTodo;
   const writeTodoOptions: Partial<WriteTodoOptions> = {
