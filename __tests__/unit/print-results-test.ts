@@ -8,8 +8,7 @@ function getOptions(options = {}) {
     {
       updateTodo: false,
       includeTodo: false,
-      cleanTodo: false,
-      shouldFix: false,
+      shouldCleanTodos: true,
       todoInfo: undefined,
       writeTodoOptions: {},
     },

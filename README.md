@@ -36,10 +36,17 @@ If you want to see todos as part of `eslint`'s output, you can include them
 
 <img src="docs/post-todo.png" style="background-color: #fff" />
 
-If an error is fixed manually, `eslint` will let you know that there's an outstanding `todo` file. You can remove this file by running `--fix`
+If an error is fixed manually, `eslint` will automatically remove the todo when run again.
 
 ```bash
-eslint . --format @scalvert/eslint-formatter-todo --fix
+eslint . --format @scalvert/eslint-formatter-todo
+```
+
+If you want to opt out of this behavior, you can run with the `NO_CLEAN_TODO` env var set.
+
+```bash
+# Will not remove the todo automatically
+NO_CLEAN_TODO='1' eslint . --format @scalvert/eslint-formatter-todo
 ```
 
 ### Configuring Due Dates
