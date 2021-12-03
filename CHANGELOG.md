@@ -1,4 +1,18 @@
 
+
+## v2.0.0 (2021-12-03)
+
+#### :boom: Breaking Change
+* [#274](https://github.com/scalvert/eslint-formatter-todo/pull/274) Convert to single file storage ([@scalvert](https://github.com/scalvert))
+* [#273](https://github.com/scalvert/eslint-formatter-todo/pull/273) Enable auto-fix of todos ([@scalvert](https://github.com/scalvert))
+
+#### :house: Internal
+* [#275](https://github.com/scalvert/eslint-formatter-todo/pull/275) Updating to use @lint-todo/utils package ([@scalvert](https://github.com/scalvert))
+
+#### Committers: 1
+- Steve Calvert ([@scalvert](https://github.com/scalvert))
+
+
 ## v1.5.0 (2021-09-14)
 
 #### :rocket: Enhancement
