@@ -1,10 +1,10 @@
 {
-  "name": "@scalvert/eslint-formatter-todo",
+  "name": "@lint-todo/eslint-formatter-todo",
   "version": "2.0.0",
   "description": "An ESLint formatter that can report errors as todos.",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/scalvert/eslint-formatter-todo.git"
+    "url": "git+https://github.com/lint-todo/eslint-formatter-todo.git"
   },
   "license": "MIT",
   "contributors": [
@@ -87,9 +87,9 @@
     "yarn": "1.22.10"
   },
   "bugs": {
-    "url": "https://github.com/scalvert/eslint-formatter-todo/issues"
+    "url": "https://github.com/lint-todo/eslint-formatter-todo/issues"
   },
-  "homepage": "https://github.com/scalvert/eslint-formatter-todo#readme",
+  "homepage": "https://github.com/lint-todo/eslint-formatter-todo#readme",
   "directories": {
     "lib": "lib"
   },
