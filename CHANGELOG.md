@@ -1,5 +1,15 @@
 
 
+
+## v2.0.0 (2021-12-06)
+
+#### :house: Internal
+* [#286](https://github.com/lint-todo/eslint-formatter-todo/pull/286) Rename repository to new scope ([@scalvert](https://github.com/scalvert))
+
+#### Committers: 1
+- Steve Calvert ([@scalvert](https://github.com/scalvert))
+
+
 ## v2.0.0 (2021-12-03)
 
 #### :boom: Breaking Change
