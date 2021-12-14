@@ -6,6 +6,7 @@ import {
 import { DirResult, dirSync } from 'tmp';
 import { buildMaybeTodos, formatter, updateResults } from '../../src/formatter';
 import fixtures from '../__fixtures__/fixtures';
+import { buildReadOptions } from '../__utils__/build-read-options';
 import { deepCopy } from '../__utils__/deep-copy';
 import { setUpdateTodoEnv } from '../__utils__/set-env';
 
@@ -44,7 +45,7 @@ describe('format-results', () => {
 
     expect(todoStorageFileExists(tmpDir.name)).toBe(true);
 
-    const todos = readTodoData(tmpDir.name);
+    const todos = readTodoData(tmpDir.name, buildReadOptions());
 
     expect(todos.size).toEqual(18);
   });

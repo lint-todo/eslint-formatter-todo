@@ -27,7 +27,7 @@ export interface TodoFormatterOptions {
   includeTodo: boolean;
   shouldCleanTodos: boolean;
   todoInfo: TodoInfo;
-  writeTodoOptions: Partial<WriteTodoOptions>;
+  writeTodoOptions: WriteTodoOptions;
 }
 
 export interface TodoFormatterCounts {
