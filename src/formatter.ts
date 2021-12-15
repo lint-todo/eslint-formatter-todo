@@ -31,7 +31,7 @@ export function formatter(results: ESLint.LintResult[]): string {
   if (!todoConfigResult.isValid) {
     throw new Error(todoConfigResult.message);
   }
-  debugger;
+
   const todoInfo = {
     added: 0,
     removed: 0,
