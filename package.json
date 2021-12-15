@@ -34,7 +34,7 @@
     "type-fest": "^0.20.2"
   },
   "devDependencies": {
-    "@types/eslint": "^7.2.4",
+    "@types/eslint": "^8.2.1",
     "@types/fs-extra": "^9.0.1",
     "@types/text-table": "^0.2.1",
     "@types/tmp": "^0.2.0",
