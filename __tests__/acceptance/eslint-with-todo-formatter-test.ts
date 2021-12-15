@@ -517,7 +517,9 @@ describe('eslint with todo formatter', function () {
       },
     });
 
-    const result = await runEslintWithFormatter();
+    // normally we wouldn't need to use the --fix flag, since todos are auto-cleaned. Auto cleaning by default isn't
+    // enabled in CI, however, so we need to force the fix in order to mimic the default behavior.
+    const result = await runEslintWithFormatter(['--fix']);
 
     expect(result.exitCode).toEqual(0);
 
