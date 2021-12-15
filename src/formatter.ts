@@ -1,6 +1,7 @@
 import {
   applyTodoChanges,
   buildTodoDatum,
+  compactTodoStorageFile,
   generateTodoBatches,
   getSeverity,
   getTodoConfig,
@@ -30,6 +31,12 @@ export function formatter(results: ESLint.LintResult[]): string {
 
   if (!todoConfigResult.isValid) {
     throw new Error(todoConfigResult.message);
+  }
+
+  if (process.env.COMPACT_TODO) {
+    const { compacted } = compactTodoStorageFile(baseDir);
+
+    return `Removed ${compacted} todos in .lint-todo storage file`;
   }
 
   const todoInfo = {
