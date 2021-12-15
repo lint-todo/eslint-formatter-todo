@@ -498,6 +498,53 @@ describe('eslint with todo formatter', function () {
     expect(todoContents).toHaveLength(2);
   });
 
+  it('can compact todo storage file', async function () {
+    project.write({
+      src: {
+        'with-fixable-error.js': getStringFixture('with-fixable-error.js'),
+      },
+    });
+
+    // generate todo based on existing error
+    await runEslintWithFormatter({
+      env: { UPDATE_TODO: '1' },
+    });
+
+    // mimic fixing the error manually via user interaction
+    project.write({
+      src: {
+        'with-fixable-error.js': getStringFixture('no-errors.js'),
+      },
+    });
+
+    const result = await runEslintWithFormatter();
+
+    expect(result.exitCode).toEqual(0);
+
+    expect(readTodoStorageFile(getTodoStorageFilePath(project.baseDir)))
+      .toMatchInlineSnapshot(`
+      Array [
+        "add|eslint|no-unused-vars|1|10|1|16|50f2c7b9dac0a4af1cde42fe5be7963201d0504d|1639526400000|1642118400000|1644710400000|src/with-fixable-error.js",
+        "remove|eslint|no-unused-vars|1|10|1|16|50f2c7b9dac0a4af1cde42fe5be7963201d0504d|1639526400000|1642118400000|1644710400000|src/with-fixable-error.js",
+      ]
+    `);
+
+    await runEslintWithFormatter({
+      env: {
+        COMPACT_TODO: '1',
+      },
+    });
+
+    expect(readTodoStorageFile(getTodoStorageFilePath(project.baseDir)))
+      .toMatchInlineSnapshot(`
+      Array [
+        "add|eslint|no-unused-vars|1|10|1|16|50f2c7b9dac0a4af1cde42fe5be7963201d0504d|1639526400000|1642118400000|1644710400000|src/with-fixable-error.js",
+      ]
+    `);
+
+    expect(result.exitCode).toEqual(0);
+  });
+
   for (const { name, isLegacy, setTodoConfig } of [
     {
       name: 'Shorthand todo configuration',
