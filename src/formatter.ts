@@ -1,18 +1,17 @@
 import {
   applyTodoChanges,
-  getSeverity,
-  getTodoBatches,
-  getTodoConfig,
-  TodoData,
-  todoStorageFileExists,
-  WriteTodoOptions,
-  writeTodos,
   buildTodoDatum,
-  validateConfig,
+  generateTodoBatches,
+  getSeverity,
+  getTodoConfig,
   Severity,
   TodoConfig,
+  TodoData,
+  todoStorageFileExists,
   Range,
-  readTodosForFilePath,
+  validateConfig,
+  WriteTodoOptions,
+  writeTodos,
 } from '@lint-todo/utils';
 import { relative, join } from 'path';
 import hasFlag from 'has-flag';
@@ -43,9 +42,6 @@ export function formatter(results: ESLint.LintResult[]): string {
   const cleanTodo = !process.env.NO_CLEAN_TODO && !ci.isCI;
   const shouldFix = hasFlag('fix');
   const shouldCleanTodos = shouldFix || cleanTodo;
-  const writeTodoOptions: Partial<WriteTodoOptions> = {
-    shouldRemove: (todoDatum: TodoData) => todoDatum.engine === 'eslint',
-  };
 
   if (
     (process.env.TODO_DAYS_TO_WARN || process.env.TODO_DAYS_TO_ERROR) &&
@@ -63,8 +59,9 @@ export function formatter(results: ESLint.LintResult[]): string {
       todoInfo.todoConfig
     );
 
-    const optionsForFile = {
-      ...writeTodoOptions,
+    const optionsForFile: WriteTodoOptions = {
+      engine: 'eslint',
+      shouldRemove: (todoDatum: TodoData) => todoDatum.engine === 'eslint',
       todoConfig: todoInfo.todoConfig,
       filePath: relative(baseDir, fileResults.filePath),
     };
@@ -94,8 +91,35 @@ export function formatter(results: ESLint.LintResult[]): string {
     includeTodo,
     shouldCleanTodos,
     todoInfo,
-    writeTodoOptions,
   });
+}
+
+function processResults(
+  results: ESLint.LintResult[],
+  maybeTodos: Set<TodoData>,
+  options: TodoFormatterOptions
+) {
+  const baseDir = getBaseDir();
+
+  if (todoStorageFileExists(baseDir)) {
+    const { remove, stable, expired } = generateTodoBatches(
+      baseDir,
+      maybeTodos,
+      options.writeTodoOptions
+    );
+
+    if (remove.size > 0 || expired.size > 0) {
+      if (options.shouldCleanTodos) {
+        applyTodoChanges(baseDir, new Set(), new Set([...remove, ...expired]));
+      } else {
+        for (const todo of remove) {
+          pushResult(results, todo);
+        }
+      }
+    }
+
+    updateResults(results, stable);
+  }
 }
 
 /**
@@ -151,39 +175,6 @@ export function updateResults(
     message.severity = <Linter.Severity>severity;
 
     result.errorCount -= 1;
-  }
-}
-
-function processResults(
-  results: ESLint.LintResult[],
-  maybeTodos: Set<TodoData>,
-  options: TodoFormatterOptions
-) {
-  const baseDir = getBaseDir();
-
-  if (todoStorageFileExists(baseDir)) {
-    const existingTodoFiles = readTodosForFilePath(
-      baseDir,
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      options.writeTodoOptions.filePath!
-    );
-    const { remove, stable, expired } = getTodoBatches(
-      maybeTodos,
-      existingTodoFiles,
-      options.writeTodoOptions
-    );
-
-    if (remove.size > 0 || expired.size > 0) {
-      if (options.shouldCleanTodos) {
-        applyTodoChanges(baseDir, new Set(), new Set([...remove, ...expired]));
-      } else {
-        for (const todo of remove) {
-          pushResult(results, todo);
-        }
-      }
-    }
-
-    updateResults(results, stable);
   }
 }
 

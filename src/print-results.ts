@@ -10,9 +10,11 @@ import {
   TodoResultMessage,
 } from './types';
 
+type TodoPrintOptions = Omit<TodoFormatterOptions, 'writeTodoOptions'>;
+
 export function printResults(
   results: ESLint.LintResult[],
-  options: TodoFormatterOptions
+  options: TodoPrintOptions
 ): string {
   const counts = sumCounts(results);
 
@@ -40,7 +42,7 @@ export function printResults(
 
 function formatResults(
   results: ESLint.LintResult[],
-  options: TodoFormatterOptions
+  options: TodoPrintOptions
 ): string {
   let output = '';
 
@@ -68,7 +70,7 @@ function formatResults(
 
 function formatMessages(
   messages: TodoResultMessage[],
-  options: TodoFormatterOptions
+  options: TodoPrintOptions
 ): string {
   const messageRows = messages
     .filter(
@@ -112,10 +114,7 @@ function formatMessages(
     : '';
 }
 
-function formatSummary(
-  counts: TodoFormatterCounts,
-  options: TodoFormatterOptions
-) {
+function formatSummary(counts: TodoFormatterCounts, options: TodoPrintOptions) {
   let output = '';
 
   const { includeTodo } = options;

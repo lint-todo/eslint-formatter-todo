@@ -4,6 +4,7 @@ import { differenceInDays, subDays } from 'date-fns';
 import {
   DaysToDecay,
   DaysToDecayByRule,
+  getTodoConfig,
   getTodoStorageFilePath,
   readTodoData,
   readTodoStorageFile,
@@ -12,6 +13,7 @@ import {
 } from '@lint-todo/utils';
 import { FakeProject } from '../__utils__/fake-project';
 import { getObjectFixture, getStringFixture } from '../__utils__/get-fixture';
+import { buildReadOptions } from '../__utils__/build-read-options';
 import { buildMaybeTodos } from '../../src/formatter';
 
 describe('eslint with todo formatter', function () {
@@ -284,7 +286,7 @@ describe('eslint with todo formatter', function () {
 
     expect(result.exitCode).toEqual(0);
     expect(todoStorageFileExists(project.baseDir)).toEqual(true);
-    expect(readTodoData(project.baseDir).size).toEqual(7);
+    expect(readTodoData(project.baseDir, buildReadOptions()).size).toEqual(7);
 
     result = await runEslintWithFormatter();
 
@@ -306,7 +308,7 @@ describe('eslint with todo formatter', function () {
 
     expect(result.exitCode).toEqual(0);
     expect(todoStorageFileExists(project.baseDir)).toEqual(true);
-    expect(readTodoData(project.baseDir).size).toEqual(7);
+    expect(readTodoData(project.baseDir, buildReadOptions()).size).toEqual(7);
 
     project.write({
       src: {
@@ -337,7 +339,13 @@ describe('eslint with todo formatter', function () {
         ),
         undefined,
         'ember-template-lint'
-      )
+      ),
+      {
+        engine: 'eslint',
+        filePath: '',
+        todoConfig: getTodoConfig(project.baseDir, 'eslint'),
+        shouldRemove: () => true,
+      }
     );
 
     const result = await runEslintWithFormatter({
@@ -552,7 +560,7 @@ describe('eslint with todo formatter', function () {
           env: { UPDATE_TODO: '1' },
         });
 
-        const todos = readTodoData(project.baseDir);
+        const todos = readTodoData(project.baseDir, buildReadOptions());
 
         expect(result.exitCode).toEqual(0);
 
@@ -582,7 +590,7 @@ describe('eslint with todo formatter', function () {
           env: { UPDATE_TODO: '1', TODO_DAYS_TO_WARN: '30' },
         });
 
-        const todos = readTodoData(project.baseDir);
+        const todos = readTodoData(project.baseDir, buildReadOptions());
 
         expect(result.exitCode).toEqual(0);
 
@@ -612,7 +620,7 @@ describe('eslint with todo formatter', function () {
           env: { UPDATE_TODO: '1' },
         });
 
-        const todos = readTodoData(project.baseDir);
+        const todos = readTodoData(project.baseDir, buildReadOptions());
 
         expect(result.exitCode).toEqual(0);
 
@@ -642,7 +650,7 @@ describe('eslint with todo formatter', function () {
           env: { UPDATE_TODO: '1', TODO_DAYS_TO_ERROR: '30' },
         });
 
-        const todos = readTodoData(project.baseDir);
+        const todos = readTodoData(project.baseDir, buildReadOptions());
 
         expect(result.exitCode).toEqual(0);
 
@@ -673,7 +681,7 @@ describe('eslint with todo formatter', function () {
           env: { UPDATE_TODO: '1' },
         });
 
-        const todos = readTodoData(project.baseDir);
+        const todos = readTodoData(project.baseDir, buildReadOptions());
 
         expect(result.exitCode).toEqual(0);
 
@@ -713,7 +721,7 @@ describe('eslint with todo formatter', function () {
           },
         });
 
-        const todos = readTodoData(project.baseDir);
+        const todos = readTodoData(project.baseDir, buildReadOptions());
 
         expect(result.exitCode).toEqual(0);
 
@@ -1183,7 +1191,7 @@ describe('eslint with todo formatter', function () {
             },
           });
 
-          const todos = readTodoData(project.baseDir);
+          const todos = readTodoData(project.baseDir, buildReadOptions());
 
           expect(result.exitCode).toEqual(0);
 
