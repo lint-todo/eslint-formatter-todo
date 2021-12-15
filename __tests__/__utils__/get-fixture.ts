@@ -31,7 +31,9 @@ export function getObjectFixture<T extends ESLint.LintResult>(
 
   return updatePaths(
     tmp,
-    fixture.hasOwnProperty('results') ? fixture.results : fixture
+    Object.prototype.hasOwnProperty.call(fixture, 'results')
+      ? fixture.results
+      : fixture
   );
 }
 

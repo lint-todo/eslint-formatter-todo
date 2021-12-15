@@ -259,7 +259,7 @@ describe('eslint with todo formatter', function () {
 
     expect(result.exitCode).toEqual(1);
     expect(stdout).toMatch(
-      /1:10  error {4}'sayHi' is defined but never used  no-unused-vars/
+      /1:10 {2}error {4}'sayHi' is defined but never used {2}no-unused-vars/
     );
     expect(stdout).toMatch(/2:3 {3}warning {2}Unexpected alert {19}no-alert/);
     expect(stdout).toMatch(
@@ -375,10 +375,10 @@ describe('eslint with todo formatter', function () {
 
     expect(result.exitCode).toEqual(0);
     expect(stdout).toMatch(
-      /1:10  todo  'addOne' is defined but never used\s+no-unused-vars/
+      /1:10 {2}todo {2}'addOne' is defined but never used\s+no-unused-vars/
     );
     expect(stdout).toMatch(
-      /1:10  todo  'fibonacci' is defined but never used\s+no-unused-vars/
+      /1:10 {2}todo {2}'fibonacci' is defined but never used\s+no-unused-vars/
     );
     expect(stdout).toMatch(/✖ 0 problems \(0 errors, 0 warnings, 10 todos\)/);
   });
@@ -405,10 +405,10 @@ describe('eslint with todo formatter', function () {
 
     expect(result.exitCode).toEqual(0);
     expect(stdout).toMatch(
-      /1:10  todo  'addOne' is defined but never used\s+no-unused-vars/
+      /1:10 {2}todo {2}'addOne' is defined but never used\s+no-unused-vars/
     );
     expect(stdout).toMatch(
-      /1:10  todo  'fibonacci' is defined but never used\s+no-unused-vars/
+      /1:10 {2}todo {2}'fibonacci' is defined but never used\s+no-unused-vars/
     );
     expect(stdout).toMatch(/✖ 0 problems \(0 errors, 0 warnings, 10 todos\)/);
   });
@@ -442,12 +442,12 @@ describe('eslint with todo formatter', function () {
 
     expect(result.exitCode).toEqual(1);
     expect(stdout).toMatch(
-      /1:10  todo  'addOne' is defined but never used\s+no-unused-vars/
+      /1:10 {2}todo {2}'addOne' is defined but never used\s+no-unused-vars/
     );
     expect(stdout).toMatch(
-      /1:10  error    'sayHi' is defined but never used\s+no-unused-vars/
+      /1:10 {2}error {4}'sayHi' is defined but never used\s+no-unused-vars/
     );
-    expect(stdout).toMatch(/2:3   warning  Unexpected alert\s+no-alert/);
+    expect(stdout).toMatch(/2:3 {3}warning {2}Unexpected alert\s+no-alert/);
     expect(stdout).toMatch(/✖ 3 problems \(2 errors, 1 warning, 7 todos\)/);
   });
 
@@ -479,7 +479,7 @@ describe('eslint with todo formatter', function () {
     const results = stripAnsi(result.stdout).trim().split(/\r?\n/);
 
     expect(results[1]).toMatch(
-      /0:0  error  Todo violation passes `no-unused-vars` rule. Please run with `CLEAN_TODO=1` env var to remove this todo from the todo list  invalid-todo-violation-rule/
+      /0:0 {2}error {2}Todo violation passes `no-unused-vars` rule. Please run with `CLEAN_TODO=1` env var to remove this todo from the todo list {2}invalid-todo-violation-rule/
     );
     expect(results[3]).toMatch(/✖ 1 problem \(1 error, 0 warnings\)/);
 
@@ -496,6 +496,55 @@ describe('eslint with todo formatter', function () {
     expect(result.exitCode).toEqual(0);
     expect(stripAnsi(result.stdout).trim()).toEqual('');
     expect(todoContents).toHaveLength(2);
+  });
+
+  it('can compact todo storage file', async function () {
+    project.write({
+      src: {
+        'with-fixable-error.js': getStringFixture('with-fixable-error.js'),
+      },
+    });
+
+    // generate todo based on existing error
+    await runEslintWithFormatter({
+      env: { UPDATE_TODO: '1' },
+    });
+
+    // mimic fixing the error manually via user interaction
+    project.write({
+      src: {
+        'with-fixable-error.js': getStringFixture('no-errors.js'),
+      },
+    });
+
+    // normally we wouldn't need to use the --fix flag, since todos are auto-cleaned. Auto cleaning by default isn't
+    // enabled in CI, however, so we need to force the fix in order to mimic the default behavior.
+    const result = await runEslintWithFormatter(['--fix']);
+
+    expect(result.exitCode).toEqual(0);
+
+    expect(readTodoStorageFile(getTodoStorageFilePath(project.baseDir)))
+      .toMatchInlineSnapshot(`
+      Array [
+        "add|eslint|no-unused-vars|1|10|1|16|50f2c7b9dac0a4af1cde42fe5be7963201d0504d|1639526400000|1642118400000|1644710400000|src/with-fixable-error.js",
+        "remove|eslint|no-unused-vars|1|10|1|16|50f2c7b9dac0a4af1cde42fe5be7963201d0504d|1639526400000|1642118400000|1644710400000|src/with-fixable-error.js",
+      ]
+    `);
+
+    await runEslintWithFormatter({
+      env: {
+        COMPACT_TODO: '1',
+      },
+    });
+
+    expect(readTodoStorageFile(getTodoStorageFilePath(project.baseDir)))
+      .toMatchInlineSnapshot(`
+      Array [
+        "add|eslint|no-unused-vars|1|10|1|16|50f2c7b9dac0a4af1cde42fe5be7963201d0504d|1639526400000|1642118400000|1644710400000|src/with-fixable-error.js",
+      ]
+    `);
+
+    expect(result.exitCode).toEqual(0);
   });
 
   for (const { name, isLegacy, setTodoConfig } of [
@@ -769,25 +818,25 @@ describe('eslint with todo formatter', function () {
 
         expect(result.exitCode).toEqual(0);
         expect(stdout).toMatch(
-          /1:10  todo  'addOne' is defined but never used\s+no-unused-vars/
+          /1:10 {2}todo {2}'addOne' is defined but never used\s+no-unused-vars/
         );
         expect(stdout).toMatch(
-          /2:7   todo  Use the isNaN function to compare with NaN\s+use-isnan/
+          /2:7 {3}todo {2}Use the isNaN function to compare with NaN\s+use-isnan/
         );
         expect(stdout).toMatch(
-          /2:9   todo  Expected '!==' and instead saw '!='\s+eqeqeq/
+          /2:9 {3}todo {2}Expected '!==' and instead saw '!='\s+eqeqeq/
         );
         expect(stdout).toMatch(
-          /3:12  todo  Unary operator '\+\+' used\s+no-plusplus/
+          /3:12 {2}todo {2}Unary operator '\+\+' used\s+no-plusplus/
         );
         expect(stdout).toMatch(
-          /3:12  todo  Assignment to function parameter 'i'\s+no-param-reassign/
+          /3:12 {2}todo {2}Assignment to function parameter 'i'\s+no-param-reassign/
         );
         expect(stdout).toMatch(
-          /5:3   todo  Function 'addOne' expected a return value\s+consistent-return/
+          /5:3 {3}todo {2}Function 'addOne' expected a return value\s+consistent-return/
         );
         expect(stdout).toMatch(
-          /5:3   todo  Unnecessary return statement\s+no-useless-return/
+          /5:3 {3}todo {2}Unnecessary return statement\s+no-useless-return/
         );
         expect(stdout).toMatch(
           /✖ 0 problems \(0 errors, 0 warnings, 7 todos\)/
@@ -820,25 +869,25 @@ describe('eslint with todo formatter', function () {
 
         expect(result.exitCode).toEqual(0);
         expect(stdout).toMatch(
-          /1:10  todo  'addOne' is defined but never used\s+no-unused-vars/
+          /1:10 {2}todo {2}'addOne' is defined but never used\s+no-unused-vars/
         );
         expect(stdout).toMatch(
-          /2:7   todo  Use the isNaN function to compare with NaN\s+use-isnan/
+          /2:7 {3}todo {2}Use the isNaN function to compare with NaN\s+use-isnan/
         );
         expect(stdout).toMatch(
-          /2:9   todo  Expected '!==' and instead saw '!='\s+eqeqeq/
+          /2:9 {3}todo {2}Expected '!==' and instead saw '!='\s+eqeqeq/
         );
         expect(stdout).toMatch(
-          /3:12  todo  Unary operator '\+\+' used\s+no-plusplus/
+          /3:12 {2}todo {2}Unary operator '\+\+' used\s+no-plusplus/
         );
         expect(stdout).toMatch(
-          /3:12  todo  Assignment to function parameter 'i'\s+no-param-reassign/
+          /3:12 {2}todo {2}Assignment to function parameter 'i'\s+no-param-reassign/
         );
         expect(stdout).toMatch(
-          /5:3   todo  Function 'addOne' expected a return value\s+consistent-return/
+          /5:3 {3}todo {2}Function 'addOne' expected a return value\s+consistent-return/
         );
         expect(stdout).toMatch(
-          /5:3   todo  Unnecessary return statement\s+no-useless-return/
+          /5:3 {3}todo {2}Unnecessary return statement\s+no-useless-return/
         );
         expect(stdout).toMatch(
           /✖ 0 problems \(0 errors, 0 warnings, 7 todos\)/
@@ -868,25 +917,25 @@ describe('eslint with todo formatter', function () {
 
         expect(result.exitCode).toEqual(0);
         expect(stdout).toMatch(
-          /1:10  warning  'addOne' is defined but never used\s+no-unused-vars/
+          /1:10 {2}warning {2}'addOne' is defined but never used\s+no-unused-vars/
         );
         expect(stdout).toMatch(
-          /2:7   warning  Use the isNaN function to compare with NaN\s+use-isnan/
+          /2:7 {3}warning {2}Use the isNaN function to compare with NaN\s+use-isnan/
         );
         expect(stdout).toMatch(
-          /2:9   warning  Expected '!==' and instead saw '!='\s+eqeqeq/
+          /2:9 {3}warning {2}Expected '!==' and instead saw '!='\s+eqeqeq/
         );
         expect(stdout).toMatch(
-          /3:12  warning  Unary operator '\+\+' used\s+no-plusplus/
+          /3:12 {2}warning {2}Unary operator '\+\+' used\s+no-plusplus/
         );
         expect(stdout).toMatch(
-          /3:12  warning  Assignment to function parameter 'i'\s+no-param-reassign/
+          /3:12 {2}warning {2}Assignment to function parameter 'i'\s+no-param-reassign/
         );
         expect(stdout).toMatch(
-          /5:3   warning  Function 'addOne' expected a return value\s+consistent-return/
+          /5:3 {3}warning {2}Function 'addOne' expected a return value\s+consistent-return/
         );
         expect(stdout).toMatch(
-          /5:3   warning  Unnecessary return statement\s+no-useless-return/
+          /5:3 {3}warning {2}Unnecessary return statement\s+no-useless-return/
         );
         expect(stdout).toMatch(/✖ 7 problems \(0 errors, 7 warnings\)/);
       });
@@ -911,25 +960,25 @@ describe('eslint with todo formatter', function () {
 
         expect(result.exitCode).toEqual(0);
         expect(stdout).toMatch(
-          /1:10  warning  'addOne' is defined but never used\s+no-unused-vars/
+          /1:10 {2}warning {2}'addOne' is defined but never used\s+no-unused-vars/
         );
         expect(stdout).toMatch(
-          /2:7   warning  Use the isNaN function to compare with NaN\s+use-isnan/
+          /2:7 {3}warning {2}Use the isNaN function to compare with NaN\s+use-isnan/
         );
         expect(stdout).toMatch(
-          /2:9   warning  Expected '!==' and instead saw '!='\s+eqeqeq/
+          /2:9 {3}warning {2}Expected '!==' and instead saw '!='\s+eqeqeq/
         );
         expect(stdout).toMatch(
-          /3:12  warning  Unary operator '\+\+' used\s+no-plusplus/
+          /3:12 {2}warning {2}Unary operator '\+\+' used\s+no-plusplus/
         );
         expect(stdout).toMatch(
-          /3:12  warning  Assignment to function parameter 'i'\s+no-param-reassign/
+          /3:12 {2}warning {2}Assignment to function parameter 'i'\s+no-param-reassign/
         );
         expect(stdout).toMatch(
-          /5:3   warning  Function 'addOne' expected a return value\s+consistent-return/
+          /5:3 {3}warning {2}Function 'addOne' expected a return value\s+consistent-return/
         );
         expect(stdout).toMatch(
-          /5:3   warning  Unnecessary return statement\s+no-useless-return/
+          /5:3 {3}warning {2}Unnecessary return statement\s+no-useless-return/
         );
         expect(stdout).toMatch(/✖ 7 problems \(0 errors, 7 warnings\)/);
       });
@@ -958,25 +1007,25 @@ describe('eslint with todo formatter', function () {
 
         expect(result.exitCode).toEqual(0);
         expect(stdout).toMatch(
-          /1:10  warning  'addOne' is defined but never used\s+no-unused-vars/
+          /1:10 {2}warning {2}'addOne' is defined but never used\s+no-unused-vars/
         );
         expect(stdout).toMatch(
-          /2:7   warning  Use the isNaN function to compare with NaN\s+use-isnan/
+          /2:7 {3}warning {2}Use the isNaN function to compare with NaN\s+use-isnan/
         );
         expect(stdout).toMatch(
-          /2:9   warning  Expected '!==' and instead saw '!='\s+eqeqeq/
+          /2:9 {3}warning {2}Expected '!==' and instead saw '!='\s+eqeqeq/
         );
         expect(stdout).toMatch(
-          /3:12  warning  Unary operator '\+\+' used\s+no-plusplus/
+          /3:12 {2}warning {2}Unary operator '\+\+' used\s+no-plusplus/
         );
         expect(stdout).toMatch(
-          /3:12  warning  Assignment to function parameter 'i'\s+no-param-reassign/
+          /3:12 {2}warning {2}Assignment to function parameter 'i'\s+no-param-reassign/
         );
         expect(stdout).toMatch(
-          /5:3   warning  Function 'addOne' expected a return value\s+consistent-return/
+          /5:3 {3}warning {2}Function 'addOne' expected a return value\s+consistent-return/
         );
         expect(stdout).toMatch(
-          /5:3   warning  Unnecessary return statement\s+no-useless-return/
+          /5:3 {3}warning {2}Unnecessary return statement\s+no-useless-return/
         );
         expect(stdout).toMatch(/✖ 7 problems \(0 errors, 7 warnings\)/);
       });
@@ -1004,25 +1053,25 @@ describe('eslint with todo formatter', function () {
 
         expect(result.exitCode).toEqual(1);
         expect(stdout).toMatch(
-          /1:10  error  'addOne' is defined but never used\s+no-unused-vars/
+          /1:10 {2}error {2}'addOne' is defined but never used\s+no-unused-vars/
         );
         expect(stdout).toMatch(
-          /2:7   error  Use the isNaN function to compare with NaN\s+use-isnan/
+          /2:7 {3}error {2}Use the isNaN function to compare with NaN\s+use-isnan/
         );
         expect(stdout).toMatch(
-          /2:9   error  Expected '!==' and instead saw '!='\s+eqeqeq/
+          /2:9 {3}error {2}Expected '!==' and instead saw '!='\s+eqeqeq/
         );
         expect(stdout).toMatch(
-          /3:12  error  Unary operator '\+\+' used\s+no-plusplus/
+          /3:12 {2}error {2}Unary operator '\+\+' used\s+no-plusplus/
         );
         expect(stdout).toMatch(
-          /3:12  error  Assignment to function parameter 'i'\s+no-param-reassign/
+          /3:12 {2}error {2}Assignment to function parameter 'i'\s+no-param-reassign/
         );
         expect(stdout).toMatch(
-          /5:3   error  Function 'addOne' expected a return value\s+consistent-return/
+          /5:3 {3}error {2}Function 'addOne' expected a return value\s+consistent-return/
         );
         expect(stdout).toMatch(
-          /5:3   error  Unnecessary return statement\s+no-useless-return/
+          /5:3 {3}error {2}Unnecessary return statement\s+no-useless-return/
         );
         expect(stdout).toMatch(/✖ 7 problems \(7 errors, 0 warnings\)/);
       });
@@ -1047,25 +1096,25 @@ describe('eslint with todo formatter', function () {
 
         expect(result.exitCode).toEqual(1);
         expect(stdout).toMatch(
-          /1:10  error  'addOne' is defined but never used\s+no-unused-vars/
+          /1:10 {2}error {2}'addOne' is defined but never used\s+no-unused-vars/
         );
         expect(stdout).toMatch(
-          /2:7   error  Use the isNaN function to compare with NaN\s+use-isnan/
+          /2:7 {3}error {2}Use the isNaN function to compare with NaN\s+use-isnan/
         );
         expect(stdout).toMatch(
-          /2:9   error  Expected '!==' and instead saw '!='\s+eqeqeq/
+          /2:9 {3}error {2}Expected '!==' and instead saw '!='\s+eqeqeq/
         );
         expect(stdout).toMatch(
-          /3:12  error  Unary operator '\+\+' used\s+no-plusplus/
+          /3:12 {2}error {2}Unary operator '\+\+' used\s+no-plusplus/
         );
         expect(stdout).toMatch(
-          /3:12  error  Assignment to function parameter 'i'\s+no-param-reassign/
+          /3:12 {2}error {2}Assignment to function parameter 'i'\s+no-param-reassign/
         );
         expect(stdout).toMatch(
-          /5:3   error  Function 'addOne' expected a return value\s+consistent-return/
+          /5:3 {3}error {2}Function 'addOne' expected a return value\s+consistent-return/
         );
         expect(stdout).toMatch(
-          /5:3   error  Unnecessary return statement\s+no-useless-return/
+          /5:3 {3}error {2}Unnecessary return statement\s+no-useless-return/
         );
         expect(stdout).toMatch(/✖ 7 problems \(7 errors, 0 warnings\)/);
       });
@@ -1094,25 +1143,25 @@ describe('eslint with todo formatter', function () {
 
         expect(result.exitCode).toEqual(1);
         expect(stdout).toMatch(
-          /1:10  error  'addOne' is defined but never used\s+no-unused-vars/
+          /1:10 {2}error {2}'addOne' is defined but never used\s+no-unused-vars/
         );
         expect(stdout).toMatch(
-          /2:7   error  Use the isNaN function to compare with NaN\s+use-isnan/
+          /2:7 {3}error {2}Use the isNaN function to compare with NaN\s+use-isnan/
         );
         expect(stdout).toMatch(
-          /2:9   error  Expected '!==' and instead saw '!='\s+eqeqeq/
+          /2:9 {3}error {2}Expected '!==' and instead saw '!='\s+eqeqeq/
         );
         expect(stdout).toMatch(
-          /3:12  error  Unary operator '\+\+' used\s+no-plusplus/
+          /3:12 {2}error {2}Unary operator '\+\+' used\s+no-plusplus/
         );
         expect(stdout).toMatch(
-          /3:12  error  Assignment to function parameter 'i'\s+no-param-reassign/
+          /3:12 {2}error {2}Assignment to function parameter 'i'\s+no-param-reassign/
         );
         expect(stdout).toMatch(
-          /5:3   error  Function 'addOne' expected a return value\s+consistent-return/
+          /5:3 {3}error {2}Function 'addOne' expected a return value\s+consistent-return/
         );
         expect(stdout).toMatch(
-          /5:3   error  Unnecessary return statement\s+no-useless-return/
+          /5:3 {3}error {2}Unnecessary return statement\s+no-useless-return/
         );
         expect(stdout).toMatch(/✖ 7 problems \(7 errors, 0 warnings\)/);
       });
@@ -1138,25 +1187,25 @@ describe('eslint with todo formatter', function () {
 
         expect(result.exitCode).toEqual(1);
         expect(stdout).toMatch(
-          /1:10  error  'addOne' is defined but never used\s+no-unused-vars/
+          /1:10 {2}error {2}'addOne' is defined but never used\s+no-unused-vars/
         );
         expect(stdout).toMatch(
-          /2:7   error  Use the isNaN function to compare with NaN\s+use-isnan/
+          /2:7 {3}error {2}Use the isNaN function to compare with NaN\s+use-isnan/
         );
         expect(stdout).toMatch(
-          /2:9   error  Expected '!==' and instead saw '!='\s+eqeqeq/
+          /2:9 {3}error {2}Expected '!==' and instead saw '!='\s+eqeqeq/
         );
         expect(stdout).toMatch(
-          /3:12  error  Unary operator '\+\+' used\s+no-plusplus/
+          /3:12 {2}error {2}Unary operator '\+\+' used\s+no-plusplus/
         );
         expect(stdout).toMatch(
-          /3:12  error  Assignment to function parameter 'i'\s+no-param-reassign/
+          /3:12 {2}error {2}Assignment to function parameter 'i'\s+no-param-reassign/
         );
         expect(stdout).toMatch(
-          /5:3   error  Function 'addOne' expected a return value\s+consistent-return/
+          /5:3 {3}error {2}Function 'addOne' expected a return value\s+consistent-return/
         );
         expect(stdout).toMatch(
-          /5:3   error  Unnecessary return statement\s+no-useless-return/
+          /5:3 {3}error {2}Unnecessary return statement\s+no-useless-return/
         );
         expect(stdout).toMatch(/✖ 7 problems \(7 errors, 0 warnings\)/);
       });

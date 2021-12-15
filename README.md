@@ -49,6 +49,12 @@ If you want to opt out of this behavior, you can run with the `NO_CLEAN_TODO` en
 NO_CLEAN_TODO='1' eslint . --format @lint-todo/eslint-formatter-todo
 ```
 
+To compact the `.lint-todo` storage file, you can use the `COMPACT_TODO` environment variable.
+
+```bash
+COMPACT_TODO=1 eslint . --format @lint-todo/eslint-formatter-todo
+```
+
 ### Configuring Due Dates
 
 Todos can be created with optional due dates. These due dates allow for todos to, over a period of time, 'decay' the severity to a **warning** and/or **error** after a certain date. This helps ensure that todos are created but not forgotten, and can allow for better managing incremental roll-outs of large-scale or slow-to-fix rules.
