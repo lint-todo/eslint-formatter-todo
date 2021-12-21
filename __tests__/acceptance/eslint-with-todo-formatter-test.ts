@@ -507,7 +507,10 @@ describe('eslint with todo formatter', function () {
 
     // generate todo based on existing error
     await runEslintWithFormatter({
-      env: { UPDATE_TODO: '1' },
+      env: {
+        UPDATE_TODO: '1',
+        TODO_CREATED_DATE: new Date('12/01/21').toJSON(),
+      },
     });
 
     // mimic fixing the error manually via user interaction
@@ -526,8 +529,8 @@ describe('eslint with todo formatter', function () {
     expect(readTodoStorageFile(getTodoStorageFilePath(project.baseDir)))
       .toMatchInlineSnapshot(`
       Array [
-        "add|eslint|no-unused-vars|1|10|1|16|50f2c7b9dac0a4af1cde42fe5be7963201d0504d|1639526400000|1642118400000|1644710400000|src/with-fixable-error.js",
-        "remove|eslint|no-unused-vars|1|10|1|16|50f2c7b9dac0a4af1cde42fe5be7963201d0504d|1639526400000|1642118400000|1644710400000|src/with-fixable-error.js",
+        "add|eslint|no-unused-vars|1|10|1|16|50f2c7b9dac0a4af1cde42fe5be7963201d0504d|1638316800000|1640908800000|1643500800000|src/with-fixable-error.js",
+        "remove|eslint|no-unused-vars|1|10|1|16|50f2c7b9dac0a4af1cde42fe5be7963201d0504d|1638316800000|1640908800000|1643500800000|src/with-fixable-error.js",
       ]
     `);
 
@@ -540,7 +543,7 @@ describe('eslint with todo formatter', function () {
     expect(readTodoStorageFile(getTodoStorageFilePath(project.baseDir)))
       .toMatchInlineSnapshot(`
       Array [
-        "add|eslint|no-unused-vars|1|10|1|16|50f2c7b9dac0a4af1cde42fe5be7963201d0504d|1639526400000|1642118400000|1644710400000|src/with-fixable-error.js",
+        "add|eslint|no-unused-vars|1|10|1|16|50f2c7b9dac0a4af1cde42fe5be7963201d0504d|1638316800000|1640908800000|1643500800000|src/with-fixable-error.js",
       ]
     `);
 
