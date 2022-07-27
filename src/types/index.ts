@@ -23,6 +23,7 @@ export type TodoInfo =
   | undefined;
 
 export interface TodoFormatterOptions {
+  formatTodoAs: string | undefined;
   updateTodo: boolean;
   includeTodo: boolean;
   shouldCleanTodos: boolean;
