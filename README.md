@@ -179,3 +179,12 @@ Converting errors to todos with `warn` and `error` dates that transition the `to
 ```bash
 UPDATE_TODO='1' TODO_DAYS_TO_WARN= '' TODO_DAYS_TO_ERROR='20' eslint . --format @lint-todo/eslint-formatter-todo
 ```
+
+### Additional options for formatting output
+
+Optionally format the output using a different eslint-formatter while preserving the todo functionality. Calling package must declare
+dependency on the optional formatter.
+
+```bash
+FORMAT_TODO_AS=@microsoft/eslint-formatter-sarif eslint . --format @lint-todo/eslint-formatter-todo
+```
