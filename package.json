@@ -36,6 +36,7 @@
   "devDependencies": {
     "@scalvert/bin-tester": "^2.1.1",
     "@types/eslint": "^7.2.4",
+    "@types/fs-extra": "^9.0.13",
     "@types/jest": "^28.1.6",
     "@types/text-table": "^0.2.1",
     "@types/tmp": "^0.2.0",
