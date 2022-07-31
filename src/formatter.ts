@@ -286,6 +286,7 @@ function pushResult(results: ESLint.LintResult[], todo: TodoData) {
       errorCount: 1,
       warningCount: 0,
       todoCount: 0,
+      fatalErrorCount: 0,
       fixableErrorCount: 0,
       fixableWarningCount: 0,
       fixableTodoCount: 0,

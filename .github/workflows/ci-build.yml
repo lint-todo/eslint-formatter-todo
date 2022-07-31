@@ -25,10 +25,8 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
       - name: install dependencies
-        run: yarn install
-      - name: lint
-        run: yarn lint
+        run: npm install
       - name: build
-        run: yarn build
+        run: npm run build
       - name: test
-        run: yarn test
+        run: npm test
