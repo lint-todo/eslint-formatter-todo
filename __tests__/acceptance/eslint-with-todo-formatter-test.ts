@@ -512,9 +512,12 @@ describe('eslint with todo formatter', function () {
       },
     });
 
-    expect(
-      readTodoStorageFile(getTodoStorageFilePath(project.baseDir))
-    ).toMatchInlineSnapshot(`Array []`);
+    expect(readTodoStorageFile(getTodoStorageFilePath(project.baseDir)))
+      .toMatchInlineSnapshot(`
+      Array [
+        "add|eslint|no-unused-vars|1|10|1|16|50f2c7b9dac0a4af1cde42fe5be7963201d0504d|1638316800000|1640908800000|1643500800000|src/with-fixable-error.js",
+      ]
+    `);
 
     expect(result.exitCode).toEqual(0);
   });
