@@ -1241,14 +1241,14 @@ describe('eslint with todo formatter', function () {
 
   describe('with FORMAT_TODO_AS', function () {
     it('with UPDATE_TODO, outputs empty formatted results from alternate formatter', async () => {
-      project.write({
+      await project.write({
         src: {
           'with-errors-0.js': getStringFixture('with-errors-0.js'),
           'with-errors-1.js': getStringFixture('with-errors-1.js'),
         },
       });
 
-      const result = await runEslintWithFormatter({
+      const result = await runBin({
         env: {
           FORMAT_TODO_AS: '@microsoft/eslint-formatter-sarif',
           UPDATE_TODO: '1',
@@ -1273,14 +1273,14 @@ describe('eslint with todo formatter', function () {
     });
 
     it('with UPDATE_TODO and INCLUDE_TODO, outputs format results from alternate formatter', async () => {
-      project.write({
+      await project.write({
         src: {
           'with-errors-0.js': getStringFixture('with-errors-0.js'),
           'with-errors-1.js': getStringFixture('with-errors-1.js'),
         },
       });
 
-      const result = await runEslintWithFormatter({
+      const result = await runBin({
         env: {
           FORMAT_TODO_AS: '@microsoft/eslint-formatter-sarif',
           UPDATE_TODO: '1',
@@ -1549,7 +1549,7 @@ describe('eslint with todo formatter', function () {
     });
 
     it('should emit errors and warnings as normal', async () => {
-      project.write({
+      await project.write({
         src: {
           'with-errors-and-warnings.js': getStringFixture(
             'with-errors-and-warnings.js'
@@ -1557,7 +1557,7 @@ describe('eslint with todo formatter', function () {
         },
       });
 
-      const result = await runEslintWithFormatter({
+      const result = await runBin({
         env: {
           FORMAT_TODO_AS: '@microsoft/eslint-formatter-sarif',
         },
@@ -1670,7 +1670,7 @@ describe('eslint with todo formatter', function () {
         },
       });
 
-      let result = await runEslintWithFormatter({
+      let result = await runBin({
         env: {
           FORMAT_TODO_AS: '@microsoft/eslint-formatter-sarif',
           UPDATE_TODO: '1',
@@ -1681,7 +1681,7 @@ describe('eslint with todo formatter', function () {
       expect(todoStorageFileExists(project.baseDir)).toEqual(true);
       expect(readTodoData(project.baseDir, buildReadOptions()).size).toEqual(7);
 
-      result = await runEslintWithFormatter({
+      result = await runBin({
         env: { FORMAT_TODO_AS: '@microsoft/eslint-formatter-sarif' },
       });
 
@@ -1703,13 +1703,13 @@ describe('eslint with todo formatter', function () {
     });
 
     it('generates todos for existing errors, and correctly reports todo severity when file is edited to trigger fuzzy match', async function () {
-      project.write({
+      await project.write({
         src: {
           'with-errors.js': getStringFixture('with-errors-0.js'),
         },
       });
 
-      let result = await runEslintWithFormatter({
+      let result = await runBin({
         env: {
           FORMAT_TODO_AS: '@microsoft/eslint-formatter-sarif',
           UPDATE_TODO: '1',
@@ -1720,13 +1720,13 @@ describe('eslint with todo formatter', function () {
       expect(todoStorageFileExists(project.baseDir)).toEqual(true);
       expect(readTodoData(project.baseDir, buildReadOptions()).size).toEqual(7);
 
-      project.write({
+      await project.write({
         src: {
           'with-errors.js': getStringFixture('with-errors-for-fuzzy.js'),
         },
       });
 
-      result = await runEslintWithFormatter({
+      result = await runBin({
         env: { FORMAT_TODO_AS: '@microsoft/eslint-formatter-sarif' },
       });
 
@@ -1748,14 +1748,14 @@ describe('eslint with todo formatter', function () {
     });
 
     it('should emit todo items and count when UPDATE_TODO=1 and INCLUDE_TODO=1 are set', async () => {
-      project.write({
+      await project.write({
         src: {
           'with-errors-0.js': getStringFixture('with-errors-0.js'),
           'with-errors-1.js': getStringFixture('with-errors-1.js'),
         },
       });
 
-      const result = await runEslintWithFormatter({
+      const result = await runBin({
         env: {
           FORMAT_TODO_AS: '@microsoft/eslint-formatter-sarif',
           UPDATE_TODO: '1',
@@ -2024,7 +2024,7 @@ describe('eslint with todo formatter', function () {
     });
 
     it('should emit todo items and count when INCLUDE_TODO=1 is set alone with prior todo items', async () => {
-      project.write({
+      await project.write({
         src: {
           'with-errors-0.js': getStringFixture('with-errors-0.js'),
           'with-errors-1.js': getStringFixture('with-errors-1.js'),
@@ -2032,7 +2032,7 @@ describe('eslint with todo formatter', function () {
       });
 
       // run eslint to generate todo dir but don't capture the result because this is not what we're testing
-      await runEslintWithFormatter({
+      await runBin({
         env: {
           FORMAT_TODO_AS: '@microsoft/eslint-formatter-sarif',
           UPDATE_TODO: '1',
@@ -2040,7 +2040,7 @@ describe('eslint with todo formatter', function () {
       });
 
       // run with INCLUDE_TODO (this is what we're testing)
-      const result = await runEslintWithFormatter({
+      const result = await runBin({
         env: {
           FORMAT_TODO_AS: '@microsoft/eslint-formatter-sarif',
           INCLUDE_TODO: '1',
@@ -2309,13 +2309,13 @@ describe('eslint with todo formatter', function () {
 
     it('should emit errors, warnings, and todos when all of these are present and INCLUDE_TODO=1 is set', async () => {
       // first we generate project files with errors and convert them to todos
-      project.write({
+      await project.write({
         src: {
           'with-errors-0.js': getStringFixture('with-errors-0.js'),
         },
       });
 
-      await runEslintWithFormatter({
+      await runBin({
         env: {
           FORMAT_TODO_AS: '@microsoft/eslint-formatter-sarif',
           UPDATE_TODO: '1',
@@ -2323,7 +2323,7 @@ describe('eslint with todo formatter', function () {
       });
 
       // now we add new errors and warnings to test output with all problems
-      project.write({
+      await project.write({
         src: {
           'with-errors-and-warnings.js': getStringFixture(
             'with-errors-and-warnings.js'
@@ -2331,7 +2331,7 @@ describe('eslint with todo formatter', function () {
         },
       });
 
-      const result = await runEslintWithFormatter({
+      const result = await runBin({
         env: {
           FORMAT_TODO_AS: '@microsoft/eslint-formatter-sarif',
           INCLUDE_TODO: '1',
@@ -2605,14 +2605,14 @@ describe('eslint with todo formatter', function () {
     });
 
     it('errors if a todo item is no longer valid when running without params, and fixes with --fix', async function () {
-      project.write({
+      await project.write({
         src: {
           'with-fixable-error.js': getStringFixture('with-fixable-error.js'),
         },
       });
 
       // generate todo based on existing error
-      await runEslintWithFormatter({
+      await runBin({
         env: {
           FORMAT_TODO_AS: '@microsoft/eslint-formatter-sarif',
           UPDATE_TODO: '1',
@@ -2620,14 +2620,14 @@ describe('eslint with todo formatter', function () {
       });
 
       // mimic fixing the error manually via user interaction
-      project.write({
+      await project.write({
         src: {
           'with-fixable-error.js': getStringFixture('no-errors.js'),
         },
       });
 
       // run normally and expect an error for not running --fix
-      let result = await runEslintWithFormatter({
+      let result = await runBin({
         env: { FORMAT_TODO_AS: '@microsoft/eslint-formatter-sarif', CI: '1' },
       });
 
@@ -2673,10 +2673,10 @@ describe('eslint with todo formatter', function () {
       );
 
       // run fix, and expect that this will delete the outstanding todo item
-      await runEslintWithFormatter(['--fix']);
+      await runBin('--fix');
 
       // run normally again and expect no error
-      result = await runEslintWithFormatter({
+      result = await runBin({
         env: { FORMAT_TODO_AS: '@microsoft/eslint-formatter-sarif' },
       });
 
