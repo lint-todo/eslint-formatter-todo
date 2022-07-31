@@ -5,9 +5,8 @@ import {
   TodoConfigByEngine,
 } from '@lint-todo/utils';
 import { dirname, join } from 'path';
-import fixturify from 'fixturify';
-import Project from 'fixturify-project';
 import { mkdirpSync, symlinkSync } from 'fs-extra';
+import { BinTesterProject } from '@scalvert/bin-tester';
 
 const DEFAULT_ESLINT_CONFIG = `{
   "env": {
@@ -69,13 +68,24 @@ const DEFAULT_ESLINT_CONFIG = `{
 }
 `;
 
-export class FakeProject extends Project {
-  static getInstance(): FakeProject {
+export class FakeProject extends BinTesterProject {
+  static async getInstance(): Promise<FakeProject> {
     const project = new this();
 
-    // project.addDevDependency('eslint', '^7.10.0');
-
     project.files['eslint-config.json'] = DEFAULT_ESLINT_CONFIG;
+
+    await project.write();
+    // link binary
+    project.symlink(
+      join(__dirname, '../..', 'node_modules', '.bin', 'eslint'),
+      join(project.baseDir, 'node_modules', '.bin', 'eslint')
+    );
+
+    // link package
+    project.symlink(
+      join(__dirname, '../..', 'node_modules', 'eslint'),
+      join(project.baseDir, 'node_modules', 'eslint')
+    );
 
     return project;
   }
@@ -83,44 +93,28 @@ export class FakeProject extends Project {
   constructor(name = 'fake-project', ...args: any[]) {
     super(name, ...args);
 
-    this.pkg = Object.assign({}, this.pkg, {
+    this.pkg = {
+      ...this.pkg,
       license: 'MIT',
       description: 'Fake project',
       repository: 'http://fakerepo.com',
-    });
-
-    // link binary
-    this.symlink(
-      join(__dirname, '../..', 'node_modules', '.bin', 'eslint'),
-      join(this.baseDir, 'node_modules', '.bin', 'eslint')
-    );
-
-    // link package
-    this.symlink(
-      join(__dirname, '../..', 'node_modules', 'eslint'),
-      join(this.baseDir, 'node_modules', 'eslint')
-    );
+    };
   }
 
-  write(dirJSON: fixturify.DirJSON): void {
-    Object.assign(this.files, dirJSON);
-    this.writeSync();
-  }
-
-  setShorthandPackageJsonTodoConfig(daysToDecay: DaysToDecay): void {
+  setShorthandPackageJsonTodoConfig(daysToDecay: DaysToDecay): Promise<void> {
     this.pkg = Object.assign({}, this.pkg, {
       lintTodo: {
         daysToDecay,
       },
     });
 
-    this.writeSync();
+    return this.write();
   }
 
   setPackageJsonTodoConfig(
     daysToDecay: DaysToDecay,
     daysToDecayByRule?: DaysToDecayByRule
-  ): void {
+  ): Promise<void> {
     const todoConfig: LintTodoPackageJson = {
       lintTodo: {
         eslint: {
@@ -136,13 +130,13 @@ export class FakeProject extends Project {
 
     this.pkg = Object.assign({}, this.pkg, todoConfig);
 
-    this.writeSync();
+    return this.write();
   }
 
   setLintTodorc(
     daysToDecay: DaysToDecay,
     daysToDecayByRule?: DaysToDecayByRule
-  ): void {
+  ): Promise<void> {
     const todoConfig: TodoConfigByEngine = {
       eslint: {
         daysToDecay,
@@ -153,7 +147,7 @@ export class FakeProject extends Project {
       todoConfig['eslint'].daysToDecayByRule = daysToDecayByRule;
     }
 
-    this.write({
+    return this.write({
       '.lint-todorc.js': `module.exports = ${JSON.stringify(
         todoConfig,
         // eslint-disable-next-line unicorn/no-null
