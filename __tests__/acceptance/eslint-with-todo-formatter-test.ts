@@ -1,3 +1,4 @@
+import '@microsoft/jest-sarif';
 import stripAnsi from 'strip-ansi';
 import { differenceInDays, subDays } from 'date-fns';
 import {
@@ -15,19 +16,6 @@ import { FakeProject } from '../__utils__/fake-project';
 import { getObjectFixture, getStringFixture } from '../__utils__/get-fixture';
 import { buildReadOptions } from '../__utils__/build-read-options';
 import { buildMaybeTodos } from '../../src/formatter';
-
-function getMessagesFromSarif(
-  result: any,
-  levels: ('error' | 'warning' | 'todo')[]
-): string {
-  return result.runs.flatMap((run: any) =>
-    run.results.reduce(
-      (acc: string[], result: any) =>
-        levels.includes(result.level) ? [...acc, result.message.text] : acc,
-      []
-    )
-  );
-}
 
 describe('eslint with todo formatter', function () {
   let project: FakeProject;
@@ -1265,15 +1253,7 @@ describe('eslint with todo formatter', function () {
       },
     });
 
-    expect(getMessagesFromSarif(JSON.parse(result.stdout), ['error'])).toEqual([
-      "'addOne' is defined but never used.",
-      'Use the isNaN function to compare with NaN.',
-      "Expected '!==' and instead saw '!='.",
-      "Unary operator '++' used.",
-      "Assignment to function parameter 'i'.",
-      "Function 'addOne' expected a return value.",
-      'Unnecessary return statement.',
-    ]);
+    expect(JSON.parse(result.stdout)).toBeValidSarifLog();
   });
 
   it('when given FORMAT_TODO_AS will ensure that results provided to that formatter do not include todos', async () => {
@@ -1283,20 +1263,31 @@ describe('eslint with todo formatter', function () {
       },
     });
 
-    await runBin({
+    let result = await runBin();
+
+    expect(result.stdout.match(/\s*\d*:\d*\s*error.*/g) || []).toHaveLength(7);
+
+    result = await runBin({
       env: {
         UPDATE_TODO: '1',
       },
     });
 
-    const result = await runBin({
+    expect(result.stdout.match(/\s*\d*:\d*\s*error.*/g) || []).toHaveLength(0);
+
+    result = await runBin({
       env: {
         FORMAT_TODO_AS: '@microsoft/eslint-formatter-sarif',
       },
     });
 
-    expect(getMessagesFromSarif(JSON.parse(result.stdout), ['error'])).toEqual(
+    // extract errors from SARIF results, we expect none since we're converting them to todos
+    const potentialErrors = JSON.parse(result.stdout).runs[0].results.reduce(
+      (acc: string[], result: any) =>
+        result.level === 'error' ? [...acc, result.message.text] : acc,
       []
     );
+
+    expect(potentialErrors).toHaveLength(0);
   });
 });
