@@ -21,6 +21,7 @@
     "es6": true
   },
   "rules": {
+    "jest/prefer-to-be": "off",
     "@typescript-eslint/no-unused-vars": "error",
     "@typescript-eslint/no-explicit-any": "off",
     "no-global-assign": [
@@ -29,11 +30,15 @@
         "exceptions": ["console"]
       }
     ],
-    "unicorn/no-reduce": "off",
-    "unicorn/prevent-abbreviations": "off",
-    "unicorn/no-process-exit": "off",
     "unicorn/import-style": "off",
+    "unicorn/no-array-for-each": "off",
     "unicorn/no-array-reduce": "off",
+    "unicorn/no-process-exit": "off",
+    "unicorn/no-reduce": "off",
+    "unicorn/prefer-module": "off",
+    "unicorn/prefer-node-protocol": "off",
+    "unicorn/prevent-abbreviations": "off",
+    "unicorn/template-indent": "off",
     "node/no-missing-import": "off",
     "node/no-unsupported-features/es-syntax": [
       "error",
