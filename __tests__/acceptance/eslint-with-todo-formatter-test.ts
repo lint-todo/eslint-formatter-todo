@@ -1265,6 +1265,7 @@ describe('eslint with todo formatter', function () {
 
     let result = await runBin();
 
+    // without converting to todos, we should have errors
     expect(result.stdout.match(/\s*\d*:\d*\s*error.*/g) || []).toHaveLength(7);
 
     result = await runBin({
@@ -1273,6 +1274,7 @@ describe('eslint with todo formatter', function () {
       },
     });
 
+    // after converting to todos, we should have no errors
     expect(result.stdout.match(/\s*\d*:\d*\s*error.*/g) || []).toHaveLength(0);
 
     result = await runBin({
@@ -1281,7 +1283,7 @@ describe('eslint with todo formatter', function () {
       },
     });
 
-    // extract errors from SARIF results, we expect none since we're converting them to todos
+    // extract errors from SARIF results, we should continue to have no errors (todos are respected with external formatter)
     const potentialErrors = JSON.parse(result.stdout).runs[0].results.reduce(
       (acc: string[], result: any) =>
         result.level === 'error' ? [...acc, result.message.text] : acc,
