@@ -1266,7 +1266,7 @@ describe('eslint with todo formatter', function () {
     let result = await runBin();
 
     // without converting to todos, we should have errors
-    expect(result.stdout.match(/\s*\d*:\d*\s*error.*/g) || []).toHaveLength(7);
+    expect(result.stdout.match(/\s*\d*:\d*\s*error.*/gm) || []).toHaveLength(7);
 
     result = await runBin({
       env: {
@@ -1275,7 +1275,7 @@ describe('eslint with todo formatter', function () {
     });
 
     // after converting to todos, we should have no errors
-    expect(result.stdout.match(/\s*\d*:\d*\s*error.*/g) || []).toHaveLength(0);
+    expect(result.stdout.match(/\s*\d*:\d*\s*error.*/gm) || []).toHaveLength(0);
 
     result = await runBin({
       env: {
