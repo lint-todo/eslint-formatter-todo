@@ -1253,7 +1253,7 @@ describe('eslint with todo formatter', function () {
   }
 
   it('when given FORMAT_TODO_AS will output with that formatters format', async () => {
-    project.write({
+    await project.write({
       src: {
         'with-errors-0.js': getStringFixture('with-errors-0.js'),
       },
@@ -1277,7 +1277,7 @@ describe('eslint with todo formatter', function () {
   });
 
   it('when given FORMAT_TODO_AS will ensure that results provided to that formatter do not include todos', async () => {
-    project.write({
+    await project.write({
       src: {
         'with-errors-0.js': getStringFixture('with-errors-0.js'),
       },
