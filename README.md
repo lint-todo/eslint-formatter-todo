@@ -182,8 +182,11 @@ UPDATE_TODO='1' TODO_DAYS_TO_WARN= '' TODO_DAYS_TO_ERROR='20' eslint . --format 
 
 ### Additional options for formatting output
 
-Optionally format the output using a different eslint-formatter while preserving the todo functionality. Calling package must declare
-dependency on the optional formatter.
+This package will only format the data in todos with the default format; however, if you need to preserve the todo
+functionality while outputting in a different format for your CI system, you can set an additional environment
+variable `FORMAT_TODO_AS` which references a node module that is installed in your project. Note that additional
+functionality of this formatter is not supported (i.e., `UPDATE_TODO`, etc) when using the `FORMAT_TODO_AS` flag,
+this flag is strictly for modifying the command line output.
 
 ```bash
 FORMAT_TODO_AS=@microsoft/eslint-formatter-sarif eslint . --format @lint-todo/eslint-formatter-todo

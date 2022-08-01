@@ -4,6 +4,7 @@ import stripAnsi from 'strip-ansi';
 import table from 'text-table';
 import { Severity } from '@lint-todo/utils';
 import {
+  ResultFormatter,
   TodoFormatterCounts,
   TodoFormatterOptions,
   TodoInfo,
@@ -19,8 +20,8 @@ export function printResults(
   const counts = sumCounts(results);
 
   if (options.formatTodoAs) {
-    const formatter = loadFormatter(options.formatTodoAs);
-    return formatter(filterTodos(results, options));
+    const resultFormatter = loadResultFormatter(options.formatTodoAs);
+    return resultFormatter(filterTodos(results));
   }
 
   let output = '\n';
@@ -45,15 +46,13 @@ export function printResults(
   return hasCounts || hasTodos || hasUpdatedTodos ? reset(output) : '';
 }
 
-function loadFormatter(
-  _formatter: string
-): (results: ESLint.LintResult[], data?: ESLint.LintResultData) => string {
+function loadResultFormatter(formatter: string): ResultFormatter {
   try {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
-    return require(_formatter);
+    return require(formatter);
   } catch {
     throw new Error(
-      `Unable to find formatter \`${_formatter}\`. Must declare explicit dependency on package. Try 'npm install ${_formatter} --save-dev' or 'yarn add ${_formatter} --dev'`
+      `Unable to find formatter \`${formatter}\`. Must declare explicit dependency on package. Try 'npm install ${formatter} --save-dev' or 'yarn add ${formatter} --dev'`
     );
   }
 }
@@ -270,34 +269,14 @@ function pluralize(word: string, count: number): string {
   return count === 1 ? word : `${word}s`;
 }
 
-function filterTodos(
-  results: ESLint.LintResult[],
-  options: TodoPrintOptions
-): ESLint.LintResult[] {
+function filterTodos(results: ESLint.LintResult[]): ESLint.LintResult[] {
   return results.reduce((acc, result) => {
-    const messages = result.messages as TodoResultMessage[];
-    if (messages.length === 0) {
-      return acc;
-    }
-
-    if (options.includeTodo) {
-      return [...acc, result];
-    }
-
-    const areAllMessagesTodo = messages.every(
-      (message) => message.severity === Severity.todo
-    );
-
-    if (areAllMessagesTodo) {
-      return acc;
-    }
-
     return [
       ...acc,
       {
         ...result,
-        messages: messages.filter(
-          (message) => message.severity !== Severity.todo
+        messages: result.messages.filter(
+          (message: TodoResultMessage) => message.severity !== Severity.todo
         ) as Linter.LintMessage[],
       },
     ];
