@@ -179,3 +179,14 @@ Converting errors to todos with `warn` and `error` dates that transition the `to
 ```bash
 UPDATE_TODO='1' TODO_DAYS_TO_WARN= '' TODO_DAYS_TO_ERROR='20' eslint . --format @lint-todo/eslint-formatter-todo
 ```
+
+### Additional options for formatting output
+
+This package will only format the data in todos with the pretty format. 
+
+If you need to preserve the todo functionality while outputting in a different format for your CI system, you can set an additional environment variable, `FORMAT_TODO_AS`, which references a node module that is installed in your project. 
+
+:warning: Note that additional functionality of this formatter is not supported (i.e., `UPDATE_TODO`, etc) when using the `FORMAT_TODO_AS` flag; this flag is strictly for modifying the command line output.
+
+```bash
+FORMAT_TODO_AS=@microsoft/eslint-formatter-sarif eslint . --format @lint-todo/eslint-formatter-todo

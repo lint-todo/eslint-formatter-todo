@@ -44,6 +44,8 @@ export function formatter(results: ESLint.LintResult[]): string {
     removed: 0,
     todoConfig: getTodoConfig(process.cwd(), 'eslint') ?? {},
   };
+
+  const formatTodoAs = process.env.FORMAT_TODO_AS;
   const updateTodo = process.env.UPDATE_TODO === '1';
   const includeTodo = process.env.INCLUDE_TODO === '1';
   const cleanTodo = !process.env.NO_CLEAN_TODO && !ci.isCI;
@@ -85,6 +87,7 @@ export function formatter(results: ESLint.LintResult[]): string {
     }
 
     processResults(results, maybeTodos, {
+      formatTodoAs,
       updateTodo,
       includeTodo,
       shouldCleanTodos,
@@ -94,6 +97,7 @@ export function formatter(results: ESLint.LintResult[]): string {
   }
 
   return printResults(results, {
+    formatTodoAs,
     updateTodo,
     includeTodo,
     shouldCleanTodos,

@@ -1,3 +1,4 @@
+import '@microsoft/jest-sarif';
 import stripAnsi from 'strip-ansi';
 import { differenceInDays, subDays } from 'date-fns';
 import {
@@ -1238,4 +1239,57 @@ describe('eslint with todo formatter', function () {
       }
     });
   }
+
+  it('when given FORMAT_TODO_AS will output with that formatters format', async () => {
+    await project.write({
+      src: {
+        'with-errors-0.js': getStringFixture('with-errors-0.js'),
+      },
+    });
+
+    const result = await runBin({
+      env: {
+        FORMAT_TODO_AS: '@microsoft/eslint-formatter-sarif',
+      },
+    });
+
+    expect(JSON.parse(result.stdout)).toBeValidSarifLog();
+  });
+
+  it('when given FORMAT_TODO_AS will ensure that results provided to that formatter do not include todos', async () => {
+    await project.write({
+      src: {
+        'with-errors-0.js': getStringFixture('with-errors-0.js'),
+      },
+    });
+
+    let result = await runBin();
+
+    // without converting to todos, we should have errors
+    expect(result.stdout.match(/\s*\d*:\d*\s*error.*/g) || []).toHaveLength(7);
+
+    result = await runBin({
+      env: {
+        UPDATE_TODO: '1',
+      },
+    });
+
+    // after converting to todos, we should have no errors
+    expect(result.stdout.match(/\s*\d*:\d*\s*error.*/g) || []).toHaveLength(0);
+
+    result = await runBin({
+      env: {
+        FORMAT_TODO_AS: '@microsoft/eslint-formatter-sarif',
+      },
+    });
+
+    // extract errors from SARIF results, we should continue to have no errors (todos are respected with external formatter)
+    const potentialErrors = JSON.parse(result.stdout).runs[0].results.reduce(
+      (acc: string[], result: any) =>
+        result.level === 'error' ? [...acc, result.message.text] : acc,
+      []
+    );
+
+    expect(potentialErrors).toHaveLength(0);
+  });
 });

@@ -1,9 +1,10 @@
 import { blueBright, dim, red, reset, underline, yellow } from 'chalk';
-import type { ESLint } from 'eslint';
+import type { ESLint, Linter } from 'eslint';
 import stripAnsi from 'strip-ansi';
 import table from 'text-table';
 import { Severity } from '@lint-todo/utils';
 import {
+  ResultFormatter,
   TodoFormatterCounts,
   TodoFormatterOptions,
   TodoInfo,
@@ -17,6 +18,11 @@ export function printResults(
   options: TodoPrintOptions
 ): string {
   const counts = sumCounts(results);
+
+  if (options.formatTodoAs) {
+    const resultFormatter = loadResultFormatter(options.formatTodoAs);
+    return resultFormatter(filterTodos(results));
+  }
 
   let output = '\n';
 
@@ -38,6 +44,17 @@ export function printResults(
 
   // Resets output color to prevent change on top level
   return hasCounts || hasTodos || hasUpdatedTodos ? reset(output) : '';
+}
+
+function loadResultFormatter(formatter: string): ResultFormatter {
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    return require(formatter);
+  } catch {
+    throw new Error(
+      `Unable to find formatter \`${formatter}\`. Must declare explicit dependency on package. Try 'npm install ${formatter} --save-dev' or 'yarn add ${formatter} --dev'`
+    );
+  }
 }
 
 function formatResults(
@@ -250,4 +267,18 @@ function sumCounts(results: ESLint.LintResult[]): TodoFormatterCounts {
 
 function pluralize(word: string, count: number): string {
   return count === 1 ? word : `${word}s`;
+}
+
+function filterTodos(results: ESLint.LintResult[]): ESLint.LintResult[] {
+  return results.reduce((acc, result) => {
+    return [
+      ...acc,
+      {
+        ...result,
+        messages: result.messages.filter(
+          (message: TodoResultMessage) => message.severity !== Severity.todo
+        ) as Linter.LintMessage[],
+      },
+    ];
+  }, [] as ESLint.LintResult[]);
 }

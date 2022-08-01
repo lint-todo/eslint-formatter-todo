@@ -1,5 +1,5 @@
 import type { TodoConfig, WriteTodoOptions } from '@lint-todo/utils';
-import type { Linter } from 'eslint';
+import type { ESLint, Linter } from 'eslint';
 
 declare module 'eslint' {
   export namespace ESLint {
@@ -9,6 +9,11 @@ declare module 'eslint' {
     }
   }
 }
+
+export type ResultFormatter = (
+  result: ESLint.LintResult[],
+  data?: ESLint.LintResultData
+) => string;
 
 export type TodoResultMessage = Omit<Linter.LintMessage, 'severity'> & {
   severity: Linter.Severity | -1;
@@ -23,6 +28,7 @@ export type TodoInfo =
   | undefined;
 
 export interface TodoFormatterOptions {
+  formatTodoAs: string | undefined;
   updateTodo: boolean;
   includeTodo: boolean;
   shouldCleanTodos: boolean;
