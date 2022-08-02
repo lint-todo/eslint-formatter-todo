@@ -25,7 +25,7 @@ import type { TodoFormatterOptions } from './types';
 
 const LINES_PATTERN = /(.*?(?:\r\n?|\n|$))/gm;
 
-export function formatter(results: ESLint.LintResult[]): string {
+export async function formatter(results: ESLint.LintResult[]): Promise<string> {
   const baseDir = getBaseDir();
   const todoConfigResult = validateConfig(baseDir);
 
@@ -96,7 +96,7 @@ export function formatter(results: ESLint.LintResult[]): string {
     });
   }
 
-  return printResults(results, {
+  return await printResults(results, {
     formatTodoAs,
     updateTodo,
     includeTodo,
