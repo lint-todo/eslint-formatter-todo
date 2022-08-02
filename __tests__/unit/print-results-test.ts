@@ -21,7 +21,7 @@ describe('print-results', () => {
   it('should return all errors', async () => {
     const results = fixtures.eslintWithErrors('/stable/path');
 
-    expect(stripAnsi(printResults(results, getOptions())))
+    expect(stripAnsi(await printResults(results, getOptions())))
       .toMatchInlineSnapshot(`
       "
       /stable/path/app/controllers/settings.js
@@ -64,7 +64,9 @@ describe('print-results', () => {
   it('should not return anything when includeTodo is false and there are only todo items', async () => {
     const results = fixtures.eslintWithTodos('/stable/path');
 
-    expect(stripAnsi(printResults(results, getOptions())).trim()).toEqual('');
+    expect(stripAnsi(await printResults(results, getOptions())).trim()).toEqual(
+      ''
+    );
   });
 
   it('should return all todo items when includeTodo is true', async () => {
@@ -72,7 +74,7 @@ describe('print-results', () => {
 
     expect(
       stripAnsi(
-        printResults(
+        await printResults(
           results,
           getOptions({
             includeTodo: true,
@@ -121,7 +123,7 @@ describe('print-results', () => {
   it('should only return errors and warnings if includeTodo is false and there are errors, warnings, and todo items', async () => {
     const results = fixtures.eslintWithErrorsWarningsTodos('/stable/path');
 
-    expect(stripAnsi(printResults(results, getOptions())))
+    expect(stripAnsi(await printResults(results, getOptions())))
       .toMatchInlineSnapshot(`
       "
       /stable/path/app/errors-only.js
@@ -143,146 +145,17 @@ describe('print-results', () => {
     `);
   });
 
-  it('should throw an error when formatTodoAs is present but the given module is not found', () => {
-    const results = fixtures.eslintWithErrors('/stable/path');
-    expect(() =>
-      printResults(
-        results,
-        getOptions({ formatTodoAs: '@lint-todo/not-found' })
-      )
-    ).toThrow(
-      "Unable to find formatter `@lint-todo/not-found`. Must declare explicit dependency on package. Try 'npm install @lint-todo/not-found --save-dev' or 'yarn add @lint-todo/not-found --dev'"
-    );
-  });
-
-  it('should only include errors and warnings if formatTodoAs is specified', () => {
-    const formatterSpy = jest.fn().mockReturnValue('mock formatted results');
-    jest.mock('@lint-todo/alternate-formatter', () => formatterSpy, {
-      virtual: true,
-    });
-
+  it('should format errors and warnings to with formatter when using formatTodoAs', async () => {
     const results = fixtures.eslintWithErrorsWarningsTodos('/stable/path');
-    expect(
-      printResults(
-        results,
-        getOptions({
-          formatTodoAs: '@lint-todo/alternate-formatter',
-        })
-      )
-    ).toEqual('mock formatted results');
-    expect(formatterSpy).toHaveBeenCalledWith([
-      {
-        filePath: '/stable/path/app/errors-only.js',
-        messages: [
-          {
-            ruleId: 'no-prototype-builtins',
-            severity: 2,
-            message:
-              "Do not access Object.prototype method 'hasOwnProperty' from target object.",
-            line: 25,
-            column: 21,
-            nodeType: 'CallExpression',
-            messageId: 'prototypeBuildIn',
-            endLine: 25,
-            endColumn: 35,
-          },
-          {
-            ruleId: 'no-prototype-builtins',
-            severity: 2,
-            message:
-              "Do not access Object.prototype method 'hasOwnProperty' from target object.",
-            line: 26,
-            column: 19,
-            nodeType: 'CallExpression',
-            messageId: 'prototypeBuildIn',
-            endLine: 26,
-            endColumn: 33,
-          },
-          {
-            ruleId: 'no-prototype-builtins',
-            severity: 2,
-            message:
-              "Do not access Object.prototype method 'hasOwnProperty' from target object.",
-            line: 32,
-            column: 34,
-            nodeType: 'CallExpression',
-            messageId: 'prototypeBuildIn',
-            endLine: 32,
-            endColumn: 48,
-          },
-        ],
-        errorCount: 3,
-        warningCount: 0,
-        fixableErrorCount: 0,
-        fixableWarningCount: 0,
-        source: '',
-      },
-      {
-        filePath: '/stable/path/app/warnings-only.js',
-        messages: [
-          {
-            ruleId: 'no-alert',
-            severity: 1,
-            message: 'Unexpected alert.',
-            line: 3,
-            column: 3,
-            nodeType: 'CallExpression',
-            messageId: 'unexpected',
-            endLine: 2,
-            endColumn: 14,
-          },
-        ],
-        errorCount: 0,
-        warningCount: 1,
-        fixableErrorCount: 0,
-        fixableWarningCount: 0,
-        source: '',
-      },
-      {
-        filePath: '/stable/path/app/todos-only.js',
-        messages: [],
-        errorCount: 0,
-        warningCount: 0,
-        todoCount: 2,
-        fixableErrorCount: 0,
-        fixableWarningCount: 0,
-        source: '',
-      },
-      {
-        filePath: '/stable/path/app/errors-warnings-todo.js',
-        messages: [
-          {
-            ruleId: 'no-redeclare',
-            severity: 2,
-            message:
-              "'window' is already defined as a built-in global variable.",
-            line: 1,
-            column: 11,
-            nodeType: 'Block',
-            messageId: 'redeclaredAsBuiltin',
-            endLine: 1,
-            endColumn: 17,
-            fix: { range: [0, 1], text: '' },
-          },
-          {
-            ruleId: 'no-alert',
-            severity: 1,
-            message: 'Unexpected alert.',
-            line: 3,
-            column: 3,
-            nodeType: 'CallExpression',
-            messageId: 'unexpected',
-            endLine: 2,
-            endColumn: 14,
-          },
-        ],
-        errorCount: 1,
-        warningCount: 1,
-        todoCount: 1,
-        fixableErrorCount: 1,
-        fixableWarningCount: 0,
-        source: '',
-      },
-    ]);
+
+    const formattedResults = await printResults(
+      results,
+      getOptions({
+        formatTodoAs: 'html',
+      })
+    );
+
+    expect(formattedResults).toMatch('<!DOCTYPE html>');
+    expect(formattedResults).toMatch('6 problems (4 errors, 2 warnings)');
   });
 });
