@@ -1,6 +1,29 @@
 
 
 
+
+## v3.0.0 (2022-08-01)
+
+#### :boom: Breaking Change
+* [#333](https://github.com/lint-todo/eslint-formatter-todo/pull/333) Convert to @scalvert/bin-tester ([@scalvert](https://github.com/scalvert))
+
+#### :rocket: Enhancement
+* [#332](https://github.com/lint-todo/eslint-formatter-todo/pull/332) Enable piping output through additional formatter for CI ([@tomcharles](https://github.com/tomcharles))
+* [#290](https://github.com/lint-todo/eslint-formatter-todo/pull/290) Adds COMPACT_TODO functionality to compact todo storage file. ([@scalvert](https://github.com/scalvert))
+
+#### :bug: Bug Fix
+* [#289](https://github.com/lint-todo/eslint-formatter-todo/pull/289) Updates @lint-todo/utils to latest version for read isolation ([@scalvert](https://github.com/scalvert))
+
+#### :house: Internal
+* [#333](https://github.com/lint-todo/eslint-formatter-todo/pull/333) Convert to @scalvert/bin-tester ([@scalvert](https://github.com/scalvert))
+* [#334](https://github.com/lint-todo/eslint-formatter-todo/pull/334) Convert to npm vs yarn ([@scalvert](https://github.com/scalvert))
+* [#286](https://github.com/lint-todo/eslint-formatter-todo/pull/286) Rename repository to new scope ([@scalvert](https://github.com/scalvert))
+
+#### Committers: 2
+- Steve Calvert ([@scalvert](https://github.com/scalvert))
+- Tom Charles ([@tomcharles](https://github.com/tomcharles))
+
+
 ## v2.0.0 (2021-12-06)
 
 #### :house: Internal
