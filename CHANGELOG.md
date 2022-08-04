@@ -2,6 +2,18 @@
 
 
 
+
+## v4.0.0 (2022-08-04)
+
+:information_source: This major version supports eslint v8.4.0 and up (it leverages async formatters)
+
+#### :boom: Breaking Change
+* [#343](https://github.com/lint-todo/eslint-formatter-todo/pull/343) Enable ESLint built-in formatters with FORMAT_TODO_AS ([@tomcharles](https://github.com/tomcharles))
+
+#### Committers: 1
+- Tom Charles ([@tomcharles](https://github.com/tomcharles))
+
+
 ## v3.0.0 (2022-08-01)
 
 #### :boom: Breaking Change
