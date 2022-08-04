@@ -87,6 +87,12 @@ export class FakeProject extends BinTesterProject {
       join(project.baseDir, 'node_modules', 'eslint')
     );
 
+    // link formatter for FORMAT_TODO_AS tests
+    project.symlink(
+      join(__dirname, '../..', 'node_modules', '@microsoft'),
+      join(project.baseDir, 'node_modules', '@microsoft')
+    );
+
     return project;
   }
 
