@@ -37,7 +37,7 @@
     "@microsoft/eslint-formatter-sarif": "^3.0.0",
     "@microsoft/jest-sarif": "^1.0.0-beta.0",
     "@scalvert/bin-tester": "^2.1.1",
-    "@types/eslint": "^7.2.4",
+    "@types/eslint": "^8.4.6",
     "@types/fs-extra": "^9.0.13",
     "@types/jest": "^28.1.6",
     "@types/text-table": "^0.2.1",
