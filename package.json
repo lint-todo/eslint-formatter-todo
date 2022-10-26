@@ -1,6 +1,6 @@
 {
   "name": "@lint-todo/eslint-formatter-todo",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "description": "An ESLint formatter that can report errors as todos.",
   "repository": {
     "type": "git",

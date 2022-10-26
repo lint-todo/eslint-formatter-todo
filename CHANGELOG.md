@@ -3,6 +3,16 @@
 
 
 
+
+## v4.0.1 (2022-10-26)
+
+#### :memo: Documentation
+* [#397](https://github.com/lint-todo/eslint-formatter-todo/pull/397) Ensure correct `eslint` version is being used. ([@rwjblue](https://github.com/rwjblue))
+
+#### Committers: 1
+- Robert Jackson ([@rwjblue](https://github.com/rwjblue))
+
+
 ## v4.0.0 (2022-08-04)
 
 :information_source: This major version supports eslint v8.4.0 and up (it leverages async formatters)
