@@ -9,10 +9,10 @@ import {
   TodoConfig,
   TodoData,
   todoStorageFileExists,
-  Range,
   validateConfig,
   WriteTodoOptions,
   writeTodos,
+  getSourceForRange,
 } from '@lint-todo/utils';
 import { relative, join } from 'path';
 import hasFlag from 'has-flag';
@@ -22,8 +22,6 @@ import { getBaseDir } from './get-base-dir';
 
 import type { ESLint, Linter } from 'eslint';
 import type { TodoFormatterOptions } from './types';
-
-const LINES_PATTERN = /(.*?(?:\r\n?|\n|$))/gm;
 
 export async function formatter(results: ESLint.LintResult[]): Promise<string> {
   const baseDir = getBaseDir();
@@ -221,10 +219,7 @@ export function buildMaybeTodos(
           ruleId: message.ruleId || '',
           range,
           source: lintResult.source
-            ? getSourceForRange(
-                lintResult.source.match(LINES_PATTERN) || [],
-                range
-              )
+            ? getSourceForRange(lintResult.source, range)
             : '',
           originalLintResult: message,
         },
@@ -238,35 +233,6 @@ export function buildMaybeTodos(
   }, new Set<TodoData>());
 
   return todoData;
-}
-
-function getSourceForRange(source: string[], range: Range) {
-  const firstLine = range.start.line - 1;
-  const lastLine = range.end.line - 1;
-  let currentLine = firstLine - 1;
-  const firstColumn = range.start.column - 1;
-  const lastColumn = range.end.column - 1;
-  const src = [];
-  let line;
-
-  while (currentLine < lastLine) {
-    currentLine++;
-    line = source[currentLine];
-
-    if (currentLine === firstLine) {
-      if (firstLine === lastLine) {
-        src.push(line.slice(firstColumn, lastColumn));
-      } else {
-        src.push(line.slice(firstColumn));
-      }
-    } else if (currentLine === lastLine) {
-      src.push(line.slice(0, lastColumn));
-    } else {
-      src.push(line);
-    }
-  }
-
-  return src.join('');
 }
 
 function pushResult(results: ESLint.LintResult[], todo: TodoData) {
