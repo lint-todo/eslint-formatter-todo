@@ -4,6 +4,16 @@
 
 
 
+
+## v4.0.2 (2022-10-31)
+
+#### :house: Internal
+* [#399](https://github.com/lint-todo/eslint-formatter-todo/pull/399) Use source utils from @lint-todo/utils ([@scalvert](https://github.com/scalvert))
+
+#### Committers: 1
+- Steve Calvert ([@scalvert](https://github.com/scalvert))
+
+
 ## v4.0.1 (2022-10-26)
 
 #### :memo: Documentation
