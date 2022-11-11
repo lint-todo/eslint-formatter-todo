@@ -244,6 +244,32 @@ describe('eslint with todo formatter', function () {
     );
   });
 
+  it('should filter warn with --quiet', async () => {
+    await project.write({
+      src: {
+        'with-errors-0.js': getStringFixture('with-errors-0.js'),
+        'with-errors-1.js': getStringFixture('with-errors-1.js'),
+      },
+    });
+
+    let result = await runBin({
+      env: {
+        UPDATE_TODO: '1',
+        TODO_DAYS_TO_WARN: '5',
+        TODO_CREATED_DATE: subDays(new Date(), 10).toJSON(),
+      },
+    });
+
+    expect(result.exitCode).toEqual(0);
+    expect(result.stdout).toMatch(
+      /✔ 10 todos created, 0 todos removed \(warn after 5 days\)/
+    );
+
+    result = await runBin('--quiet');
+
+    expect(result.stdout).toMatchInlineSnapshot(`""`);
+  });
+
   it('generates todos for existing errors', async function () {
     await project.write({
       src: {

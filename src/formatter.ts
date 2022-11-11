@@ -94,6 +94,10 @@ export async function formatter(results: ESLint.LintResult[]): Promise<string> {
     });
   }
 
+  if (hasFlag('quiet')) {
+    results = filterResults(results);
+  }
+
   return await printResults(results, {
     formatTodoAs,
     updateTodo,
@@ -263,6 +267,31 @@ function pushResult(results: ESLint.LintResult[], todo: TodoData) {
       usedDeprecatedRules: [],
     });
   }
+}
+
+function filterResults(results: ESLint.LintResult[]) {
+  const filtered: ESLint.LintResult[] = [];
+
+  results.forEach((result) => {
+    const filteredMessages = result.messages.filter(
+      (message: Linter.LintMessage) => {
+        return message.severity !== Severity.warn;
+      }
+    );
+
+    if (filteredMessages.length > 0) {
+      filtered.push({
+        ...result,
+        messages: filteredMessages,
+        errorCount: filteredMessages.length,
+        warningCount: 0,
+        fixableErrorCount: result.fixableErrorCount,
+        fixableWarningCount: 0,
+      });
+    }
+  });
+
+  return filtered;
 }
 
 function findResult(results: ESLint.LintResult[], todo: TodoData) {
