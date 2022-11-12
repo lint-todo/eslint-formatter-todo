@@ -117,7 +117,7 @@ Due dates can be configured in one of two ways, but both specify integers for `w
    ...and you supply the following environment variables:
 
    ```bash
-   UPDATE_TODO='1' TODO_DAYS_TO_WARN= '2' eslint . --format @lint-todo/eslint-formatter-todo
+   UPDATE_TODO='1' TODO_DAYS_TO_WARN='2' eslint . --format @lint-todo/eslint-formatter-todo
    ```
 
    ...the todos will be created with a `warn` date 2 days from the created date, and an `error` date 10 days from the created date.
@@ -171,13 +171,13 @@ Due dates can be configured on a per-rule basis with the `daysToDecayByRule` opt
 Converting errors to todos with `warn` and `error` dates that transition the `todo` to `warn` after 10 days and `error` after 20 days:
 
 ```bash
-UPDATE_TODO='1' TODO_DAYS_TO_WARN= '10' TODO_DAYS_TO_ERROR='20' eslint . --format @lint-todo/eslint-formatter-todo
+UPDATE_TODO='1' TODO_DAYS_TO_WARN='10' TODO_DAYS_TO_ERROR='20' eslint . --format @lint-todo/eslint-formatter-todo
 ```
 
 Converting errors to todos with `warn` and `error` dates that transition the `todo` `error` after 20 days, but doesn't include a `warn` date:
 
 ```bash
-UPDATE_TODO='1' TODO_DAYS_TO_WARN= '' TODO_DAYS_TO_ERROR='20' eslint . --format @lint-todo/eslint-formatter-todo
+UPDATE_TODO='1' TODO_DAYS_TO_WARN='' TODO_DAYS_TO_ERROR='20' eslint . --format @lint-todo/eslint-formatter-todo
 ```
 
 ### Additional options for formatting output
