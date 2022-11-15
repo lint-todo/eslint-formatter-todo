@@ -27,7 +27,7 @@
     "chalk": "^4.1.0",
     "ci-info": "^3.3.0",
     "fs-extra": "^10.0.0",
-    "has-flag": "^4.0.0",
+    "has-flag": "^5.0.1",
     "strip-ansi": "^6.0.0",
     "text-table": "^0.2.0",
     "type-fest": "^0.20.2",
