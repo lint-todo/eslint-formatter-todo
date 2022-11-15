@@ -5,6 +5,20 @@
 
 
 
+
+## v4.0.3 (2022-11-15)
+
+#### :bug: Bug Fix
+* [#408](https://github.com/lint-todo/eslint-formatter-todo/pull/408) Ensures --quiet flag filters out todos converted to warnings ([@scalvert](https://github.com/scalvert))
+
+#### :memo: Documentation
+* [#411](https://github.com/lint-todo/eslint-formatter-todo/pull/411) Fix env var syntax in README ([@joshuabremerdexcom](https://github.com/joshuabremerdexcom))
+
+#### Committers: 2
+- Joshua Bremer ([@joshuabremerdexcom](https://github.com/joshuabremerdexcom))
+- Steve Calvert ([@scalvert](https://github.com/scalvert))
+
+
 ## v4.0.2 (2022-10-31)
 
 #### :house: Internal
