@@ -275,7 +275,7 @@ function filterResults(results: ESLint.LintResult[]) {
   results.forEach((result) => {
     const filteredMessages = result.messages.filter(
       (message: Linter.LintMessage) => {
-        return message.severity !== Severity.warn;
+        return message.severity === Severity.error;
       }
     );
 
