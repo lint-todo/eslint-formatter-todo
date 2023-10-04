@@ -5,6 +5,13 @@
 
 
 
+## v4.0.4 (TBD)
+
+#### :rocket: Enhancement
+* [#477](https://github.com/lint-todo/eslint-formatter-todo/pull/477) Adds COMPACT_TODO_AFTER_PROCESS functionality to compact todo storage file after other formatter operations. ([@ngouy](https://github.com/ngouy))
+
+#### Committers: 1
+- Nathan Gouy ([@ngouy](https://github.com/ngouy))
 
 ## v4.0.3 (2022-11-15)
 

@@ -18,6 +18,7 @@ export type TodoInfo =
   | {
       added: number;
       removed: number;
+      cleanedUp: number;
       todoConfig: TodoConfig | undefined;
     }
   | undefined;
