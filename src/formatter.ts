@@ -40,6 +40,7 @@ export async function formatter(results: ESLint.LintResult[]): Promise<string> {
   const todoInfo = {
     added: 0,
     removed: 0,
+    cleanedUp: 0,
     todoConfig: getTodoConfig(process.cwd(), 'eslint') ?? {},
   };
 
@@ -49,6 +50,7 @@ export async function formatter(results: ESLint.LintResult[]): Promise<string> {
   const cleanTodo = !process.env.NO_CLEAN_TODO && !ci.isCI;
   const shouldFix = hasFlag('fix');
   const shouldCleanTodos = shouldFix || cleanTodo;
+  const compactAfterProcess = process.env.COMPACT_TODO_AFTER_PROCESS === '1';
 
   if (
     (process.env.TODO_DAYS_TO_WARN || process.env.TODO_DAYS_TO_ERROR) &&
@@ -98,13 +100,22 @@ export async function formatter(results: ESLint.LintResult[]): Promise<string> {
     results = filterResults(results);
   }
 
-  return await printResults(results, {
+  let resultsToPrint = await printResults(results, {
     formatTodoAs,
     updateTodo,
     includeTodo,
     shouldCleanTodos,
     todoInfo,
   });
+
+  if (compactAfterProcess) {
+    const { compacted } = compactTodoStorageFile(baseDir);
+
+    resultsToPrint &&= resultsToPrint + "\n"
+    resultsToPrint += `Removed ${compacted - todoInfo.cleanedUp} todos from .lint-todo storage file`;
+  }
+
+  return resultsToPrint;
 }
 
 function processResults(
@@ -113,17 +124,19 @@ function processResults(
   options: TodoFormatterOptions
 ) {
   const baseDir = getBaseDir();
+  const { todoInfo, writeTodoOptions, shouldCleanTodos } = options;
 
   if (todoStorageFileExists(baseDir)) {
     const { remove, stable, expired } = generateTodoBatches(
       baseDir,
       maybeTodos,
-      options.writeTodoOptions
+      writeTodoOptions
     );
 
     if (remove.size > 0 || expired.size > 0) {
-      if (options.shouldCleanTodos) {
+      if (shouldCleanTodos) {
         applyTodoChanges(baseDir, new Set(), new Set([...remove, ...expired]));
+        if (todoInfo) todoInfo.cleanedUp += remove.size
       } else {
         for (const todo of remove) {
           pushResult(results, todo);

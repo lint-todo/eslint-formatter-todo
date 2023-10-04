@@ -49,10 +49,16 @@ If you want to opt out of this behavior, you can run with the `NO_CLEAN_TODO` en
 NO_CLEAN_TODO='1' eslint . --format @lint-todo/eslint-formatter-todo
 ```
 
-To compact the `.lint-todo` storage file, you can use the `COMPACT_TODO` environment variable.
+To compact the `.lint-todo` storage file without any other operation, you can use the `COMPACT_TODO` environment variable.
 
 ```bash
 COMPACT_TODO=1 eslint . --format @lint-todo/eslint-formatter-todo
+```
+
+To compact the `.lint-todo` storage file after other operations (such as cleanup), you can use the `COMPACT_TODO_AFTER_PROCESS` environment variable.
+
+```bash
+COMPACT_TODO_AFTER_PROCESS=1 CLEANUP_TODO=1 eslint . --format @lint-todo/eslint-formatter-todo
 ```
 
 ### Configuring Due Dates

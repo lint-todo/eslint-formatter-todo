@@ -545,6 +545,51 @@ describe('eslint with todo formatter', function () {
 
     expect(result.exitCode).toEqual(0);
   });
+  
+  it('can clean and compact at the same time', async function () {
+    await project.write({
+      src: {
+        'with-fixable-error.js': getStringFixture('with-fixable-error.js'),
+      },
+    });
+
+    // generate todo based on existing error
+    await runBin({
+      env: {
+        UPDATE_TODO: '1',
+        NO_CLEAN_TODO: '1',
+        TODO_CREATED_DATE: new Date('12/01/21').toJSON(),
+      },
+    });
+
+    expect(readTodoStorageFile(getTodoStorageFilePath(project.baseDir)))
+    .toMatchInlineSnapshot(`
+    Array [
+      "add|eslint|no-unused-vars|1|10|1|16|50f2c7b9dac0a4af1cde42fe5be7963201d0504d|1638316800000|1640908800000|1643500800000|src/with-fixable-error.js",
+    ]
+  `);
+
+    // mimic fixing the error manually via user interaction
+    await project.write({
+      src: {
+        'with-fixable-error.js': getStringFixture('no-errors.js'),
+      },
+    });
+
+    // normally we wouldn't need to use the --fix flag, since todos are auto-cleaned. Auto cleaning by default isn't
+    // enabled in CI, however, so we need to force the fix in order to mimic the default behavior.
+    const result = await runBin('--fix', {
+      env: {
+        COMPACT_AFTER_PROCESS: '1',
+      }
+    });
+
+    expect(result.stdout).toEqual("Removed 1 todos from .lint-todo storage file");
+    expect(result.exitCode).toEqual(0);
+
+    expect(readTodoStorageFile(getTodoStorageFilePath(project.baseDir)))
+      .toMatchInlineSnapshot(`Array []`);
+  });
 
   for (const { name, isLegacy, setTodoConfig } of [
     {
